@@ -1,0 +1,59 @@
+---
+title: "Introduction to ggplot2"
+author: "Wan Kee"
+format: html
+---
+
+`ggplot2` is a R package dedicated to data visualization. It can greatly improve the quality and aesthetics of graphics. ggplot2 builds charts through layers using geom_ functions.
+
+::: {.panel-tabset}
+
+# geom_bar
+
+# geom_bin
+
+# geom_boxplot
+
+# geom_density
+
+# geom_error
+
+# geom_hex
+
+# geom_hist
+
+# geom_hline
+
+# geom_jitter
+
+# geom_label
+
+# geom_line
+
+# geom_point
+
+# geom_polygon
+
+# geom_rect
+
+# geom_ribbon
+
+# geom_rug
+
+# geom_segment
+
+# geom_smooth
+
+# geom_text
+
+# geom_title
+
+# geom_violin
+
+# geom_vline
+
+
+:::
+
+
+

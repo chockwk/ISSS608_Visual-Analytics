@@ -1,0 +1,110 @@
+---
+pagetitle: "Visual Analytics"
+page-layout: custom
+section-divs: false
+editor: source
+sidebar: false
+search: false
+
+listing:
+
+  - id: Topics
+    contents: 
+    - /Topics/A_Introduction to ggplot2/HO_Introduction to ggplot2.qmd
+    - "!index.qmd"
+    type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 9
+    feed: false
+
+  - id: Practices
+    contents: 
+    - Placeholder
+    - "!index.qmd"
+    type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 6
+    feed: false
+
+  - id: Projects
+    contents: 
+    - Placeholder
+    - "index.qmd"
+    type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 3
+    feed: false
+
+toc: false
+---
+
+## Overview
+
+::: {.header-text} 
+::: {.content-container}
+::: {.header-block}
+<br/>
+
+Welcome to **Visual Analytics**. In this site, you will find a showcase of the exercises I have done for the SMU MITB course <a href="https://chockwk-visual-analytics.netlify.app/">ISSS608 Visual Analytics</a> taught by Prof Kam Tin Seong.
+
+The learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.
+
+:::
+:::
+:::
+
+::: {.content-container}
+::: {.listing-block}
+<a href="Topics/index.qmd">
+
+## Topics
+</a> 
+
+::: {#Topics}
+:::
+
+:::
+:::
+
+::: {.content-container}
+::: {.listing-block}
+<a href="Practices/index.qmd">
+
+## Practices
+</a>
+
+::: {#Practices}
+:::
+
+:::
+:::
+
+::: {.content-container}
+::: {.listing-block}
+<a href="Projects/index.qmd">
+
+## Projects 
+</a>
+
+::: {#Projects}
+:::
+
+:::
+:::
+
+::: {.footer-text}
+::: {.footer-container .black-background}
+::: {.footer-block}
+
+</a>
+
+:::
+:::
+:::
+
