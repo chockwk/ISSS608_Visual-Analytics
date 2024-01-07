@@ -2,8 +2,6 @@
 title: "Visual Analytics"
 ---
 
-## Visual Analytics
-
 Welcome to my home page on Visual Analytics!
 
 This page documents my learning journey of visual analytics taught by Prof Kam Tin Seong.
