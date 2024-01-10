@@ -66,7 +66,7 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
-### ggrepel
+## ggrepel
 
 ```{r}
 ggplot(data = exam_data, 
@@ -88,4 +88,172 @@ ggplot(data = exam_data,
 ```
 Warning: ggrepel: 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 :::
+
+# 5 Customize Plot Themes
+
+::: panel-tabset
+
+## ggplot
+
+`ggplot2` comes with eight built-in themes, namely `theme_gray()`, `theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_light()`, `theme_linedraw()`, `theme_minimal()`, and `theme_void()`.
+
+```{r}
+ggplot(data = exam_data, 
+       aes(x = MATHS))+
+  geom_histogram(bins=20, 
+             boundary = 100,
+             color="black",
+             fill="lightgreen")+
+  ggtitle("Distribution of Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+## ggtheme
+
+ggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.
+
+```{r}
+ggplot(data = exam_data, 
+       aes(x = MATHS))+
+  geom_histogram(bins=20, 
+             boundary = 100,
+             color="black",
+             fill="lightgreen")+
+  ggtitle("Distribution of Maths Score")+
+  theme_economist()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+## hrbthems
+
+`hrbrthemes` package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.
+
+“ipsum” is Latin for “precise”
+
+Error in theme_ipsum() : could not find function "theme_ipsum"
+NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.
+Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow
+
+```{r}
+ggplot(data = exam_data, 
+       aes(x = MATHS))+
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="black",
+                 fill="lightgreen")+
+  ggtitle("Distribution of Maths Score")+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  theme_ipsum(axis_title_size = 18,
+              base_size = 15,
+              grid = "Y")
+```
+
+axis_title_size argument is used to increase the font size of the axis title to 18,
+base_size argument is used to increase the default axis label to 15, and
+grid argument is used to remove the x-axis grid lines.
+
+:::
+
+# 6 Create Composite Graphics 
+
+::: panel-tabset
+
+## patchwork (multiple graphs)
+
+Patchwork package has a very simple syntax where we can create layouts super easily. Here’s the general syntax that combines:
+
+"+" operator creates a horizontal layout.
+"()" create a subplot group.
+“|” operator to stack two ggplot2 graphs,
+“/” operator to place the plots beside each other,
+“()” operator the define the sequence of the plotting.
+
+```{r}
+maths <- ggplot(data = exam_data,
+                aes(x = MATHS, fill = CLASS))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "Maths Score Distribution", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+english <- ggplot(data = exam_data,
+                aes(x = ENGLISH, fill = CLASS))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "English Score Distribution", x = "English Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+science <- ggplot(data = exam_data,
+                aes(x = SCIENCE, fill = CLASS))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "Science Score Distribution", x = "Science Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+english + maths + science
+```
+
+```{r}
+(english + maths) / science
+```
+
+## gridExtra (multiple graphs)
+
+```{r}
+library(gridExtra)
+
+grid.arrange(english, maths, science, ncol = 2)
+```
+
+## patchwork (insert)
+
+```{r}
+main <- ggplot(data = exam_data, 
+       aes(x = MATHS, 
+           y = ENGLISH)) +
+  geom_point() +
+  geom_smooth(method = lm, 
+              size = 0.5) +  
+  geom_label_repel(aes(label = ID), 
+                   fontface = "bold") +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100)) +
+  ggtitle("English and Maths Scores using Scatterplot")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+main + 
+  inset_element(maths, left = 0.02, bottom = 0.7, right = 0.4, top = 1) +
+  inset_element(english, left = 0.4, bottom = 0.7, right = 0.8, top = 1)
+```
+
+```{r}
+plot <- (english / maths) | main
+plot & theme_economist()
+```
+
+:::
+
+
 
