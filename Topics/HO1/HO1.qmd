@@ -1,0 +1,553 @@
+---
+title: "Fundamentals of ggplot2"
+author: "Wan Kee"
+date: 8 January 2024
+format: html
+---
+
+![](images/image5.png)
+
+# 1 Learning Objectives
+
+-   Basic principles and essential components of **ggplot2**
+-   Plot statistical graphics based on the principle of **Layered Grammar of Graphics**
+
+# 2 Load ggplot2 Package
+
+`ggplot2` is a R package dedicated to **data visualization** by builds charts through **layers** using `geom_` functions. It can greatly improve the quality and aesthetics of graphics.
+
+The easiest way to get ggplot2 is to install the whole **tidyverse**.
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+## ggplot2 Cheatsheet
+
+[![](images/Screenshot%202024-01-09%20at%202.43.16AM.png)](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
+
+# 3 Grammar of Graphics
+
+From the well-known Anscombe's quartet, different datasets may have the same summary statistics and can be deceptive; it is important to **always visualize and understand the data attributes** before proceeding to feature engineering and machine learning. 
+
+We will explore essential concepts behind the **layered Grammar of Graphics framework** and discuss how we can use each specific layered component to build effective visualization on multi-dimensional data.
+
+A **grammar of graphics** is a framework which follows a layered approach by using defined components to build a visualization. The original grammar of graphics framework was proposed by Leland Wilkinson, which covers all major aspects pertaining to effective data visualization in detail.
+
+There are **seven** major components of the Grammar of Graphics as illustrated below to build effective visualizations on multi-dimensional data.
+
+![](images/Screenshot%202024-01-09%20at%203.44.48%20PM.png)
+
+# 4 Load Data
+
+`exam_data` is a year end examination grades of a cohort of Primary 3 students from a local school.
+
+The output shows a total of **seven attributes**; four of them are **categorical attributes** (ID, CLASS, GENDER and RACE) and the other three are **continuous attributes** (MATHS, ENGLISH and SCIENCE).
+
+```{r}
+exam_data <- read.csv("data/Exam_data.csv")
+summary(exam_data)
+```
+
+```{r}
+glimpse(exam_data)
+```
+
+# 5 Basic Understanding of Base R vs ggplot
+
+Before we start on ggplots, do note **Base R provides the core graphical functions for data visualization**. Both Base R and ggplot can adjust style, color, size, thickness, axes labels and title.
+
+However, when **adding new features**, such as best fit line or data labels, Base R requires separate statement to create new graphs; supply the dataset and superimpose the new feature onto the previous plot. As such, it is an inefficient process when using Base R for such data visualizations.
+
+::: panel-tabset
+
+## Base R
+
+```{r}
+plot(exam_data$ENGLISH, exam_data$MATHS, main="Scatterplot in Base R",
+   xlab="English Scores", ylab="Maths Scores", 
+   pch=4, col = "lightgreen", lwd=1, cex = 2)
+abline(lm(exam_data$ENGLISH~exam_data$MATHS), col="black")
+```
+
+## ggplot
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point(colour = "lightgreen")+
+  geom_abline()+
+  labs(title = "Scatterplot in ggplot", x = "English Score", y = "Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+:::
+
+# 6 Usage of ggplot
+
+Here are the general steps to create a ggplot:
+
+1.  Start with `ggplot()`
+
+2.  Supply a dataset as x or y
+
+3.  Aesthetic mapping with `aes()`
+
+4.  Add on layers such as `geom_bar()`, `geom_bin()`, `geom_boxplot()`, `geom_density()`, `geom_error()`, `geom_hex()`, `geom_histogram()`, `geom_hline()`, `geom_jitter()`, `geom_label()`, `geom_line()`, `geom_point()`, `geom_polygon()`, `geom_rect()`, `geom_ribbon()`, `geom_rug()`, `geom_segment()`, `geom_smooth()`, `geom_text()`, `geom_title()`, `geom_violin()`, `geom_vline()`
+
+5.  Scales through `scale_colour_brewer()`
+
+6.  Faceting specifications using `facet_wrap()`
+
+7.  Coordinate systems by `coord_flip()`
+
+## Step 1 to 4: Creating various ggplot 
+
+::: panel-tabset
+
+#### geom_bar
+
+A **barplot** is used to display the relationship between a numeric and a categorical variable.
+
+```{r}
+ggplot(data = exam_data, aes(x = CLASS))+
+         geom_bar(fill = "lightgreen")+
+         labs(title = "Distribution of Students by Class", x = "Class", y = "Count")+
+         theme_minimal()+
+         theme(legend.position = "none",
+               panel.grid.major = element_blank(),
+               panel.grid.minor = element_blank(),
+               axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = GENDER))+
+  geom_bar(fill = "lightgreen")+
+  labs(title = "Distribution of Students by Gender", x = "Gender", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = CLASS,
+           fill = GENDER))+
+  geom_bar()+
+  labs(title = "Distribution of Gender by Class", x = "Class", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = RACE))+
+  geom_bar(fill = "lightgreen")+
+  labs(title = "Distribution of Students by Race", x = "Class", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = CLASS,
+           fill = RACE))+
+  geom_bar()+
+  labs(title = "Distribution of Race by Class", x = "Class", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### coord_polar
+
+A **piechart** is a circle divided into sectors that each represent a proportion of the whole. There is no specific `geom` to build piechart with ggplot2. The trick is to build a barplot and use `coord_polar` to make it circular. In the case of pie chart, the `pie()` function of Base R is a better alternative.
+
+```{r}
+ggplot(exam_data, aes(x = CLASS)) +
+  geom_bar() +
+  coord_polar()+
+  labs(title = "Distribution of Students by Class", x = "Class", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_dotplot
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS))+
+  geom_dotplot(fill = "lightgreen",
+               dotsize = 0.5)+
+  labs(title = "Maths Score Distribution", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+Alert:
+
+1.  Bin width defaults to 1/30 of the range of the data. Pick better value with `binwidth`
+2.  Misleading y axis. Turn off y-axis using `scale_y_continuous()` and change `binwidth` to 2.5
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS))+
+  geom_dotplot(fill = "lightgreen",
+               dotsize = 0.5,
+               binwidth = 2.5)+
+  scale_y_continuous(NULL, breaks = NULL)+
+  labs(title = "Maths Score Distribution", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_histogram
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS))+
+  geom_histogram(colour = "black", fill = "lightgreen")+
+  labs(title = "Maths Score Distribution using Histogram", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+Note: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+Create 10 bins
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS))+
+  geom_histogram(colour = "black", fill = "lightgreen", bins = 10)+
+  labs(title = "Maths Score Distribution using Histogram", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, 
+           fill = GENDER))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "Maths Score Distribution using Histogram", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+Insight: The performance of students between Female and Male is observed to be similar across all scores.
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, 
+           fill = CLASS))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "Maths Score Distribution using Histogram", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+Insight: Majority of 3A and 3B students score 80-100 in Maths while 3G, 3H and 3I scoare below 50.
+
+#### geom_density
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS))+
+  geom_density(colour = "black")+
+  labs(title = "Maths Score Distribution using Density Plot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, 
+           colour = GENDER))+
+  geom_density()+
+  labs(title = "Maths Score Distribution using Density Plot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, 
+           colour = CLASS))+
+  geom_density()+
+  labs(title = "Maths Score Distribution using Density Plot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_boxplot
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS))+
+  geom_boxplot()+
+  labs(title = "Maths Score Distribution using Boxplot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+Note: x or y as MATHS determines the orientation of the boxplot. In this case, the maths score is a continuous variable and will be placed on y-axis for ease of visualization.
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER, fill = GENDER))+
+  geom_boxplot(notch = TRUE)+
+  labs(title = "Maths Score Distribution using Boxplot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = CLASS, fill = CLASS))+
+  geom_boxplot(notch = TRUE)+
+  labs(title = "Maths Score Distribution using Boxplot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_violin
+
+Requiries x and y input
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER, colour = GENDER))+
+  geom_violin()+
+  labs(title = "Maths Score Distribution using Violin Plot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER, fill = GENDER))+
+  geom_violin()+
+  geom_boxplot(width = 0.3, notch = TRUE, colour = "black", fill = "white")+
+  labs(title = "Maths Score Distribution using Violin plot and Boxplot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = CLASS, fill = CLASS))+
+  geom_violin(width = 1)+
+  geom_boxplot(width = 0.2, notch = TRUE, colour = "black", fill = "white")+
+  labs(title = "Maths Score Distribution using Violin plot and Boxplot", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_point
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+#### geom_smooth
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  geom_smooth(size = 0.8,
+              method = lm)+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER))+
+  geom_boxplot()+
+  geom_point(position = "jitter", size = 0.3)+
+  labs(title = "Maths Score Distribution by Gender", x = "Gender", y = "Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+:::
+
+## Step 5: Scale
+
+## Step 6: Statistic Summary
+
+Boxplot shows median while stat_summary show mean.
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER))+
+  geom_boxplot()+
+  labs(title = "Maths Score Distribution by Gender", x = "Gender", y = "Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  stat_summary(geom = "point",       
+               fun.y="mean",         
+               colour ="aquamarine4",        
+               size=4) 
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER))+
+  geom_boxplot()+
+  labs(title = "Maths Score Distribution by Gender", x = "Gender", y = "Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  stat_summary(geom = "point",       
+               fun.y="median",         
+               colour ="aquamarine4",        
+               size=4) 
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER))+
+  geom_boxplot()+
+  labs(title = "Maths Score Distribution by Gender", x = "Gender", y = "Maths Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  geom_point(stat = "summary",
+             fun.y="mean",
+             colour ="aquamarine4",
+             size=4) 
+```
+
+## Step 7: Facets
+
+Facetting generates small multiples (sometimes also called trellis plot), each displaying a different subset of the data. They are an alternative to aesthetics for displaying additional discrete variables. ggplot2 supports two types of factes, namely: facet_grid() and facet_wrap().
+
+::: panel-tabset
+### facet_grid
+
+Note x is Maths score.
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, fill = CLASS))+
+  geom_histogram(bins = 20)+
+  facet_grid(~CLASS)+
+  labs(title = "Maths Score Distribution by Gender", x = "Maths Score", y = "Count")+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+### facet_wrap
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, fill = CLASS))+
+  geom_histogram(bins = 20)+
+  facet_wrap(~CLASS)+
+  labs(title = "Maths Score Distribution by Gender", x = "Maths_Score", y = "Count")+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+:::
+
+## Step 8: Coordinates
+
+# 7 References
+
+Base R: https://r-graph-gallery.com/base-R.html
+Base R vs ggplot: https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/
+ggplot2: https://ggplot2.tidyverse.org

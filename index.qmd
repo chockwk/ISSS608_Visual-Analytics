@@ -1,110 +1,18 @@
 ---
-pagetitle: "Visual Analytics"
-page-layout: custom
-section-divs: false
-editor: source
-sidebar: false
-search: false
-
+title: "Visual Analytics"
 listing:
-
-  - id: Topics
-    contents: 
-    - /Topics/A_Introduction to ggplot2/HO_Introduction to ggplot2.qmd
-    - "!index.qmd"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 9
-    feed: false
-
-  - id: Practices
-    contents: 
-    - Placeholder
-    - "!index.qmd"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 6
-    feed: false
-
-  - id: Projects
-    contents: 
-    - Placeholder
-    - "index.qmd"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 3
-    feed: false
-
-toc: false
+  contents:
+  - "HO1.qmd"
+type: grid
+sort: "date"
 ---
 
-## Overview
+Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!
 
-::: {.header-text} 
-::: {.content-container}
-::: {.header-block}
-<br/>
+![](Topics/A_Introduction%20to%20ggplot2/images/1*W--cGoA3_n2ZlU6Xs4o2iQ.gif)
 
-Welcome to **Visual Analytics**. In this site, you will find a showcase of the exercises I have done for the SMU MITB course <a href="https://chockwk-visual-analytics.netlify.app/">ISSS608 Visual Analytics</a> taught by Prof Kam Tin Seong.
+This page documents my learning journey of geospatial analytics taught by **Prof Kam Tin Seong**.
 
 The learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.
 
-:::
-:::
-:::
-
-::: {.content-container}
-::: {.listing-block}
-<a href="Topics/index.qmd">
-
-## Topics
-</a> 
-
-::: {#Topics}
-:::
-
-:::
-:::
-
-::: {.content-container}
-::: {.listing-block}
-<a href="Practices/index.qmd">
-
-## Practices
-</a>
-
-::: {#Practices}
-:::
-
-:::
-:::
-
-::: {.content-container}
-::: {.listing-block}
-<a href="Projects/index.qmd">
-
-## Projects 
-</a>
-
-::: {#Projects}
-:::
-
-:::
-:::
-
-::: {.footer-text}
-::: {.footer-container .black-background}
-::: {.footer-block}
-
-</a>
-
-:::
-:::
-:::
-
+# Posts

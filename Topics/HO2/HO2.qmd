@@ -1,0 +1,25 @@
+---
+title: "Extensions of ggplot2"
+author: "Wan Kee"
+date: "9 January 2024"
+---
+
+# 1 Learning Objectives
+
+-   Annotate or label data using `ggrepel` package
+-   Create publication quality figure by using `ggthemes` and `hrbrthemes` packages
+-   Plot composite figure to combine ggplot2 graphs using `patchwork` package
+
+# 2 Load Packages
+
+Beside tidyverse, the following R packages will be used:
+-   `ggrepel` provides geoms to repel overlapping text labels
+-   `ggthemes` provides themes, geoms, and scales
+-   `hrbrthemes` provides typography-centric themes and theme components
+-   `patchwork` prepares composite figures
+
+```{r}
+pacman::p_load(ggrepel, patchwork, ggthemes, hrbrthemes, tidyverse) 
+```
+
+# 3 Import Data

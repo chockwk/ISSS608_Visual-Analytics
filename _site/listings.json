@@ -2,7 +2,13 @@
   {
     "listing": "/index.html",
     "items": [
-      "/Topics/index.html"
+      "/Topics/HO1/HO1.html"
+    ]
+  },
+  {
+    "listing": "/Topics/index.html",
+    "items": [
+      "/Topics/A_Introduction to ggplot2/HO1_Introduction to ggplot2.html"
     ]
   }
 ]

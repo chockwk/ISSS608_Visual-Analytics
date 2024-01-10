@@ -5,13 +5,15 @@ website:
   title: "Visual Analytics"
   navbar:
     left:
-      - href: ISSS608_Visual Analytics.qmd
+      - href: index.qmd
         text: Home
     right: 
       - text: "Topics"
         menu: 
-          - text: Building Block ggplot2
-          - text: Building Block tidyverse
+          - text: Fundamentals of ggplot2
+            href: HO1.html
+          - text: Extensions of ggplot2
+            href: HO2.html
           - text: xx
       - text: "Practices"
         menu: 
@@ -27,7 +29,7 @@ website:
   page-footer:
     background: "#ABEBC6"
     center:
-      - href: https://cosmic-kitten.netlify.app
+      - href: https://chockwk-visual-analytics.netlify.app
         icon: house-fill
         aria-label: Home
       - href: wkchock.2022@mitb.smu.edu.sg
