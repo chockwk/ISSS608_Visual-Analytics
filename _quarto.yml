@@ -11,9 +11,9 @@ website:
       - text: "Topics"
         menu: 
           - text: Fundamentals of ggplot2
-            href: HO1.html
+            href: Topics/HO1/HO1.html
           - text: Extensions of ggplot2
-            href: HO2.html
+            href: Topics/HO1/HO2.html
           - text: xx
       - text: "Practices"
         menu: 

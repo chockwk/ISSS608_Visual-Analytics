@@ -28,7 +28,7 @@ pacman::p_load(tidyverse)
 
 # 3 Grammar of Graphics
 
-From the well-known Anscombe's quartet, different datasets may have the same summary statistics and can be deceptive; it is important to **always visualize and understand the data attributes** before proceeding to feature engineering and machine learning. 
+From the well-known Anscombe's quartet, different datasets may have the same summary statistics and can be deceptive; it is important to **always visualize and understand the data attributes** before proceeding to feature engineering and machine learning.
 
 We will explore essential concepts behind the **layered Grammar of Graphics framework** and discuss how we can use each specific layered component to build effective visualization on multi-dimensional data.
 
@@ -60,7 +60,6 @@ Before we start on ggplots, do note **Base R provides the core graphical functio
 However, when **adding new features**, such as best fit line or data labels, Base R requires separate statement to create new graphs; supply the dataset and superimpose the new feature onto the previous plot. As such, it is an inefficient process when using Base R for such data visualizations.
 
 ::: panel-tabset
-
 ## Base R
 
 ```{r}
@@ -104,10 +103,9 @@ Here are the general steps to create a ggplot:
 
 7.  Coordinate systems by `coord_flip()`
 
-## Step 1 to 4: Creating various ggplot 
+## Step 1 to 4: Creating various ggplot
 
 ::: panel-tabset
-
 #### geom_bar
 
 A **barplot** is used to display the relationship between a numeric and a categorical variable.
@@ -548,6 +546,4 @@ ggplot(data = exam_data,
 
 # 7 References
 
-Base R: https://r-graph-gallery.com/base-R.html
-Base R vs ggplot: https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/
-ggplot2: https://ggplot2.tidyverse.org
+Base R: https://r-graph-gallery.com/base-R.html Base R vs ggplot: https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/ ggplot2: https://ggplot2.tidyverse.org

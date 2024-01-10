@@ -3,6 +3,7 @@ title: "Visual Analytics"
 listing:
   contents:
   - "HO1.qmd"
+  - "HO2.qmd"
 type: grid
 sort: "date"
 ---
