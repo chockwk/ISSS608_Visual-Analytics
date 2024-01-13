@@ -14,11 +14,12 @@ website:
             href: Topics/HO1/HO1.html
           - text: Extensions of ggplot2
             href: Topics/HO2/HO2.html
-          - text: xx
+          - text: Common Statistical Data Formats
+            href: Topics/IC1/IC1.html
       - text: "Exercises"
         menu: 
-          - text: xx
-            href: Topics/IC1/IC1.html
+          - text: Creating data visualisation beyond default
+            href: Topics/TH1/TH1.html
       - text: "Projects"
         menu:
           - text: xx
