@@ -4,19 +4,21 @@ project:
 website:
   title: "Visual Analytics"
   navbar:
+  
     left:
-      - href: index.qmd
-        text: Home
+      - text: "☼ Home"
+        href: index.qmd
+        
     right: 
       - text: "✿ Topics"
         menu: 
-          - text: Fundamentals of ggplot2
+          - text: ggplot2 Fundamentals
             href: Topics/HO1/HO1.html
-          - text: Extensions of ggplot2
+          - text: ggplot2 Extensions
             href: Topics/HO2/HO2.html
-          - text: Common Statistical Data Formats
+          - text: Statistical Data Formats
             href: Topics/IC1/IC1.html
-          - text: Extensions of ggplot2
+          - text: Interactive Data Visualization
             href: Topics/HO3/HO3.html
             
       - text: "❄ Exercises"

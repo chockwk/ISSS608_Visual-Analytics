@@ -3,6 +3,12 @@ title: "Extensions of ggplot2"
 author: "Wan Kee"
 date: "9 January 2024"
 date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: true
+  error: true
+editor: source
 ---
 
 ![](images/image2.jpg)
@@ -16,7 +22,6 @@ date-modified: "last-modified"
 # 2 Load Packages
 
 Beside tidyverse, the following R packages will be used:
-
 -   `ggrepel` provides geoms to repel overlapping text labels
 -   `ggthemes` provides themes, geoms, and scales
 -   `hrbrthemes` provides typography-centric themes and theme components

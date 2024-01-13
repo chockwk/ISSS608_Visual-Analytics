@@ -3,7 +3,12 @@ title: "Fundamentals of ggplot2"
 author: "Wan Kee"
 date: "8 January 2024"
 date-modified: "last-modified"
-format: html
+execute: 
+  eval: true
+  echo: true
+  warning: true
+  error: true
+editor: source
 ---
 
 ![](images/image5.png)

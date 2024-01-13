@@ -3,6 +3,12 @@ title: "Creating data visualisation beyond default"
 author: "Wan Kee"
 date: "13 January 2024"
 date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: true
+  error: true
+editor: source
 ---
 
 # 1 Learning Objectives
