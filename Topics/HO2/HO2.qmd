@@ -1,8 +1,8 @@
 ---
 title: "Extensions of ggplot2"
 author: "Wan Kee"
-date created: 9 January 2024
-date modified: 9 January 2024
+date: "9 January 2024"
+date-modified: "last-modified"
 ---
 
 ![](images/image2.jpg)
@@ -41,12 +41,15 @@ summary(exam_data)
 
 `ggrepel` is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text.
 
-We simply replace geom_text() by geom_text_repel() and geom_label() by geom_label_repel.
-
+::: callout-note
+We replace the following functions:
+-   `geom_text()` by `geom_text_repel()`
+-   `geom_label()` by `geom_label_repel()`
+:::
 
 ::: panel-tabset
-
 ## ggplot
+
 ```{r}
 ggplot(data = exam_data, 
        aes(x = MATHS, 
@@ -87,13 +90,15 @@ ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 ```
-Warning: ggrepel: 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps
+
+::: callout-warning
+`ggrepel` 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps
+:::
 :::
 
 # 5 Customize Plot Themes
 
 ::: panel-tabset
-
 ## ggplot
 
 `ggplot2` comes with eight built-in themes, namely `theme_gray()`, `theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_light()`, `theme_linedraw()`, `theme_minimal()`, and `theme_void()`.
@@ -136,11 +141,28 @@ ggplot(data = exam_data,
 
 `hrbrthemes` package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.
 
-“ipsum” is Latin for “precise”
+Themes:
 
-Error in theme_ipsum() : could not find function "theme_ipsum"
-NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.
+-   `theme_ft_rc()`
+-   `theme_ipsum()`
+-   `theme_ipsum_ps()`
+-   `theme_ipsum_rc()`
+-   `theme_ipsum_tw()`
+-   `theme_modern_rc()`
+
+`theme_ipsum()` where 'ipsum' is Latin for 'precise.
+
+::: callout-warning
+**Error in theme_ipsum() : could not find function "theme_ipsum"**
+
+Either Arial Narrow or Roboto Condensed fonts are required to use these themes.
+
 Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow
+
+**Why Arial Narrow?**
+
+Arial Narrow is generally installed by default or readily available on any modern system. Also, it is a condensed font with solid default kerning pairs and geometric numbers.
+:::
 
 ```{r}
 ggplot(data = exam_data, 
@@ -159,25 +181,17 @@ ggplot(data = exam_data,
               grid = "Y")
 ```
 
-axis_title_size argument is used to increase the font size of the axis title to 18,
-base_size argument is used to increase the default axis label to 15, and
-grid argument is used to remove the x-axis grid lines.
-
+axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
 :::
 
-# 6 Create Composite Graphics 
+# 6 Create Composite Graphics
 
 ::: panel-tabset
-
 ## patchwork (multiple graphs)
 
 Patchwork package has a very simple syntax where we can create layouts super easily. Here’s the general syntax that combines:
 
-"+" operator creates a horizontal layout.
-"()" create a subplot group.
-“|” operator to stack two ggplot2 graphs,
-“/” operator to place the plots beside each other,
-“()” operator the define the sequence of the plotting.
+"+" operator creates a horizontal layout. "()" create a subplot group. “\|” operator to stack two ggplot2 graphs, “/” operator to place the plots beside each other, “()” operator the define the sequence of the plotting.
 
 ```{r}
 maths <- ggplot(data = exam_data,
@@ -253,11 +267,8 @@ main +
 plot <- (english / maths) | main
 plot & theme_economist()
 ```
-
 :::
 
 # 7 References
 
-
-
-
+1.  hrbrthemes: https://hrbrmstr.github.io/hrbrthemes/

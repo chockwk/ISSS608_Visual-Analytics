@@ -1,0 +1,31 @@
+---
+title: "Creating data visualisation beyond default"
+author: "Wan Kee"
+date: "13 January 2024"
+date-modified: "last-modified"
+---
+
+# 1 Learning Objectives
+
+::: panel-tabset
+## Background
+
+OECD education director Andreas Schleicher shared in a BBC article that “Singapore managed to achieve excellence without wide differences between children from wealthy and disadvantaged families.” (2016) Furthermore, several Singapore’s Minister for Education also started an “every school a good school” slogan. The general public, however, strongly belief that there are still disparities that exist, especially between the elite schools and neighborhood school, between students from families with higher socioeconomic status and those with relatively lower socioeconomic status and immigration and non-immigration families.
+
+## Task
+
+The 2022 Programme for International Student Assessment (PISA) data was released on December 5, 2022. PISA global education survey every three years to assess the education systems worldwide through testing 15 year old students in the subjects of mathematics, reading, and science.
+
+In this take-home exercise, you are required to use appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions to reveal:
+
+-   the distribution of Singapore students’ performance in mathematics, reading, and science, and
+-   the relationship between these performances with schools, gender and socioeconomic status of the students.
+:::
+
+# 2 Load Package
+
+# 3 Import Data
+
+The PISA 2022 dataset with the full set of responses from individual students, school principals, teachers and parents. The master questionnaires administered to students who sat the computer-based assessment; each country translated these questionnaires into their own language(s).
+
+Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/) (data) and [PISA 2022 Results Volume 1](https://www.oecd-ilibrary.org/education/pisa-2022-results-volume-i_53f23881-en) (guide)

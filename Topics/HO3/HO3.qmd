@@ -1,0 +1,87 @@
+---
+title: "HO3"
+author: "Wan Kee"
+date: "13 January 2024"
+date-modified: "last-modified"
+---
+
+# Learning Objectives
+
+1.  Create interactive data visualization using `ggiraph` and `plotlyr`
+
+# Load Packages
+
+The following R packages will be used in this topic:
+
+-   `ggiraph` makes `ggplot` graphics interactive
+-   `plotly` plots interactive statistical graphs
+-   `DT` provides an R interface to the JavaScript library DataTables that create interactive table on html page
+-   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
+-   `patchwork` combines multiple ggplot2 graphs into one figure
+
+```{r}
+pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse) 
+```
+
+# Import Data
+
+`exam_data` is a year end examination grades of a cohort of Primary 3 students from a local school.
+
+```{r}
+exam_data <- read.csv("data/Exam_data.csv")
+```
+
+## ggiraph
+
+`ggiraph` is is a tool that allows you to create **dynamic** ggplot graphs. It allows the addition of **tooltips**, **hover effects** and **JavaScript actions** to the graphics. The package also allows the selection of graphical elements when used in shiny applications.
+
+`ggiraph` is **an htmlwidget** and **a ggplot2 extension**. The graphs are exported as SVG documents and special attributes are used on various elements.
+
+::: callout-note
+The **htmlwidgets package** provides a framework for creating R bindings to JavaScript libraries. HTML Widgets can be: (1) used at the R console for data analysis just like conventional R plots, (2) embedded within R Markdown documents, (3) ncorporated into Shiny web applications.
+:::
+
+Interactive is made with **ggplot geometries, legends and theme elements** with three aesthetics:
+
+-   `tooltip`: Tooltips to be displayed when mouse is over elements
+-   `onclick`: JavaScript function to be executed when elements are clicked
+-   `data_id`: ID associated with elements for hover and click actions
+
+Usage:
+
+-   Provide at least one of the aesthetics `tooltip`, `data_id` and `onclick` to create interactive elements.
+-   Call function `girafe()` with the ggplot object so that the graphic is translated as a web interactive graphics.
+
+::: callout-note
+We can replace `geom_point()` by `geom_point_interactive()` `geom_sf()` by `geom_sf_interactive()`
+:::
+
+::: panel-tabset
+## tooltip
+
+```{r}
+#| eval: false
+plot1 <- ggplot(data = exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(aes(tooltip = ID),
+                           stackgroups = TRUE, 
+                           binwidth = 1, 
+                           method = "histodot") +
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(
+  ggobj = plot1,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
+```
+
+## onclick
+
+## data_id
+:::

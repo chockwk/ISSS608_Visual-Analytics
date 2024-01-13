@@ -4,7 +4,9 @@ listing:
   contents:
   - "HO1.qmd"
   - "HO2.qmd"
+  - "HO3.qmd"
   - "IC1.qmd"
+  - "TH1.qmd"
 type: grid
 sort: "date"
 ---
@@ -24,7 +26,6 @@ This is the Datasaurus Dozen. While different in appearance, each dataset has th
 # What is Visual Analytics?
 
 Visual Analytics is the craft of **analytical reasoning** supported by:
-
 -   Data Science and Analytics
 -   Data Visualisation
 -   Human-Computing-Interaction (HCI)

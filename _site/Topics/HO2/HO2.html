@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Wan Kee">
+<meta name="dcterms.date" content="2024-01-09">
 
 <title>Visual Analytics - Extensions of ggplot2</title>
 <style>
@@ -139,11 +140,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-practices" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Practices</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-exercises" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Exercises</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-practices">    
-        <li class="dropdown-header">xx</li>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-exercises">    
+        <li>
+    <a class="dropdown-item" href="../../Topics/IC1/IC1.html" rel="" target="">
+ <span class="dropdown-text">xx</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -199,7 +203,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 9, 2024</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">January 13, 2024</p>
+    </div>
+  </div>
     
   </div>
   
@@ -256,7 +272,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="annotate-data-using-ggrepel" class="level1">
 <h1>4 Annotate Data using ggrepel</h1>
 <p><code>ggrepel</code> is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text.</p>
-<p>We simply replace geom_text() by geom_text_repel() and geom_label() by geom_label_repel.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We replace the following functions: - <code>geom_text()</code> by <code>geom_text_repel()</code> - <code>geom_label()</code> by <code>geom_label_repel()</code></p>
+</div>
+</div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">ggplot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">ggrepel</a></li></ul>
 <div class="tab-content">
@@ -320,7 +348,19 @@ increasing max.overlaps</code></pre>
 <p><img src="HO2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Warning: ggrepel: 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>ggrepel</code> 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -372,8 +412,33 @@ increasing max.overlaps</code></pre>
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <p><code>hrbrthemes</code> package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.</p>
-<p>“ipsum” is Latin for “precise”</p>
-<p>Error in theme_ipsum() : could not find function “theme_ipsum” NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes. Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow</p>
+<p>Themes:</p>
+<ul>
+<li><code>theme_ft_rc()</code></li>
+<li><code>theme_ipsum()</code></li>
+<li><code>theme_ipsum_ps()</code></li>
+<li><code>theme_ipsum_rc()</code></li>
+<li><code>theme_ipsum_tw()</code></li>
+<li><code>theme_modern_rc()</code></li>
+</ul>
+<p><code>theme_ipsum()</code> where ‘ipsum’ is Latin for ’precise.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Error in theme_ipsum() : could not find function “theme_ipsum”</strong></p>
+<p>Either Arial Narrow or Roboto Condensed fonts are required to use these themes.</p>
+<p>Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow</p>
+<p><strong>Why Arial Narrow?</strong></p>
+<p>Arial Narrow is generally installed by default or readily available on any modern system. Also, it is a condensed font with solid default kerning pairs and geometric numbers.</p>
+</div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> exam_data, </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MATHS))<span class="sc">+</span></span>
@@ -519,6 +584,9 @@ increasing max.overlaps</code></pre>
 </section>
 <section id="references" class="level1">
 <h1>7 References</h1>
+<ol type="1">
+<li>hrbrthemes: https://hrbrmstr.github.io/hrbrthemes/</li>
+</ol>
 
 
 </section>

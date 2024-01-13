@@ -15,7 +15,7 @@ website:
           - text: Extensions of ggplot2
             href: Topics/HO2/HO2.html
           - text: xx
-      - text: "Practices"
+      - text: "Exercises"
         menu: 
           - text: xx
             href: Topics/IC1/IC1.html

@@ -1,8 +1,8 @@
 ---
 title: "Fundamentals of ggplot2"
 author: "Wan Kee"
-date created: 8 January 2024
-date modified: 13 January 2024
+date: "8 January 2024"
+date-modified: "last-modified"
 format: html
 ---
 
@@ -20,7 +20,6 @@ format: html
 ::: {.callout-tip}
 The easiest way to get ggplot2 is to install the whole **tidyverse**.
 :::
-
 
 ```{r}
 pacman::p_load(tidyverse)
@@ -202,7 +201,7 @@ ggplot(data = exam_data,
 
 #### coord_polar
 
-A **piechart** is a circle divided into sectors that each represent a proportion of the whole. There is no specific `geom` to build piechart with ggplot2. The trick is to build a barplot and use `coord_polar` to make it circular. 
+A **pie chart** is a circle divided into sectors that each represent a proportion of the whole. There is no specific `geom` to build piechart with ggplot2. The trick is to build a barplot and use `coord_polar` to make it circular. 
 
 ```{r}
 ggplot(exam_data, aes(x = CLASS)) +
@@ -505,6 +504,23 @@ ggplot(data = exam_data,
 
 ## Layer 5: Scale
 
+`scale_colour_brewer()` and `scale_fill_brewer()` provide sequential, diverging and qualitative colour schemes from ColorBrewer and particularly well suited to display discrete values on a map.
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, 
+           fill = GENDER))+
+  geom_histogram(colour = "black", bins = 10)+
+  labs(title = "Maths Score Distribution using Histogram", x = "Maths Score", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  scale_fill_brewer(palette = "Blues")
+```
+
+?scales::brewer_pal for more details
+
 ## Layer 6: Statistic Summary
 
 Boxplot shows median while stat_summary show mean.
@@ -593,6 +609,102 @@ ggplot(data = exam_data,
 :::
 
 ## Layer 8: Coordinates
+
+The Coordinates functions map the position of objects onto the plane of the plot. 
+
+::: panel-tabset
+
+## coord_cartesian
+
+`coord_cartesian()` limits on the coordinate system and performs a visual zoom.
+
+Usage:
+coord_cartesian(xlim = NULL, ylim = NULL, expand = TRUE, default = FALSE, clip = "on")
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  coord_cartesian(xlim = c(80,100), ylim = c(80,100))
+```
+
+## coord_flip
+
+`coord_flip()` flips the horizontal bar chart into vertical bar chart.
+
+Usage:
+coord_flip(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on")
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = CLASS,
+           fill = RACE))+
+  geom_bar()+
+  labs(title = "Distribution of Race by Class", x = "Class", y = "Count")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  coord_flip()
+```
+
+## coord_fixed
+
+`coord_fixed` is a fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes. The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis.
+
+Usage:
+coord_fixed(ratio = 1, xlim = NULL, ylim = NULL, expand = TRUE, clip = "on")
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  coord_fixed(ratio = 5)
+```
+
+## coord_quickmap
+
+`coord_quickmap()` is a quick approximation that does preserve straight lines. 
+
+Useage: 
+coord_quickmap(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on")
+
+::: {.callout-note}
+The package "mapproj" is required for `coord_map()`
+
+`coord_map()` projects a portion of the earth, which is approximately spherical, onto a flat 2D plane using any projection defined by the mapproj package. Map projections do not, in general, preserve straight lines, so this requires considerable computation.
+
+Both `coord_map()` and `coord_quickmap()` are superseded by `coord_sf()`.
+:::
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = ENGLISH))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "Maths and English Score Distribution using Scatterplot", x = "Maths Score", y = "English Score")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  coord_map()
+```
+
+:::
 
 # 7 References
 

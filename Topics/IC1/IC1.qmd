@@ -1,6 +1,77 @@
 ---
-title: "IC01"
+title: "Common Statistical Data Formats"
 author: "Wan Kee"
-date created: 13 January 2024
-date modified: 13 January 2024
+date: "13 January 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: true
+  error: true
+editor: source
 ---
+
+# ✿ 1  Learning Objectives
+
+-   Load common statistical data formats using `haven` package
+-   Manage large dataset using .gitignore file and #| eval: false
+
+# ✿ 2  Load Packages
+
+The following packages will be used in this topic:
+
+-   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
+-   `haven` import common statistical formats into R via the embedded 'ReadStat' C library
+
+```{r}
+pacman::p_load(tidyverse, haven)
+```
+
+# ✿ 3  Import Data
+
+PISA 2022 
+
+[`read_sas()`](https://haven.tidyverse.org/reference/read_sas.html) imports the PISA data into R environment.
+
+```{r}
+#| eval: false
+stu_qqq <- read_sas("data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat")
+```
+
+::: callout-note
+Github not more than 100 MB. Add text, data/, into the .gitignore file.
+:::
+
+The output shows 613,744 observations with 1,279 variables. The tibble dataframe contains descriptions, unavailable in `read.sas()`.
+
+We will filter country code 3-character (CNT) for SGP to obtain Singapore results.
+
+```{r}
+#| eval: false
+stu_qqq_SGP <- stu_qqq %>% 
+  filter(CNT == "SGP")
+```
+
+The output shows 6,606 observations with 1,279 variables.
+
+::: {.callout-caution collapse="true"}
+## Save Point
+
+```{r}
+#| eval: false
+write_rds(stu_qqq_SGP, "data/stu_qqq_SGP.rds")
+```
+:::
+
+::: {.callout-caution collapse="true"}
+## Load Point
+
+```{r}
+stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
+```
+:::
+
+
+# Reference
+
+Haven: https://haven.tidyverse.org/index.html
