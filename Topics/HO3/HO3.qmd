@@ -1,5 +1,5 @@
 ---
-title: "HO3"
+title: "Interactive Data Visualization"
 author: "Wan Kee"
 date: "13 January 2024"
 date-modified: "last-modified"
