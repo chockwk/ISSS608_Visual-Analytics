@@ -71,9 +71,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+      searchColumns: ["listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -130,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Fundamentals of ggplot2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO1/HO2.html" rel="" target="">
+    <a class="dropdown-item" href="./Topics/HO2/HO2.html" rel="" target="">
  <span class="dropdown-text">Extensions of ggplot2</span></a>
   </li>  
         <li class="dropdown-header">xx</li>
@@ -141,7 +141,10 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Practices</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-practices">    
-        <li class="dropdown-header">xx</li>
+        <li>
+    <a class="dropdown-item" href="./Topics/IC1/IC1.html" rel="" target="">
+ <span class="dropdown-text">xx</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -168,7 +171,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#posts" id="toc-posts" class="nav-link active" data-scroll-target="#posts">Posts</a></li>
+  <li><a href="#what-is-visual-analytics" id="toc-what-is-visual-analytics" class="nav-link active" data-scroll-target="#what-is-visual-analytics">What is Visual Analytics?</a></li>
+  <li><a href="#posts" id="toc-posts" class="nav-link" data-scroll-target="#posts">Posts</a></li>
   </ul>
 </nav>
     </div>
@@ -193,9 +197,24 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <p>Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!</p>
-<p><img src="Topics/A_Introduction to ggplot2/images/1*W--cGoA3_n2ZlU6Xs4o2iQ.gif" class="img-fluid"></p>
 <p>This page documents my learning journey of geospatial analytics taught by <strong>Prof Kam Tin Seong</strong>.</p>
-<p>The learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.</p>
+<p><img src="_site/images/datasaurus.gif" class="img-fluid"></p>
+<p>Source: <a href="https://www.research.autodesk.com/publications/same-stats-different-graphs/">Autodesk</a></p>
+<p>This is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.</p>
+<p><img src="_site/images/datasaurus_all.png" class="img-fluid"></p>
+<section id="what-is-visual-analytics" class="level1">
+<h1>What is Visual Analytics?</h1>
+<p>Visual Analytics is the craft of <strong>analytical reasoning</strong> supported by:</p>
+<ul>
+<li>Data Science and Analytics</li>
+<li>Data Visualisation</li>
+<li>Human-Computing-Interaction (HCI)</li>
+<li>Interface Design</li>
+<li>Visual Storytelling</li>
+</ul>
+<p>The learning objective is to understand the <strong>basic concepts, theories and methodologies</strong> of visual analytics, analyse data using appropriate <strong>visual thinking and visual analytics techniques</strong>, and implement cutting-edge <strong>visual analytics system</strong> for <strong>decision making</strong>.</p>
+<p><img src="_site/images/VA.png" class="img-fluid"></p>
+</section>
 <section id="posts" class="level1">
 <h1>Posts</h1>
 
@@ -205,7 +224,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1704729600000" data-listing-file-modified-sort="1704909693547" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1705114271468" data-listing-reading-time-sort="8">
 <div class="thumbnail">
 <p><a href="./Topics/HO2/HO2.html"> <p class="card-img-top"><img src="Topics/HO2/images/image2.jpg"  class="thumbnail-image card-img"/></p> </a></p>
 </div>
@@ -224,16 +243,13 @@ Beside tidyverse, the following R packages will be used:
 </div>
 <div class="metadata">
 <a href="./Topics/HO2/HO2.html">
-<div class="listing-date">
-Jan 9, 2024
-</div>
 <div class="listing-author">
 Wan Kee
 </div>
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1704643200000" data-listing-file-modified-sort="1704883203951" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17">
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1705113569185" data-listing-reading-time-sort="17">
 <div class="thumbnail">
 <p><a href="./Topics/HO1/HO1.html"> <p class="card-img-top"><img src="Topics/HO1/images/image5.png"  class="thumbnail-image card-img"/></p> </a></p>
 </div>
@@ -252,9 +268,31 @@ Fundamentals of ggplot2
 </div>
 <div class="metadata">
 <a href="./Topics/HO1/HO1.html">
-<div class="listing-date">
-Jan 8, 2024
+<div class="listing-author">
+Wan Kee
 </div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-listing-file-modified-sort="1705114271417" data-listing-reading-time-sort="1">
+<div class="thumbnail">
+<p><a href="./Topics/IC1/IC1.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+</div>
+<div class="body">
+<a href="./Topics/IC1/IC1.html">
+<h3 class="no-anchor listing-title">
+IC01
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./Topics/IC1/IC1.html">
 <div class="listing-author">
 Wan Kee
 </div>

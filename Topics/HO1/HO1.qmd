@@ -1,7 +1,8 @@
 ---
 title: "Fundamentals of ggplot2"
 author: "Wan Kee"
-date: 8 January 2024
+date created: 8 January 2024
+date modified: 13 January 2024
 format: html
 ---
 
@@ -16,7 +17,10 @@ format: html
 
 `ggplot2` is a R package dedicated to **data visualization** by builds charts through **layers** using `geom_` functions. It can greatly improve the quality and aesthetics of graphics.
 
+::: {.callout-tip}
 The easiest way to get ggplot2 is to install the whole **tidyverse**.
+:::
+
 
 ```{r}
 pacman::p_load(tidyverse)
@@ -36,22 +40,39 @@ A **grammar of graphics** is a framework which follows a layered approach by usi
 
 There are **seven** major components of the Grammar of Graphics as illustrated below to build effective visualizations on multi-dimensional data.
 
-![](images/Screenshot%202024-01-09%20at%203.44.48%20PM.png)
+![](images/Screenshot 2024-01-09 at 3.44.48PM.png)
 
 # 4 Load Data
 
 `exam_data` is a year end examination grades of a cohort of Primary 3 students from a local school.
 
-The output shows a total of **seven attributes**; four of them are **categorical attributes** (ID, CLASS, GENDER and RACE) and the other three are **continuous attributes** (MATHS, ENGLISH and SCIENCE).
-
 ```{r}
 exam_data <- read.csv("data/Exam_data.csv")
+```
+
+::: panel-tabset
+
+## Summary
+
+```{r}
 summary(exam_data)
 ```
+
+::: {.callout-note}
+The output shows a total of **seven attributes**; four of them are **categorical attributes** (ID, CLASS, GENDER and RACE) and the other three are **continuous attributes** (MATHS, ENGLISH and SCIENCE).
+:::
+
+## Glimpse
 
 ```{r}
 glimpse(exam_data)
 ```
+
+::: {.callout-note}
+The output shows a brief view of the values of each attribute within `exam_data`. 
+:::
+
+:::
 
 # 5 Basic Understanding of Base R vs ggplot
 
@@ -69,6 +90,10 @@ plot(exam_data$ENGLISH, exam_data$MATHS, main="Scatterplot in Base R",
 abline(lm(exam_data$ENGLISH~exam_data$MATHS), col="black")
 ```
 
+::: {.callout-note}
+Note the extensive reference to `exam_data` in `plot()` and `abline()`.
+:::
+
 ## ggplot
 
 ```{r}
@@ -83,6 +108,11 @@ ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 ```
+
+::: {.callout-note}
+Note the layers of grammar of graphics, namely `ggplot()`, `geom_point()`, `geom_abline()`, `labs()`, `theme_minimal()` and `theme()`.
+:::
+
 :::
 
 # 6 Usage of ggplot
@@ -103,7 +133,7 @@ Here are the general steps to create a ggplot:
 
 7.  Coordinate systems by `coord_flip()`
 
-## Step 1 to 4: Creating various ggplot
+## Layer 1 to 4: Creating various ggplot
 
 ::: panel-tabset
 #### geom_bar
@@ -172,7 +202,7 @@ ggplot(data = exam_data,
 
 #### coord_polar
 
-A **piechart** is a circle divided into sectors that each represent a proportion of the whole. There is no specific `geom` to build piechart with ggplot2. The trick is to build a barplot and use `coord_polar` to make it circular. In the case of pie chart, the `pie()` function of Base R is a better alternative.
+A **piechart** is a circle divided into sectors that each represent a proportion of the whole. There is no specific `geom` to build piechart with ggplot2. The trick is to build a barplot and use `coord_polar` to make it circular. 
 
 ```{r}
 ggplot(exam_data, aes(x = CLASS)) +
@@ -185,6 +215,10 @@ ggplot(exam_data, aes(x = CLASS)) +
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 ```
+
+::: {.callout-tip}
+In the case of pie chart, the `pie()` function of Base R is a better alternative.
+:::
 
 #### geom_dotplot
 
@@ -201,10 +235,11 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
-Alert:
-
+::: {.callout-warning}
+## Attention
 1.  Bin width defaults to 1/30 of the range of the data. Pick better value with `binwidth`
 2.  Misleading y axis. Turn off y-axis using `scale_y_continuous()` and change `binwidth` to 2.5
+:::
 
 ```{r}
 ggplot(data = exam_data,
@@ -235,7 +270,9 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
+::: {.callout-note}
 Note: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+:::
 
 Create 10 bins
 
@@ -251,6 +288,10 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
+::: {.callout-note}
+Note: `stat_bin()` using `bins = 10`.
+:::
+
 ```{r}
 ggplot(data = exam_data,
        aes(x = MATHS, 
@@ -263,7 +304,10 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
-Insight: The performance of students between Female and Male is observed to be similar across all scores.
+::: {.callout-tip}
+## Insight
+The performance of students between Female and Male is observed to be similar across all scores.
+:::
 
 ```{r}
 ggplot(data = exam_data,
@@ -277,7 +321,10 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
-Insight: Majority of 3A and 3B students score 80-100 in Maths while 3G, 3H and 3I scoare below 50.
+::: {.callout-tip}
+## Insight
+Majority of 3A and 3B students score 80-100 in Maths while 3G, 3H and 3I scoare below 50.
+:::
 
 #### geom_density
 
@@ -331,7 +378,9 @@ ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 ```
 
-Note: x or y as MATHS determines the orientation of the boxplot. In this case, the maths score is a continuous variable and will be placed on y-axis for ease of visualization.
+::: {.callout-note}
+x or y as MATHS determines the orientation of the boxplot. In this case, the maths score is a continuous variable and will be placed on y-axis for ease of visualization.
+:::
 
 ```{r}
 ggplot(data = exam_data,
@@ -358,7 +407,7 @@ ggplot(data = exam_data,
 
 #### geom_violin
 
-Requiries x and y input
+`geom_violin` requiries x and y input.
 
 ```{r}
 ggplot(data = exam_data,
@@ -454,9 +503,9 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Step 5: Scale
+## Layer 5: Scale
 
-## Step 6: Statistic Summary
+## Layer 6: Statistic Summary
 
 Boxplot shows median while stat_summary show mean.
 
@@ -508,11 +557,12 @@ ggplot(data = exam_data,
              size=4) 
 ```
 
-## Step 7: Facets
+## Layer 7: Facets
 
 Facetting generates small multiples (sometimes also called trellis plot), each displaying a different subset of the data. They are an alternative to aesthetics for displaying additional discrete variables. ggplot2 supports two types of factes, namely: facet_grid() and facet_wrap().
 
 ::: panel-tabset
+
 ### facet_grid
 
 Note x is Maths score.
@@ -542,8 +592,10 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Step 8: Coordinates
+## Layer 8: Coordinates
 
 # 7 References
 
-Base R: https://r-graph-gallery.com/base-R.html Base R vs ggplot: https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/ ggplot2: https://ggplot2.tidyverse.org
+1.  Base R: https://r-graph-gallery.com/base-R.html
+2.  Base R vs ggplot: https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/
+3.  ggplot2: https://ggplot2.tidyverse.org

@@ -4,16 +4,35 @@ listing:
   contents:
   - "HO1.qmd"
   - "HO2.qmd"
+  - "IC1.qmd"
 type: grid
 sort: "date"
 ---
 
 Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!
 
-![](Topics/A_Introduction%20to%20ggplot2/images/1*W--cGoA3_n2ZlU6Xs4o2iQ.gif)
-
 This page documents my learning journey of geospatial analytics taught by **Prof Kam Tin Seong**.
 
-The learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.
+![](_site/images/datasaurus.gif)
+
+Source: [Autodesk](https://www.research.autodesk.com/publications/same-stats-different-graphs/)
+
+This is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.
+
+![](_site/images/datasaurus_all.png)
+
+# What is Visual Analytics?
+
+Visual Analytics is the craft of **analytical reasoning** supported by:
+
+-   Data Science and Analytics
+-   Data Visualisation
+-   Human-Computing-Interaction (HCI)
+-   Interface Design
+-   Visual Storytelling
+
+The learning objective is to understand the **basic concepts, theories and methodologies** of visual analytics, analyse data using appropriate **visual thinking and visual analytics techniques**, and implement cutting-edge **visual analytics system** for **decision making**.
+
+![](_site/images/VA.png)
 
 # Posts

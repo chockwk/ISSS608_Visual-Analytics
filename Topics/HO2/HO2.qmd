@@ -1,7 +1,8 @@
 ---
 title: "Extensions of ggplot2"
 author: "Wan Kee"
-date: "9 January 2024"
+date created: 9 January 2024
+date modified: 9 January 2024
 ---
 
 ![](images/image2.jpg)
@@ -254,6 +255,9 @@ plot & theme_economist()
 ```
 
 :::
+
+# 7 References
+
 
 
 
