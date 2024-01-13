@@ -8,7 +8,7 @@ website:
       - href: index.qmd
         text: Home
     right: 
-      - text: "Topics"
+      - text: "✿ Topics"
         menu: 
           - text: Fundamentals of ggplot2
             href: Topics/HO1/HO1.html
@@ -19,12 +19,12 @@ website:
           - text: Extensions of ggplot2
             href: Topics/HO3/HO3.html
             
-      - text: "Exercises"
+      - text: "❄ Exercises"
         menu: 
           - text: Creating data visualisation beyond default
             href: Exercises/TH1/TH1.html
             
-      - text: "Projects"
+      - text: "✱ Projects"
         menu:
           - text: xx
     

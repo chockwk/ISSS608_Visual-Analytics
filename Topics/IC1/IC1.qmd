@@ -11,14 +11,22 @@ execute:
 editor: source
 ---
 
-# ✿ 1  Learning Objectives
+#  1. Learning Objectives
 
 -   Load common statistical data formats using `haven` package
--   Manage large dataset using .gitignore file and #| eval: false
+-   Manage large dataset using .gitignore file and #\| eval: false
 
-# ✿ 2  Load Packages
+# ✿ 2 R Package: Haven
 
-The following packages will be used in this topic:
+`Haven` enables R to read and write various data formats used by other statistical packages by wrapping the ReadStat C library. `Haven` is part of the tidyverse and supports:
+
+-   **SAS**: `read_sas()` reads `.sas7bdat` and `.sas7bcat` files while `read_xpt()` reads SAS transport files and `write_xpt()` writes SAS transport files.
+-   **SPSS**: `read_sav()` reads `.sav` files and `read_por()` reads the older `.por` files. `write_sav()` writes `.sav` files.
+-   **Stata**: `read_dta()` reads `.dta` files. `write_dta()` writes `.dta` files.
+
+# ✿ 3 Load Packages
+
+The following R packages will be used in this topic:
 
 -   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
 -   `haven` import common statistical formats into R via the embedded 'ReadStat' C library
@@ -27,24 +35,27 @@ The following packages will be used in this topic:
 pacman::p_load(tidyverse, haven)
 ```
 
-# ✿ 3  Import Data
+# ✿ 3 Import Data
 
-PISA 2022 
+The Programme for International Student Assessment (PISA) is a global education survey conducted every three years to **assess the education systems worldwide** through testing 15 year-old students in the subjects of mathematics, reading, and science. The current dataset was released on December 5, 2022.
+
+Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/)
 
 [`read_sas()`](https://haven.tidyverse.org/reference/read_sas.html) imports the PISA data into R environment.
 
 ```{r}
 #| eval: false
+
 stu_qqq <- read_sas("data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat")
 ```
 
+The output shows **613,744 observations** with **1,279 variables**. The tibble dataframe contains descriptions for each variable, which is unavailable if `read.sas()` is used.
+
 ::: callout-note
-Github not more than 100 MB. Add text, data/, into the .gitignore file.
+To manage work space and render speed, Prof Kam recommends to avoid loading data into Github or datasets not exceeding 100 MB. We add the following text, data/, to .gitignore file for the exclusion of data folder.
 :::
 
-The output shows 613,744 observations with 1,279 variables. The tibble dataframe contains descriptions, unavailable in `read.sas()`.
-
-We will filter country code 3-character (CNT) for SGP to obtain Singapore results.
+For relevance, we filter `stu_qqq` by the column `country code` (CNT) in 3-character for *SGP* to obtain Singapore results.
 
 ```{r}
 #| eval: false
@@ -52,7 +63,7 @@ stu_qqq_SGP <- stu_qqq %>%
   filter(CNT == "SGP")
 ```
 
-The output shows 6,606 observations with 1,279 variables.
+The output shows **6,606 observations** with **1,279 variables**.
 
 ::: {.callout-caution collapse="true"}
 ## Save Point
@@ -71,6 +82,9 @@ stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
 ```
 :::
 
+```{r}
+head(stu_qqq_SGP, n = 5)
+```
 
 # Reference
 

@@ -14,8 +14,6 @@ OECD education director Andreas Schleicher shared in a BBC article that “Singa
 
 ## Task
 
-The 2022 Programme for International Student Assessment (PISA) data was released on December 5, 2022. PISA global education survey every three years to assess the education systems worldwide through testing 15 year old students in the subjects of mathematics, reading, and science.
-
 In this take-home exercise, you are required to use appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions to reveal:
 
 -   the distribution of Singapore students’ performance in mathematics, reading, and science, and
@@ -26,6 +24,8 @@ In this take-home exercise, you are required to use appropriate Exploratory Data
 
 # 3 Import Data
 
-The PISA 2022 dataset with the full set of responses from individual students, school principals, teachers and parents. The master questionnaires administered to students who sat the computer-based assessment; each country translated these questionnaires into their own language(s).
+The 2022 Programme for International Student Assessment (PISA) data was released on December 5, 2022. PISA global education survey every three years to **assess the education systems worldwide** through testing 15 year old students in the subjects of mathematics, reading, and science.
+
+The PISA 2022 dataset is a set of responses from individual students, school principals, teachers and parents. The master questionnaires administered to students who sat the computer-based assessment; each country translated these questionnaires into their own language(s).
 
 Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/) (data) and [PISA 2022 Results Volume 1](https://www.oecd-ilibrary.org/education/pisa-2022-results-volume-i_53f23881-en) (guide)
