@@ -1,5 +1,5 @@
 ---
-title: "Creating data visualisation beyond default"
+title: "OECD PISA Global Education"
 author: "Wan Kee"
 date: "13 January 2024"
 date-modified: "last-modified"
@@ -11,27 +11,249 @@ execute:
 editor: source
 ---
 
-# 1 Learning Objectives
+![](/_site/images/future%20classroom.jpg)
+
+# 1. Learning Objectives
 
 ::: panel-tabset
 ## Background
 
-OECD education director Andreas Schleicher shared in a BBC article that “Singapore managed to achieve excellence without wide differences between children from wealthy and disadvantaged families.” (2016) Furthermore, several Singapore’s Minister for Education also started an “every school a good school” slogan. The general public, however, strongly belief that there are still disparities that exist, especially between the elite schools and neighborhood school, between students from families with higher socioeconomic status and those with relatively lower socioeconomic status and immigration and non-immigration families.
+The **Organisation for Economic Co-operation and Development (OECD) Programme for International Student Assessment (PISA)** is a global education survey conducted to examines what students know in mathematics, reading and science, how well students can solve complex problems, think critically and communicate effectively. This gives insights into how well education systems are preparing students for real life challenges and future success. It provides the **most comprehensive and rigorous international assessment** of student learning outcomes to date. Results from PISA indicate the **quality and equity of learning outcomes** attained around the world, and allow educators and policy makers to learn from the policies and practices applied in other countries.
+
+PISA 2022 reports the following:
+
+-   Describes students’ performance in mathematics, reading and science;
+
+-   Examines gender differences in performance;
+
+-   Investigates how performance relates to students’ socio-economic status and immigrant background;
+
+-   Describes how the quality and equity of learning outcomes have evolved since previous PISA assessments.
+
+OECD education director, Andreas Schleicher, shared in a BBC article that “[Singapore managed to achieve excellence without wide differences between children from wealthy and disadvantaged families.](https://www.bbc.com/news/education-38212070)”. Furthermore, the slogan “[Every School a Good School](https://www.straitstimes.com/singapore/parenting-education/dpm-heng-swee-keat-gives-three-suggestions-to-strengthen-schooling)” was popularised by Mr Heng Swee Keat when he was education minister from 2011 to 2015.
+
+The general public, however, strongly belief that there are still **disparities** that exist, especially between the elite schools and neighborhood school, between students from families with higher socioeconomic status and those with relatively lower socioeconomic status and immigration and non-immigration families.
+
+## Data
+
+Singapore participated for the first time in PISA in 2009. By comparing results internationally, policy makers and educators in Singapore can learn from other countries’ policies and practices.
+
+PISA is conducted every three years to **assess the education systems worldwide** through testing 15 year-old students in the subjects of mathematics, reading, and science.
+
+The PISA 2022 database contains the full set of responses from individual students, school principals and parents. There are a total of five data files and their contents are as follows:
+
+-   **Student questionnaire data file** (focus of this practice)
+
+-   School questionnaire data file
+
+-   Teacher questionnaire data file
+
+-   Cognitive item data file
+
+-   Questionnaire timing data file
+
+These data files are in SAS and SPSS formats.
+
+::: {.callout-note appearance="simple"}
+### Why are 15-year-old students choosen for assessment?
+
+PISA measures student performance as the extent to which 15-year-old students **near the end of their compulsory education** have acquired the knowledge and skills that are essential for full participation in modern societies, particularly in the core domains of reading, mathematics, and science.
+:::
 
 ## Task
 
-In this take-home exercise, you are required to use appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions to reveal:
+Using appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions, we will reveal the following in this practice:
 
--   the distribution of Singapore students’ performance in mathematics, reading, and science, and
--   the relationship between these performances with schools, gender and socioeconomic status of the students.
+-   the distribution of Singapore students’ **performance** in mathematics, reading, and science, and
+-   the relationship between these **performances** with schools, **gender** and **socioeconomic status** of the students.
 :::
 
-# 2 Load Package
+# 2. Load Packages
 
-# 3 Import Data
+The following R packages will be used:
 
-The 2022 Programme for International Student Assessment (PISA) data was released on December 5, 2022. PISA global education survey every three years to **assess the education systems worldwide** through testing 15 year old students in the subjects of mathematics, reading, and science.
+-   `ggrepel` provides geoms to repel overlapping text labels
 
-The PISA 2022 dataset is a set of responses from individual students, school principals, teachers and parents. The master questionnaires administered to students who sat the computer-based assessment; each country translated these questionnaires into their own language(s).
+-   `ggthemes` provides themes, geoms, and scales
+
+-   `hrbrthemes` provides typography-centric themes and theme components
+
+-   `patchwork` prepares composite figures
+
+-   `haven` read and write various data formats used by other statistical packages
+
+-   `tidyverse` support data science, analysis and communication task
+
+-   `kableExtra`
+
+```{r}
+pacman::p_load(ggrepel, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
+```
+
+# 3. Import Data
+
+The PISA 2022 database was released on December 5, 2022. For the purpose of this practice, the Student questionnaire data file will be used to fulfil the task.
 
 Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/) (data) and [PISA 2022 Results Volume 1](https://www.oecd-ilibrary.org/education/pisa-2022-results-volume-i_53f23881-en) (guide)
+
+```{r}
+#| eval: false
+stu_qqq <- read_sas("data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat")
+```
+
+The output shows **613,744 observations** with **1,279 variables**.
+
+For relevance, we filter `stu_qqq` by the column `country code (CNT)` for *SGP* to obtain **Singapore results**.
+
+```{r}
+#| eval: false
+stu_qqq_SGP <- stu_qqq %>% 
+  filter(CNT == "SGP")
+```
+
+The output shows **6,606 observations** with **1,279 variables**.
+
+::: {.callout-caution collapse="true"}
+## Save Point
+
+```{r}
+#| eval: false
+write_rds(stu_qqq_SGP, "data/stu_qqq_SGP.rds")
+```
+:::
+
+# 4. Explore Data
+
+::: {.callout-caution collapse="true"}
+## Load Point
+
+```{r}
+stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
+```
+:::
+
+```{mermaid}
+%%| code-fold: true
+%%| code-summary: "Show the code"
+
+flowchart LR
+  A[Country Code] --> B[School ID]
+  B --> C[Student ID]
+  C --> D{Student \n Performance}
+  D --> E[Maths]
+  E --> H[Anxiety \n Cognitive Activation \n Exposure \n Self-efficacy \n Teacher Support]
+  D --> F[Reading]
+  D --> G[Science]
+  F --> H
+  G --> H
+  C --> I{Education \n System}
+  I --> J[School Characteristics: \n Grades \n Classroom \n Teacher]
+  I --> K[Student Characteristics: \n Attitude \n Background \n Behaviour]
+  C --> L{Economic \n Social \n Cultural \n Status}
+  L --> M[Parents Highest Level of Education\n Parents highest occupational status \n Home Possessions]
+```
+
+
+```{r}
+SCH_table <- stu_qqq_SGP %>%
+  group_by(CNTSCHID) %>%
+  summarise(TOTAL_STUDENT = n())
+
+DT::datatable(SCH_table)
+```
+'70200150' no such school ID
+
+```{r}
+mean(SCH_table$TOTAL_STUDENT)
+```
+
+```{r}
+duplicate <- stu_qqq_SGP %>% 
+  group_by(CNTSTUID) %>% 
+  filter(n() > 1)
+```
+
+```{r}
+sum(is.na(stu_qqq_SGP))
+```
+
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+stu_qqq_SGP_perf <- stu_qqq_SGP %>%
+  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID) %>%
+  summarise(MATH = round(mean(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH, 
+                              PV6MATH, PV7MATH, PV8MATH, PV9MATH, PV10MATH), 1),
+            READING = round(mean(PV1READ, PV2READ, PV3READ, PV4READ, PV5READ,
+                                 PV6READ, PV7READ, PV8READ, PV9READ, PV10READ), 1),
+            SCIENCE = round(mean(PV1SCIE, PV2SCIE, PV3SCIE, PV4SCIE, PV5SCIE,
+                                 PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
+
+tooltip_css <- "background-color: white; font-style: bold; color: black"
+
+stu_qqq_SGP_perf$tooltip <- c(paste0("School = ", stu_qqq_SGP_perf$CNTSCHID, 
+                                     "\nStudent = ", stu_qqq_SGP_perf$CNTSTUID))
+
+plot1 <- ggplot(data = stu_qqq_SGP_perf, 
+                aes(x = MATH))+
+  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
+                           stackgroups = TRUE, 
+                           binwidth = 1, 
+                           method = "histodot")+
+  geom_vline(aes(xintercept = 472))+
+  coord_cartesian(xlim = c(0,1000))+ 
+  scale_y_continuous(limits = c(0,100))+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+plot2 <- ggplot(data = stu_qqq_SGP_perf, 
+                aes(x = READING))+
+  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
+                           stackgroups = TRUE, 
+                           binwidth = 1, 
+                           method = "histodot")+
+  geom_vline(aes(xintercept = 476))+
+  coord_cartesian(xlim = c(0,1000))+ 
+  scale_y_continuous(limits = c(0,100))+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+plot3 <- ggplot(data = stu_qqq_SGP_perf, 
+                aes(x = SCIENCE))+
+  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
+                           stackgroups = TRUE, 
+                           binwidth = 1, 
+                           method = "histodot")+
+  geom_vline(aes(xintercept = 485))+
+  coord_cartesian(xlim = c(0,1000))+
+  scale_y_continuous(limits = c(0,100))+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+g <- wrap_plots(list(plot1, plot2, plot3), ncol = 1)
+
+girafe(ggobj = g,
+       # code = print(plot1 + plot2 + plot3), 
+       width_svg = 6,
+       height_svg = 3,
+       options = list(
+         opts_tooltip(css = tooltip_css),
+         opts_hover(css = "fill: #ABEBC6;"),
+         opts_hover_inv(css = "opacity:0.2;")
+         )
+       ) 
+```
+
+
+

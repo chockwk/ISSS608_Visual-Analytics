@@ -23,7 +23,7 @@ This is the Datasaurus Dozen. While different in appearance, each dataset has th
 
 ![](_site/images/datasaurus_all.png)
 
-# What is Visual Analytics?
+# Visual Analytics?
 
 Visual Analytics is the craft of **analytical reasoning** supported by:
 -   Data Science and Analytics
@@ -36,4 +36,4 @@ The learning objective is to understand the **basic concepts, theories and metho
 
 ![](_site/images/VA.png)
 
-# Posts
+# Topic Overview

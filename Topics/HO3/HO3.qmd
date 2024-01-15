@@ -6,7 +6,7 @@ date-modified: "last-modified"
 execute: 
   eval: true
   echo: true
-  warning: true
+  warning: false
   error: true
 editor: source
 ---
@@ -72,7 +72,9 @@ We can replace
 To plot an interactive statistical graph by using ggiraph package, - Create an ggplot object using `ggplot()` and `geom_dotplot_interactive()` - Indiate `aes()` to include an attribute `tooltip = ID` - Create an interactive svg object using `girafe()` to be displayed on an html page
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
+
 plot1 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(tooltip = ID),
@@ -98,7 +100,8 @@ girafe(
 `paste0()` concatenate strings or vectors, in this example, two attributes, namely `ID` and `CLASS`. Note the change in `aes()` to `tooltip = exam_data$tooltip`
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 exam_data$tooltip <- c(paste0("Name = ", exam_data$ID, 
                               "\n Class = ", exam_data$CLASS))
@@ -129,11 +132,14 @@ The customization is indicated by `tooltip_css` below, which changes the `backgr
 
 `opts_tooltip()` within `giraph()` customize the tooltip rendering by add `css` declarations.
 
-::: {.callout-tip title="Usage} opts_tooltip( css = NULL, offx = 10, offy = 0, use_cursor_pos = TRUE, opacity = 0.9, use_fill = FALSE, use_stroke = FALSE, delay_mouseover = 200, delay_mouseout = 500, placement = c("auto", "doc", "container"), zindex = 999 )
+::: {.callout-tip title="Usage"} 
+
+opts_tooltip( css = NULL, offx = 10, offy = 0, use_cursor_pos = TRUE, opacity = 0.9, use_fill = FALSE, use_stroke = FALSE, delay_mouseover = 200, delay_mouseout = 500, placement = c("auto", "doc", "container"), zindex = 999 )
 :::
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 tooltip_css <- "background-color: white; font-style: bold; color: black"
 
@@ -164,7 +170,8 @@ girafe(
 ### Tooltip (statistics)
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 exam_data$Average_Score <- round(rowMeans(exam_data[, c("ENGLISH", "MATHS", "SCIENCE")]),
                                  digits = 2)
@@ -204,6 +211,9 @@ The top student is Student036 from Class 3A!
 :::
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
 tooltip <- function(y, ymax, accuracy = 0.01) {
   mean <- scales::number(y, accuracy = accuracy)
   sem <- scales::number(ymax - y, accuracy = accuracy)
@@ -228,6 +238,8 @@ girafe(ggobj = plot4,
        options = list(opts_tooltip(css = tooltip_css)))
 ```
 
+:::
+
 ## 4.2 Data_id
 
 ::: panel-tabset
@@ -238,7 +250,8 @@ Note the change in `aes()` to `data_id = CLASS`.
 Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 plot5 <- ggplot(data=exam_data, 
                 aes(x = MATHS))+
@@ -269,7 +282,8 @@ The default value of the hover css is hover_css = “fill:orange;”. In this ex
 :::
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 plot6 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
@@ -300,7 +314,8 @@ girafe(
 `opts_hover()` and `opts_hover_inv()` customize the data_id rendering by add `css` declarations.
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 tooltip_css <- "background-color: white; font-style: bold; color: black"
 
@@ -340,7 +355,8 @@ girafe(
 `sprintf()` print formatted strings where `fmt` is the format and `x` is the value to format.
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 exam_data$onclick <- sprintf("window.open(\"%s%s\")",
 "https://www.moe.gov.sg/schoolfinder?journey=Primary%20school",
@@ -379,7 +395,8 @@ The following programming strategy will be used:
 -   `patchwork`  will be used inside girafe function to create the interactive coordinated multiple views.
 
 ```{r}
-#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 
 plot8 <- ggplot(data = exam_data, 
                 aes(x = ENGLISH))+

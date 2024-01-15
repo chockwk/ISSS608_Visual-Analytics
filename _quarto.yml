@@ -10,7 +10,7 @@ website:
         href: index.qmd
         
     right: 
-      - text: "✿ Topics"
+      - text: "✿ Learning Topics"
         menu: 
           - text: ggplot2 Fundamentals
             href: Topics/HO1/HO1.html
@@ -21,7 +21,7 @@ website:
           - text: Interactive Data Visualization
             href: Topics/HO3/HO3.html
             
-      - text: "❄ Exercises"
+      - text: "❄ Real-world Exercises"
         menu: 
           - text: Creating data visualisation beyond default
             href: Exercises/TH1/TH1.html

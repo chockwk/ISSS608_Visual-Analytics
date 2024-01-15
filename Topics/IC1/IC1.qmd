@@ -88,9 +88,43 @@ stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
 ```
 :::
 
+# 5. Explore Data
+
+```{r}
+stu_qqq$CNT <- as.factor(stu_qqq$CNT)
+stu_qqq$CNTSCHID <- as.character(stu_qqq$CNTSCHID)
+stu_qqq$CNTSTUID = as.factor(stu_qqq$CNTSTUID)
+
+duplicate <- stu_qqq %>% 
+  group_by(CNTSTUID) %>% 
+  filter(n() > 1)
+```
+
+From the output, there is no observation in `duplicate`. 
+
+```{r}
+SCH_table <- stu_qqq %>%
+  group_by(CNT) %>%
+  summarise(TOTAL_SCH = n())
+
+DT::datatable(SCH_table)
+```
+
+There are 6606 schools in Singapore in PISA 2022.
+
+```{r}
+STU_table <- stu_qqq %>%
+  group_by(CNT, CNTSCHID) %>%
+  summarise(TOTAL_STU = n())
+
+DT::datatable(STU_table)
+```
+
 ```{r}
 head(stu_qqq_SGP, n = 5)
 ```
+
+
 
 # Reference
 
