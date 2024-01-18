@@ -6,7 +6,7 @@ date-modified: "last-modified"
 execute: 
   eval: true
   echo: true
-  warning: true
+  warning: false
   error: true
 editor: source
 ---
@@ -72,6 +72,8 @@ Using appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions,
 
 The following R packages will be used:
 
+-   `ggiraph`
+
 -   `ggrepel` provides geoms to repel overlapping text labels
 
 -   `ggthemes` provides themes, geoms, and scales
@@ -87,7 +89,7 @@ The following R packages will be used:
 -   `kableExtra`
 
 ```{r}
-pacman::p_load(ggrepel, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
+pacman::p_load(ggiraph, ggrepel, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
 ```
 
 # 3. Import Data
@@ -177,19 +179,25 @@ duplicate <- stu_qqq_SGP %>%
 sum(is.na(stu_qqq_SGP))
 ```
 
+# 5. Visualize Data
 
 ```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
-
 stu_qqq_SGP_perf <- stu_qqq_SGP %>%
-  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID) %>%
+  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID, ESCS) %>%
   summarise(MATH = round(mean(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH, 
                               PV6MATH, PV7MATH, PV8MATH, PV9MATH, PV10MATH), 1),
             READING = round(mean(PV1READ, PV2READ, PV3READ, PV4READ, PV5READ,
                                  PV6READ, PV7READ, PV8READ, PV9READ, PV10READ), 1),
             SCIENCE = round(mean(PV1SCIE, PV2SCIE, PV3SCIE, PV4SCIE, PV5SCIE,
                                  PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
+```
+
+
+## 5.1 How did Singaporean students perform in Maths, Reading and Science?
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
 
 tooltip_css <- "background-color: white; font-style: bold; color: black"
 
@@ -204,13 +212,18 @@ plot1 <- ggplot(data = stu_qqq_SGP_perf,
                            method = "histodot")+
   geom_vline(aes(xintercept = 472))+
   coord_cartesian(xlim = c(0,1000))+ 
-  scale_y_continuous(limits = c(0,100))+
+  scale_y_continuous(limits = c(0,50))+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
+plot1
+```
+
+
+```{r}
 plot2 <- ggplot(data = stu_qqq_SGP_perf, 
                 aes(x = READING))+
   geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
@@ -219,13 +232,18 @@ plot2 <- ggplot(data = stu_qqq_SGP_perf,
                            method = "histodot")+
   geom_vline(aes(xintercept = 476))+
   coord_cartesian(xlim = c(0,1000))+ 
-  scale_y_continuous(limits = c(0,100))+
+  scale_y_continuous(limits = c(0,50))+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
+plot2
+```
+
+
+```{r}
 plot3 <- ggplot(data = stu_qqq_SGP_perf, 
                 aes(x = SCIENCE))+
   geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
@@ -234,26 +252,92 @@ plot3 <- ggplot(data = stu_qqq_SGP_perf,
                            method = "histodot")+
   geom_vline(aes(xintercept = 485))+
   coord_cartesian(xlim = c(0,1000))+
-  scale_y_continuous(limits = c(0,100))+
+  scale_y_continuous(limits = c(0,50))+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
+plot3
+# g <- wrap_plots(list(plot1, plot2, plot3), ncol = 1)
 
-g <- wrap_plots(list(plot1, plot2, plot3), ncol = 1)
-
-girafe(ggobj = g,
+# girafe(ggobj = g,
        # code = print(plot1 + plot2 + plot3), 
-       width_svg = 6,
-       height_svg = 3,
-       options = list(
-         opts_tooltip(css = tooltip_css),
-         opts_hover(css = "fill: #ABEBC6;"),
-         opts_hover_inv(css = "opacity:0.2;")
-         )
-       ) 
+#       width_svg = 6,
+#       height_svg = 4,
+#       options = list(
+#         opts_tooltip(css = tooltip_css),
+#        opts_hover(css = "fill: #ABEBC6;"),
+#         opts_hover_inv(css = "opacity:0.2;")
+#         )
+#       ) 
 ```
 
+## 5.2 Does the school system affect Singaporean students' performance in Maths, Reading and Science?
 
+
+## 5.2 Does socio-economic background affect Singaporean students' performance in Maths, Reading and Science?
+
+PISA index of economic, social, and cultural status
+ESCS is a composite score that combines into a single score information from three components: parents’ highest level of education (PARED index1); parents’ highest occupational status (HISEI index1); and home possessions (HOMEPOS index1, which is a proxy for family wealth).
+
+```{r}
+ggplot(data = stu_qqq_SGP_perf,
+       aes(y = ESCS, x = MATH))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "ESCS and MATH", x = "Maths", y = "Socio-economic Index (ESCS)")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = stu_qqq_SGP_perf,
+       aes(y = ESCS, x = READING))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "ESCS and READING", x = "Reading", y = "Socio-economic Index (ESCS)")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+```{r}
+ggplot(data = stu_qqq_SGP_perf,
+       aes(y = ESCS, x = SCIENCE))+
+  geom_point()+
+  geom_smooth(size = 0.8)+
+  labs(title = "ESCS and SCIENCE", x = "Reading", y = "Socio-economic Index (ESCS)")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+## 5.2 Does correlation exist between the weighted likelihood estimates (WLEs)?
+
+```{r}
+library(corrplot)
+
+stu_qqq_SGP_impute <- stu_qqq_SGP %>%
+  mutate_all(funs(ifelse(is.na(.), 0, .)))
+
+selected_columns = c(990:1002, 1004:1016)
+
+# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+
+vars.cor = cor(stu_qqq_SGP[, selected_columns])
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
 

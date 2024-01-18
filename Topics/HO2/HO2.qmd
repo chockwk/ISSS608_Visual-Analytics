@@ -13,25 +13,29 @@ editor: source
 
 ![](images/image2.jpg)
 
-# 1 Learning Objectives
+# 1. Learning Objectives
 
 -   Annotate or label data using `ggrepel` package
 -   Create publication quality figure by using `ggthemes` and `hrbrthemes` packages
 -   Plot composite figure to combine ggplot2 graphs using `patchwork` package
 
-# 2 Load Packages
+# 2. Load Packages
 
 Beside tidyverse, the following R packages will be used:
+
 -   `ggrepel` provides geoms to repel overlapping text labels
+
 -   `ggthemes` provides themes, geoms, and scales
+
 -   `hrbrthemes` provides typography-centric themes and theme components
+
 -   `patchwork` prepares composite figures
 
 ```{r}
 pacman::p_load(ggrepel, patchwork, ggthemes, hrbrthemes, tidyverse) 
 ```
 
-# 3 Import Data
+# 3. Import Data
 
 `exam_data` is a year end examination grades of a cohort of Primary 3 students from a local school.
 
@@ -44,88 +48,114 @@ summary(exam_data)
 
 # 4 Annotate Data using ggrepel
 
-`ggrepel` is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text.
+`ggrepel` is an extension of `ggplot2` which provides geoms to repel overlapping text labels, `geom_label_repel()` and `geom_text_repel()`. Text labels repel away from each other, away from data points, and away from edges of the plotting area.
 
 ::: callout-note
-We replace the following functions:
--   `geom_text()` by `geom_text_repel()`
--   `geom_label()` by `geom_label_repel()`
+We replace `geom_label()` by `geom_label_repel().`
 :::
 
-::: panel-tabset
-## ggplot
-
 ```{r}
-ggplot(data = exam_data, 
-       aes(x = MATHS, 
-           y = ENGLISH)) +
+plot1 <- ggplot(data = exam_data, 
+                aes(x = MATHS, y = ENGLISH)) +
   geom_point() +
-  geom_smooth(method=lm, 
-              size=0.5) +  
+  geom_smooth(method = lm, 
+              size = 0.5) +  
   geom_label(aes(label = ID), 
              hjust = 0.5, 
              vjust = -0.5) +
-  coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100)) +
-  ggtitle("English and Maths Scores using Scatterplot")+
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100)) +
+  ggtitle("Scatterplot Without Label Repel")+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
-```
 
-## ggrepel
-
-```{r}
-ggplot(data = exam_data, 
-       aes(x = MATHS, 
-           y = ENGLISH)) +
+plot2 <- ggplot(data = exam_data, 
+                aes(x = MATHS, y = ENGLISH)) +
   geom_point() +
   geom_smooth(method = lm, 
               size = 0.5) +  
   geom_label_repel(aes(label = ID), 
-                   fontface = "bold") +
-  coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100)) +
-  ggtitle("English and Maths Scores using Scatterplot (ggrepel)")+
+                   hjust = 0.5, 
+                   vjust = -0.5,
+                   max.overlaps = 20) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100)) +
+  ggtitle("Scatterplot with Label Repel")+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
+
+gridExtra::grid.arrange(plot1, plot2, ncol = 2)
 ```
 
 ::: callout-warning
-`ggrepel` 318 unlabeled data points (too many overlaps). Consider increasing max.overlaps
-:::
+Where there are limited space for large number of labels, `ggrepel` can contain `max.overlaps =` to indicate the number of labels displayed on the plot.
 :::
 
-# 5 Customize Plot Themes
-
-::: panel-tabset
-## ggplot
+# 5. Customize Plot Themes
 
 `ggplot2` comes with eight built-in themes, namely `theme_gray()`, `theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_light()`, `theme_linedraw()`, `theme_minimal()`, and `theme_void()`.
 
+-   `theme_gray()`: A grey background and white gridlines
+
+-   `theme_bw()`: The classic dark-on-light ggplot2 theme
+
+-   `theme_linedraw()`: A theme with black lines of various widths on white background
+
+-   `theme_light()`: A theme with light grey lines and axes
+
+-   `theme_dark()`: The dark background with similar line sizes.
+
+-   `theme_minimal()`: A minimalistic theme with no background annotations.
+
+-   `theme_classic()`: A classic-looking theme with x and y axis lines and no gridlines.
+
+-   `theme_void()`: A completely empty theme.
+
+-   `theme_test()`: A theme for visual unit tests
+
+::: panel-tabset
+
+## built-in themes
+
 ```{r}
-ggplot(data = exam_data, 
-       aes(x = MATHS))+
+plot3 <- ggplot(data = exam_data, 
+                aes(x = MATHS))+
   geom_histogram(bins=20, 
              boundary = 100,
              color="black",
              fill="lightgreen")+
-  ggtitle("Distribution of Maths Score")+
-  theme_minimal()+
+  ggtitle("theme_light")+
+  theme_light()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
+
+plot4 <- ggplot(data = exam_data, 
+                aes(x = MATHS))+
+  geom_histogram(bins=20, 
+             boundary = 100,
+             color="black",
+             fill="lightgreen")+
+  ggtitle("theme_dark")+
+  theme_dark()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+gridExtra::grid.arrange(plot3, plot4, ncol = 2)
 ```
 
 ## ggtheme
 
-ggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.
+`ggthemes` provides `ggplot2` themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.
 
 ```{r}
 ggplot(data = exam_data, 
@@ -186,23 +216,32 @@ ggplot(data = exam_data,
               grid = "Y")
 ```
 
-axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
-:::
+axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines. :::
 
 # 6 Create Composite Graphics
 
 ::: panel-tabset
-## patchwork (multiple graphs)
+## Patchwork (Multiple Graphs)
 
 Patchwork package has a very simple syntax where we can create layouts super easily. Here’s the general syntax that combines:
 
-"+" operator creates a horizontal layout. "()" create a subplot group. “\|” operator to stack two ggplot2 graphs, “/” operator to place the plots beside each other, “()” operator the define the sequence of the plotting.
+-   "+" operator creates a horizontal layout.
+
+-   "()" create a subplot group.
+
+-   “\|” operator to stack two ggplot2 graphs,
+
+-   “/” operator to place the plots beside each other,
+
+-   “()” operator the define the sequence of the plotting.
+
+This example uses + to combine multiple graphs.
 
 ```{r}
 maths <- ggplot(data = exam_data,
                 aes(x = MATHS, fill = CLASS))+
   geom_histogram(colour = "black", bins = 10)+
-  labs(title = "Maths Score Distribution", x = "Maths Score", y = "Count")+
+  labs(title = "Maths Score     +", x = "Maths Score", y = "Count")+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
@@ -212,7 +251,7 @@ maths <- ggplot(data = exam_data,
 english <- ggplot(data = exam_data,
                 aes(x = ENGLISH, fill = CLASS))+
   geom_histogram(colour = "black", bins = 10)+
-  labs(title = "English Score Distribution", x = "English Score", y = "Count")+
+  labs(title = "English Score     +", x = "English Score", y = "Count")+
   theme_minimal()+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
@@ -222,7 +261,7 @@ english <- ggplot(data = exam_data,
 science <- ggplot(data = exam_data,
                 aes(x = SCIENCE, fill = CLASS))+
   geom_histogram(colour = "black", bins = 10)+
-  labs(title = "Science Score Distribution", x = "Science Score", y = "Count")+
+  labs(title = "Science Score", x = "Science Score", y = "Count")+
   theme_minimal()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -231,19 +270,20 @@ science <- ggplot(data = exam_data,
 english + maths + science
 ```
 
+`()` determine the sequence of two plots and `/` places the plot below.
+
 ```{r}
 (english + maths) / science
 ```
 
-## gridExtra (multiple graphs)
+## gridExtra (Multiple Graphs)
 
 ```{r}
 library(gridExtra)
-
 grid.arrange(english, maths, science, ncol = 2)
 ```
 
-## patchwork (insert)
+## Patchwork (Insert)
 
 ```{r}
 main <- ggplot(data = exam_data, 
@@ -267,6 +307,8 @@ main +
   inset_element(maths, left = 0.02, bottom = 0.7, right = 0.4, top = 1) +
   inset_element(english, left = 0.4, bottom = 0.7, right = 0.8, top = 1)
 ```
+
+## Patchwork and ggtheme
 
 ```{r}
 plot <- (english / maths) | main
