@@ -11,16 +11,22 @@ execute:
 editor: source
 ---
 
-![](/_site/images/future%20classroom.jpg)
+![](/_site/images/future%20classroom.jpg){width="500"}
 
 # 1. Learning Objectives
 
 ::: panel-tabset
 ## Background
 
-The **Organisation for Economic Co-operation and Development (OECD) Programme for International Student Assessment (PISA)** is a global education survey conducted to examines what students know in mathematics, reading and science, how well students can solve complex problems, think critically and communicate effectively. This gives insights into how well education systems are preparing students for real life challenges and future success. It provides the **most comprehensive and rigorous international assessment** of student learning outcomes to date. Results from PISA indicate the **quality and equity of learning outcomes** attained around the world, and allow educators and policy makers to learn from the policies and practices applied in other countries.
+The **Organisation for Economic Co-operation and Development (OECD) Programme for International Student Assessment (PISA)** is a **global education survey** conducted to examines what students know in mathematics, reading and science, how well students can solve complex problems, think critically and communicate effectively. This gives insights into how well education systems are preparing students for real life challenges and future success. It provides the **most comprehensive and rigorous international assessment** of student learning outcomes to date. Results from PISA indicate the **quality and equity of learning outcomes** attained around the world, and allow educators and policy makers to learn from the policies and practices applied in other countries.
 
-PISA 2022 reports the following:
+OECD education director, Andreas Schleicher, shared in a BBC article that “[Singapore managed to achieve excellence without wide differences between children from wealthy and disadvantaged families.](https://www.bbc.com/news/education-38212070)”. Furthermore, the slogan “[Every School a Good School](https://www.straitstimes.com/singapore/parenting-education/dpm-heng-swee-keat-gives-three-suggestions-to-strengthen-schooling)” was popularised by Mr Heng Swee Keat when he was education minister from 2011 to 2015.
+
+The general public, however, strongly belief that there are still **disparities** that exist, especially between the elite schools and neighborhood school, between students from families with higher socioeconomic status and those with relatively lower socioeconomic status and immigration and non-immigration families.
+
+## Data
+
+PISA is conducted every three years to **assess the education systems worldwide** through testing 15 year-old students in the subjects of mathematics, reading, and science. Singapore participated for the first time in PISA in 2009. PISA reports the following:
 
 -   Describes students’ performance in mathematics, reading and science;
 
@@ -30,29 +36,7 @@ PISA 2022 reports the following:
 
 -   Describes how the quality and equity of learning outcomes have evolved since previous PISA assessments.
 
-OECD education director, Andreas Schleicher, shared in a BBC article that “[Singapore managed to achieve excellence without wide differences between children from wealthy and disadvantaged families.](https://www.bbc.com/news/education-38212070)”. Furthermore, the slogan “[Every School a Good School](https://www.straitstimes.com/singapore/parenting-education/dpm-heng-swee-keat-gives-three-suggestions-to-strengthen-schooling)” was popularised by Mr Heng Swee Keat when he was education minister from 2011 to 2015.
-
-The general public, however, strongly belief that there are still **disparities** that exist, especially between the elite schools and neighborhood school, between students from families with higher socioeconomic status and those with relatively lower socioeconomic status and immigration and non-immigration families.
-
-## Data
-
-Singapore participated for the first time in PISA in 2009. By comparing results internationally, policy makers and educators in Singapore can learn from other countries’ policies and practices.
-
-PISA is conducted every three years to **assess the education systems worldwide** through testing 15 year-old students in the subjects of mathematics, reading, and science.
-
-The PISA 2022 database contains the full set of responses from individual students, school principals and parents. There are a total of five data files and their contents are as follows:
-
--   **Student questionnaire data file** (focus of this practice)
-
--   School questionnaire data file
-
--   Teacher questionnaire data file
-
--   Cognitive item data file
-
--   Questionnaire timing data file
-
-These data files are in SAS and SPSS formats.
+By comparing results internationally, policy makers and educators in Singapore can learn from other countries’ policies and practices.
 
 ::: {.callout-note appearance="simple"}
 ### Why are 15-year-old students choosen for assessment?
@@ -62,17 +46,32 @@ PISA measures student performance as the extent to which 15-year-old students **
 
 ## Task
 
-Using appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions, we will reveal the following in this practice:
+The PISA 2022 database contains the full set of responses from individual students, school principals and parents. There are a total of five data files and their contents are as follows:
 
--   the distribution of Singapore students’ **performance** in mathematics, reading, and science, and
--   the relationship between these **performances** with schools, **gender** and **socioeconomic status** of the students.
+-   Student questionnaire data file (**focus of this task**)
+
+-   School questionnaire data file
+
+-   Teacher questionnaire data file
+
+-   Cognitive item data file
+
+-   Questionnaire timing data file
+
+These data files are in SAS and SPSS formats; SAS files will be used in this task.
+
+Using appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions, we will reveal the following:
+
+-   The distribution of Singapore students’ **performance** in mathematics, reading, and science, and
+
+-   The relationship between these **performances** with **schools**, **gender** and **socioeconomic status** of the students.
 :::
 
 # 2. Load Packages
 
 The following R packages will be used:
 
--   `ggiraph`
+-   `ggiraph` creates dynamic ggplot graphs.
 
 -   `ggrepel` provides geoms to repel overlapping text labels
 
@@ -82,17 +81,20 @@ The following R packages will be used:
 
 -   `patchwork` prepares composite figures
 
--   `haven` read and write various data formats used by other statistical packages
+-   `haven` reads and writes various data formats used by other statistical packages
 
--   `tidyverse` support data science, analysis and communication task
+-   `tidyverse` supports data science, analysis and communication task
 
--   `kableExtra`
+-   `kableExtra` builds common complex tables and manipulate table styles
 
 ```{r}
 pacman::p_load(ggiraph, ggrepel, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
 ```
 
 # 3. Import Data
+
+::: panel-tabset
+## Full Dataset
 
 The PISA 2022 database was released on December 5, 2022. For the purpose of this practice, the Student questionnaire data file will be used to fulfil the task.
 
@@ -103,9 +105,11 @@ Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/) (data) and [PI
 stu_qqq <- read_sas("data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat")
 ```
 
-The output shows **613,744 observations** with **1,279 variables**.
+The output shows **613,744 observations** with **1,279 variables**. Being a global survey, the `stu_qqq` dataset contains several nominal data columns to label and categorize the students; namely country code `CNT`, country identifier `CNTRYID`, school ID `CNTSCHID` and student ID `CNTSTUID`. The other variables examine numerous aspects of well-being, education system, family background and pandemic-related impact on education.
 
-For relevance, we filter `stu_qqq` by the column `country code (CNT)` for *SGP* to obtain **Singapore results**.
+## Singapore Dataset
+
+For relevance, we filter `stu_qqq` by the column `country code (CNT)` for *SGP* to obtain the survery results from Singapore students.
 
 ```{r}
 #| eval: false
@@ -113,7 +117,7 @@ stu_qqq_SGP <- stu_qqq %>%
   filter(CNT == "SGP")
 ```
 
-The output shows **6,606 observations** with **1,279 variables**.
+The output shows **6,606 observations** with **1,279 variables** where Singapore accounts for close to **1%** of the observations. The number of observations is likely to reflect the number of students who undergo the assessment. Based on the duplication check using student ID `CNTSTUID`, there are **zero observations** which indicates unique student ID with **no duplication**. To enable efficient loading of dataset, there will be save and load points to prevent import of large datasets.
 
 ::: {.callout-caution collapse="true"}
 ## Save Point
@@ -124,8 +128,6 @@ write_rds(stu_qqq_SGP, "data/stu_qqq_SGP.rds")
 ```
 :::
 
-# 4. Explore Data
-
 ::: {.callout-caution collapse="true"}
 ## Load Point
 
@@ -133,6 +135,104 @@ write_rds(stu_qqq_SGP, "data/stu_qqq_SGP.rds")
 stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
 ```
 :::
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+duplicate <- stu_qqq_SGP %>% 
+  group_by(CNTSTUID) %>% 
+  filter(n() > 1)
+```
+:::
+
+# 4. Explore Data
+
+::: panel-tabset
+## 4.1 Data Table
+
+As of 2022, Singapore has **148 public secondary schools** under [MOE](https://www.moe.gov.sg/schoolfinder?journey=Secondary%20school) and **24 [international schools](https://en.wikipedia.org/wiki/List_of_international_schools_in_Singapore)**. From the data table, PISA 2022 database compiles the student assessment across **164 unique school ID**, surveying an impressive **95% of local schools**. In addition, Singapore is allocated a country ID `CNTRYID` 702 and the school ID `CNTSCHID` ranges from 70200001 to 70200165.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+SCH_table <- stu_qqq_SGP %>%
+  group_by(CNT, CNTRYID, CNTSCHID) %>%
+  summarise(TOTAL_STUDENT = n())
+
+DT::datatable(SCH_table)
+```
+
+::: {.callout-note appearance="simple"}
+### Observation
+
+Given that the index runs from 1 to 164 and the school ID `CNTSCHID` ranges from 70200001 to 70200165, there is no school allocated to '70200150'.
+:::
+
+There is an average of\* **40.28 students assessed per school**, equivalent to the **class size** of a level, in Singapore context, Secondary 3.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+summary(SCH_table$TOTAL_STUDENT)
+```
+
+## 4.2 Data Structure
+
+The data structure can be obtained using `str()`, `glimpse()` or `head()`. Due to the large number of variables and display purposes, we will display up to 20 variables.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+head(stu_qqq_SGP, n = 30)
+```
+
+There is an observable number of `NA` values in the tibble table. Appropriate imputation will be performed according to the context of the variables and analysis requirements.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+sum(is.na(stu_qqq_SGP))
+```
+
+## 4.3 Data Type
+
+Casting to **character**:
+
+`CNTRYID`, `CNTSCHID` and `CNTSTUID` are unique ID and casted from `dbl` to `chr`.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+stu_qqq_SGP <- stu_qqq_SGP %>% 
+  mutate(CNTRYID = as.character(stu_qqq_SGP$CNTRYID),
+         CNTSCHID = as.character(stu_qqq_SGP$CNTSCHID),
+         CNTSTUID = as.character(stu_qqq_SGP$CNTSTUID))
+```
+
+Casting to **factor**:
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+stu_qqq_SGP <- stu_qqq_SGP %>% 
+  mutate(ST004D01T = as.factor(stu_qqq_SGP$ST004D01T),
+         ST294Q02JA = as.factor(stu_qqq_SGP$ST294Q02JA),
+         ST272Q01JA = as.factor(stu_qqq_SGP$ST272Q01JA),
+         ST019AQ01T = as.factor(stu_qqq_SGP$ST019AQ01T),
+         ST253Q01JA = as.factor(stu_qqq_SGP$ST019AQ01T))
+```
+:::
+
+## Data Scheme
+
+With **1,279 variables**, we can find out
 
 ```{mermaid}
 %%| code-fold: true
@@ -153,33 +253,106 @@ flowchart LR
   I --> K[Student Characteristics: \n Attitude \n Background \n Behaviour]
   C --> L{Economic \n Social \n Cultural \n Status}
   L --> M[Parents Highest Level of Education\n Parents highest occupational status \n Home Possessions]
-```
-
-
-```{r}
-SCH_table <- stu_qqq_SGP %>%
-  group_by(CNTSCHID) %>%
-  summarise(TOTAL_STUDENT = n())
-
-DT::datatable(SCH_table)
-```
-'70200150' no such school ID
-
-```{r}
-mean(SCH_table$TOTAL_STUDENT)
-```
-
-```{r}
-duplicate <- stu_qqq_SGP %>% 
-  group_by(CNTSTUID) %>% 
-  filter(n() > 1)
-```
-
-```{r}
-sum(is.na(stu_qqq_SGP))
+  C --> N{Well-being}
+  N --> O[Sense of Belonging \n School Safety \n Perseverance \n Curiosity \n Cooperation \n Stress Resistance \n Emotional Control]
 ```
 
 # 5. Visualize Data
+
+# 5.1 What is the demographics and environment of the students?
+
+To understand the student demographics, we will visualize the distribution and summary statistics of gender, age and nationality. We will also have an overview of the students' time invested in studying and exposure to digital device, and their parent's education level.
+
+-   ::: {.callout-tip title="Education Level using ISCED"}
+    -   ISCED Level 1 (primary education)
+
+    -   ISCED Level 2 (lower secondary)
+
+    -   ISCED Level 3.3 (upper secondary education with no direct access to tertiary education) ISCED Level 3.4 (upper secondary education with direct access to tertiary education)
+
+    -   ISCED Level 4 (post-secondary non-tertiary)
+
+    -   ISCED Level 5 (short-cycle tertiary education)
+
+    -   ISCED Level 6 (Bachelor’s or equivalent)
+
+    -   ISCED Level 7 (Master’s or equivalent)
+
+    -   ISCED Level 8 (Doctoral or equivalent)
+    :::
+
+| Variable   | Description                                          |
+|------------|------------------------------------------------------|
+| ST004D01T  | Student (Standardized) Gender                        |
+| AGE        | Students' age                                        |
+| ST019AQ01T | Country of birth                                     |
+| ST294Q02JA | Number of days spent studying for school or homework |
+| ST253Q01JA | Number of digital devices in your home               |
+| HISCED     | Highest level of education of parents (ISCED)        |
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+plot1 <- ggplot(stu_qqq_SGP, aes(x = ST004D01T))+
+  geom_bar()+
+  labs(title = "Students' Gender", x = NULL, y = NULL)+
+  ylim(0,4000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)
+
+plot2 <- ggplot(stu_qqq_SGP, aes(y = AGE))+
+  geom_boxplot()+
+  labs(title = "Students' Age", x = NULL, y = NULL)
+
+plot3 <- ggplot(stu_qqq_SGP, aes(x = ST019AQ01T))+
+  geom_bar(na.rm = TRUE)+
+  labs(title = "Students' Nationality", x = NULL, y = NULL)+
+  ylim(0,6000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)
+
+plot4 <- ggplot(stu_qqq_SGP, aes(x = ST294Q02JA))+
+  geom_bar(na.rm = TRUE)+
+  labs(title = "Students' Study (Days)", x = NULL, y = NULL)+
+  ylim(0,3500)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)
+
+plot5 <- ggplot(stu_qqq_SGP, aes(x = ST253Q01JA))+
+  geom_bar(na.rm = TRUE)+
+  labs(title = "Students' Digital Expose", x = NULL, y = NULL)+
+  ylim(0,6000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)
+
+plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
+  geom_bar()+
+  labs(title = "Parents' Education", x = NULL, y = NULL)+
+  ylim(0,2000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)
+
+(plot1 + plot2 + plot3) / (plot4 + plot5 + plot6)
+```
+
+::: {.callout-note appearance="simple"}
+## Observations
+
+1.  **Gender**: The distribution between male and female is relatively even.
+2.  **Age**: The median age is 15.75.
+3.  **Nationality**: Assuming value 1 is Singapore, majority of the students are local.
+4.  **Study Time**: Most students spend 1 or 6 days studying or doing homework. (In comparison, Masters students spend 7 days studying.)
+5.  **Digital Exposure**: Manjority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
+6.  **Parents' Education**: The parents of most students (70%) hold tertiary and above education.
+:::
+
+## 5.1 How did Singaporean students perform in Maths, Reading and Science?
 
 ```{r}
 stu_qqq_SGP_perf <- stu_qqq_SGP %>%
@@ -192,8 +365,6 @@ stu_qqq_SGP_perf <- stu_qqq_SGP %>%
                                  PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
 ```
 
-
-## 5.1 How did Singaporean students perform in Maths, Reading and Science?
 
 ```{r}
 #| code-fold: true
@@ -222,7 +393,6 @@ plot1 <- ggplot(data = stu_qqq_SGP_perf,
 plot1
 ```
 
-
 ```{r}
 plot2 <- ggplot(data = stu_qqq_SGP_perf, 
                 aes(x = READING))+
@@ -241,7 +411,6 @@ plot2 <- ggplot(data = stu_qqq_SGP_perf,
 
 plot2
 ```
-
 
 ```{r}
 plot3 <- ggplot(data = stu_qqq_SGP_perf, 
@@ -275,11 +444,9 @@ plot3
 
 ## 5.2 Does the school system affect Singaporean students' performance in Maths, Reading and Science?
 
-
 ## 5.2 Does socio-economic background affect Singaporean students' performance in Maths, Reading and Science?
 
-PISA index of economic, social, and cultural status
-ESCS is a composite score that combines into a single score information from three components: parents’ highest level of education (PARED index1); parents’ highest occupational status (HISEI index1); and home possessions (HOMEPOS index1, which is a proxy for family wealth).
+PISA index of economic, social, and cultural status ESCS is a composite score that combines into a single score information from three components: parents’ highest level of education (PARED index1); parents’ highest occupational status (HISEI index1); and home possessions (HOMEPOS index1, which is a proxy for family wealth).
 
 ```{r}
 ggplot(data = stu_qqq_SGP_perf,
@@ -341,3 +508,56 @@ corrplot.mixed(vars.cor,
                tl.col = "black")
 ```
 
+```{r}
+plot8 <- ggplot(data = exam_data, 
+                aes(x = ENGLISH))+
+  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+  
+  coord_cartesian(xlim = c(0,100))+ 
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+plot9 <- ggplot(data = exam_data, 
+                aes(x = MATHS))+
+  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+  
+  coord_cartesian(xlim = c(0,100))+ 
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+plot10 <- ggplot(data = exam_data, 
+                aes(x = SCIENCE))+
+  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+  
+  coord_cartesian(xlim = c(0,100))+ 
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(code = print(plot8 + plot9 + plot10), 
+       width_svg = 6,
+       height_svg = 3,
+       options = list(
+         opts_tooltip(css = tooltip_css),
+         opts_hover(css = "fill: #ABEBC6;"),
+         opts_hover_inv(css = "opacity:0.2;")
+         )
+       )
+```

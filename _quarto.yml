@@ -20,10 +20,12 @@ website:
             href: Topics/IC1/IC1.html
           - text: Interactive Data Visualization
             href: Topics/HO3/HO3.html
+          - text: x
+          - text: x
             
       - text: "❄ Real-world Exercises"
         menu: 
-          - text: Creating data visualisation beyond default
+          - text: OECD PISA Global Education
             href: Exercises/TH1/TH1.html
             
       - text: "✱ Projects"
