@@ -88,7 +88,7 @@ The following R packages will be used:
 -   `kableExtra` builds common complex tables and manipulate table styles
 
 ```{r}
-pacman::p_load(ggiraph, ggrepel, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
+pacman::p_load(ggiraph, ggrepel, ggridges, ggdist, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
 ```
 
 # 3. Import Data
@@ -263,24 +263,6 @@ flowchart LR
 
 To understand the student demographics, we will visualize the distribution and summary statistics of gender, age and nationality. We will also have an overview of the students' time invested in studying and exposure to digital device, and their parent's education level.
 
--   ::: {.callout-tip title="Education Level using ISCED"}
-    -   ISCED Level 1 (primary education)
-
-    -   ISCED Level 2 (lower secondary)
-
-    -   ISCED Level 3.3 (upper secondary education with no direct access to tertiary education) ISCED Level 3.4 (upper secondary education with direct access to tertiary education)
-
-    -   ISCED Level 4 (post-secondary non-tertiary)
-
-    -   ISCED Level 5 (short-cycle tertiary education)
-
-    -   ISCED Level 6 (Bachelor’s or equivalent)
-
-    -   ISCED Level 7 (Master’s or equivalent)
-
-    -   ISCED Level 8 (Doctoral or equivalent)
-    :::
-
 | Variable   | Description                                          |
 |------------|------------------------------------------------------|
 | ST004D01T  | Student (Standardized) Gender                        |
@@ -295,48 +277,65 @@ To understand the student demographics, we will visualize the distribution and s
 #| code-summary: "Show the code"
 
 plot1 <- ggplot(stu_qqq_SGP, aes(x = ST004D01T))+
-  geom_bar()+
+  geom_bar(colour = "black", 
+           fill = "aquamarine")+
   labs(title = "Students' Gender", x = NULL, y = NULL)+
   ylim(0,4000)+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
-            vjust = -1)
+            vjust = -1)+
+  theme_minimal()
 
 plot2 <- ggplot(stu_qqq_SGP, aes(y = AGE))+
-  geom_boxplot()+
-  labs(title = "Students' Age", x = NULL, y = NULL)
+  geom_boxplot(notch = TRUE,
+               fill = "aquamarine3")+
+  labs(title = "Students' Age", x = NULL, y = NULL)+
+  theme_minimal()
 
 plot3 <- ggplot(stu_qqq_SGP, aes(x = ST019AQ01T))+
-  geom_bar(na.rm = TRUE)+
+  geom_bar(colour = "black",
+           fill = "aquamarine4",
+           na.rm = TRUE)+
   labs(title = "Students' Nationality", x = NULL, y = NULL)+
   ylim(0,6000)+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
-            vjust = -1)
+            vjust = -1)+
+  theme_minimal()
 
 plot4 <- ggplot(stu_qqq_SGP, aes(x = ST294Q02JA))+
-  geom_bar(na.rm = TRUE)+
+  geom_bar(colour = "black",
+           fill = "aquamarine4",
+           na.rm = TRUE)+
   labs(title = "Students' Study (Days)", x = NULL, y = NULL)+
   ylim(0,3500)+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
-            vjust = -1)
+            vjust = -1,
+            size = 3)+
+  theme_minimal()
 
 plot5 <- ggplot(stu_qqq_SGP, aes(x = ST253Q01JA))+
-  geom_bar(na.rm = TRUE)+
+  geom_bar(colour = "black",
+           fill = "aquamarine",
+           na.rm = TRUE)+
   labs(title = "Students' Digital Expose", x = NULL, y = NULL)+
   ylim(0,6000)+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
-            vjust = -1)
+            vjust = -1)+
+  theme_minimal()
 
 plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
-  geom_bar()+
+  geom_bar(colour = "black",
+           fill = "aquamarine3")+
   labs(title = "Parents' Education", x = NULL, y = NULL)+
   ylim(0,2000)+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
-            vjust = -1)
+            vjust = -1,
+            size = 3)+
+  theme_minimal()
 
 (plot1 + plot2 + plot3) / (plot4 + plot5 + plot6)
 ```
@@ -345,18 +344,34 @@ plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
 ## Observations
 
 1.  **Gender**: The distribution between male and female is relatively even.
+
 2.  **Age**: The median age is 15.75.
+
 3.  **Nationality**: Assuming value 1 is Singapore, majority of the students are local.
+
 4.  **Study Time**: Most students spend 1 or 6 days studying or doing homework. (In comparison, Masters students spend 7 days studying.)
+
 5.  **Digital Exposure**: Manjority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
-6.  **Parents' Education**: The parents of most students (70%) hold tertiary and above education.
+
+6.  **Parents' Education**: Short-cycle tertiary education is not applicable in Singapore. Most parents (70%) hold tertiary and above education.
+
+    | ISCED Level | Education Level             |
+    |-------------|-----------------------------|
+    | Level 1     | Primary                     |
+    | Level 2     | Lower secondary             |
+    | Level 3     | Upper secondary             |
+    | Level 4     | Post-secondary non-tertiary |
+    | Level 5     | Short-cycle tertiary        |
+    | Level 6     | Bachelor’s or equivalent    |
+    | Level 7     | Master’s or equivalent      |
+    | Level 8     | Doctoral or equivalent      |
 :::
 
 ## 5.1 How did Singaporean students perform in Maths, Reading and Science?
 
 ```{r}
 stu_qqq_SGP_perf <- stu_qqq_SGP %>%
-  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID, ESCS) %>%
+  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID, ST004D01T, ESCS) %>%
   summarise(MATH = round(mean(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH, 
                               PV6MATH, PV7MATH, PV8MATH, PV9MATH, PV10MATH), 1),
             READING = round(mean(PV1READ, PV2READ, PV3READ, PV4READ, PV5READ,
@@ -365,82 +380,115 @@ stu_qqq_SGP_perf <- stu_qqq_SGP %>%
                                  PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
 ```
 
+```{r}
+glimpse(stu_qqq_SGP_perf)
+```
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
-tooltip_css <- "background-color: white; font-style: bold; color: black"
-
-stu_qqq_SGP_perf$tooltip <- c(paste0("School = ", stu_qqq_SGP_perf$CNTSCHID, 
-                                     "\nStudent = ", stu_qqq_SGP_perf$CNTSTUID))
-
-plot1 <- ggplot(data = stu_qqq_SGP_perf, 
-                aes(x = MATH))+
-  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
-                           stackgroups = TRUE, 
-                           binwidth = 1, 
-                           method = "histodot")+
-  geom_vline(aes(xintercept = 472))+
-  coord_cartesian(xlim = c(0,1000))+ 
-  scale_y_continuous(limits = c(0,50))+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-
-plot1
+stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$MATH)
+stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$READING)
+stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$SCIENCE)
 ```
 
 ```{r}
-plot2 <- ggplot(data = stu_qqq_SGP_perf, 
-                aes(x = READING))+
-  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
-                           stackgroups = TRUE, 
-                           binwidth = 1, 
-                           method = "histodot")+
-  geom_vline(aes(xintercept = 476))+
-  coord_cartesian(xlim = c(0,1000))+ 
-  scale_y_continuous(limits = c(0,50))+
+#| code-fold: true
+#| code-summary: "Show the code"
+
+plot7 <- ggplot(stu_qqq_SGP_perf, 
+                aes(x = MATH, y = ST004D01T,
+                    fill = ST004D01T, colour = ST004D01T))+
+  geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  geom_vline(aes(xintercept = 472), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 500, y = 3,  
+           label = "OECD Mean Maths Score = 472",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_vline(aes(xintercept = 575), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 1000, y = 3,  
+           label = "SGP Mean Maths Score = 575",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_boxplot(colour = "black",
+               width = .20,
+               outlier.shape = NA,
+               alpha = 0.4)+
+  xlim(0,1000)+
+  labs(title = "Mathematics", x = NULL, y = NULL)+
   theme_minimal()+
   theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
+        axis.text.x = element_blank())
 
-plot2
-```
-
-```{r}
-plot3 <- ggplot(data = stu_qqq_SGP_perf, 
-                aes(x = SCIENCE))+
-  geom_dotplot_interactive(aes(data_id = CNTSTUID, tooltip = stu_qqq_SGP_perf$tooltip),
-                           stackgroups = TRUE, 
-                           binwidth = 1, 
-                           method = "histodot")+
-  geom_vline(aes(xintercept = 485))+
-  coord_cartesian(xlim = c(0,1000))+
-  scale_y_continuous(limits = c(0,50))+
+plot8 <- ggplot(stu_qqq_SGP_perf, 
+                aes(x = READING, y = ST004D01T,
+                    fill = ST004D01T, colour = ST004D01T))+
+  geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  geom_vline(aes(xintercept = 476), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 500, y = 3,  
+           label = "OECD Mean Reading Score = 476",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_vline(aes(xintercept = 543), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 1000, y = 3,  
+           label = "SGP Mean Reading Score = 543",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_boxplot(colour = "black",
+               width = .20,
+               outlier.shape = NA,
+               alpha = 0.4)+
+  xlim(0,1000)+
+  labs(title = "Reading", x = NULL, y = NULL)+
   theme_minimal()+
   theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-plot3
-# g <- wrap_plots(list(plot1, plot2, plot3), ncol = 1)
+        axis.text.x = element_blank())
 
-# girafe(ggobj = g,
-       # code = print(plot1 + plot2 + plot3), 
-#       width_svg = 6,
-#       height_svg = 4,
-#       options = list(
-#         opts_tooltip(css = tooltip_css),
-#        opts_hover(css = "fill: #ABEBC6;"),
-#         opts_hover_inv(css = "opacity:0.2;")
-#         )
-#       ) 
+plot9 <- ggplot(stu_qqq_SGP_perf, 
+                aes(x = SCIENCE, y = ST004D01T,
+                    fill = ST004D01T, colour = ST004D01T))+
+  geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  geom_vline(aes(xintercept = 485), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 500, y = 3,  
+           label = "OECD Mean Science Score = 485",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_vline(aes(xintercept = 561), 
+             colour = "azure4",
+             linetype = "dashed") +
+  annotate(geom = "text", x = 1000, y = 3,  
+           label = "SGP Mean Maths Score = 561",
+           vjust = -0.5,  
+           hjust = 1.2,
+           size = 3.5) +
+  geom_boxplot(colour = "black",
+               width = .20,
+               outlier.shape = NA,
+               alpha = 0.4)+
+  xlim(0,1000)+
+  labs(title = "Science", x = NULL, y = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none")
+
+plot7 / plot8 / plot9
 ```
+
 
 ## 5.2 Does the school system affect Singaporean students' performance in Maths, Reading and Science?
 
@@ -449,115 +497,158 @@ plot3
 PISA index of economic, social, and cultural status ESCS is a composite score that combines into a single score information from three components: parents’ highest level of education (PARED index1); parents’ highest occupational status (HISEI index1); and home possessions (HOMEPOS index1, which is a proxy for family wealth).
 
 ```{r}
-ggplot(data = stu_qqq_SGP_perf,
-       aes(y = ESCS, x = MATH))+
-  geom_point()+
+plot10 <- ggplot(data = stu_qqq_SGP_perf,
+                 aes(y = ESCS, x = MATH, 
+                     fill = ST004D01T, colour = ST004D01T))+
+  geom_point(alpha = 0.3)+
   geom_smooth(size = 0.8)+
   labs(title = "ESCS and MATH", x = "Maths", y = "Socio-economic Index (ESCS)")+
   theme_minimal()+
+  xlim(100,900)+
   theme(legend.position = "none",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
+
+plot11 <- ggplot(data = stu_qqq_SGP_perf, 
+                 aes(y = ESCS, x = READING, 
+                     fill = ST004D01T, colour = ST004D01T))+
+  geom_point(alpha = 0.3)+
+  geom_smooth(size = 0.8)+
+  labs(title = "ESCS and READING", x = "Reading", y = NULL)+
+  theme_minimal()+
+  xlim(100,900)+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  theme(axis.text.y = element_blank())
+
+plot12 <- ggplot(data = stu_qqq_SGP_perf,
+                 aes(y = ESCS, x = SCIENCE, 
+                     fill = ST004D01T, colour = ST004D01T))+
+  geom_point(alpha = 0.3)+
+  geom_smooth(size = 0.8)+
+  labs(title = "ESCS and SCIENCE", x = "Science", y = NULL)+
+  theme_minimal()+
+  xlim(100,900)+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))+
+  theme(axis.text.y = element_blank())
+
+plot10 + plot11 + plot12
 ```
 
-```{r}
-ggplot(data = stu_qqq_SGP_perf,
-       aes(y = ESCS, x = READING))+
-  geom_point()+
-  geom_smooth(size = 0.8)+
-  labs(title = "ESCS and READING", x = "Reading", y = "Socio-economic Index (ESCS)")+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-```
-
-```{r}
-ggplot(data = stu_qqq_SGP_perf,
-       aes(y = ESCS, x = SCIENCE))+
-  geom_point()+
-  geom_smooth(size = 0.8)+
-  labs(title = "ESCS and SCIENCE", x = "Reading", y = "Socio-economic Index (ESCS)")+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-```
 
 ## 5.2 Does correlation exist between the weighted likelihood estimates (WLEs)?
 
 ```{r}
-library(corrplot)
+#| code-fold: true
+#| code-summary: "Show the code"
 
 stu_qqq_SGP_impute <- stu_qqq_SGP %>%
   mutate_all(funs(ifelse(is.na(.), 0, .)))
 
-selected_columns = c(990:1002, 1004:1016)
+stu_qqq_SGP_impute$FAMSUP <- as.double(stu_qqq_SGP_impute$FAMSUP)
+stu_qqq_SGP_impute$DISCLIM <- as.double(stu_qqq_SGP_impute$DISCLIM)
+stu_qqq_SGP_impute$TEACHSUP<- as.double(stu_qqq_SGP_impute$TEACHSUP)
+stu_qqq_SGP_impute$COGACRCO<- as.double(stu_qqq_SGP_impute$COGACRCO)
+COGACRCO
+```
+
+```{r}
+library(corrplot)
+
+emotional_wellbeing = c(990:1001, 1005:1006)
 
 # stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
 
-vars.cor = cor(stu_qqq_SGP[, selected_columns])
+vars.cor = cor(stu_qqq_SGP_impute[, emotional_wellbeing],
+               use = "complete.obs")
 corrplot.mixed(vars.cor,
                lower = "ellipse", 
                upper = "number",
+               number.cex = 0.6,
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+
+```{r}
+library(corrplot)
+
+school_support = c(1007:1015)
+
+# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+
+vars.cor = cor(stu_qqq_SGP_impute[, school_support],
+               use = "complete.obs")
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               number.cex = 0.6,
                tl.pos = "lt",
                diag = "l",
                tl.col = "black")
 ```
 
 ```{r}
-plot8 <- ggplot(data = exam_data, 
-                aes(x = ENGLISH))+
-  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
-                           stackgroups = TRUE,
-                           binwidth = 1,
-                           method = "histodot")+  
-  coord_cartesian(xlim = c(0,100))+ 
-  scale_y_continuous(NULL, breaks = NULL)+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
+library(corrplot)
 
-plot9 <- ggplot(data = exam_data, 
-                aes(x = MATHS))+
-  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
-                           stackgroups = TRUE,
-                           binwidth = 1,
-                           method = "histodot")+  
-  coord_cartesian(xlim = c(0,100))+ 
-  scale_y_continuous(NULL, breaks = NULL)+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
+family_support = c(1004, 1030:1039)
 
-plot10 <- ggplot(data = exam_data, 
-                aes(x = SCIENCE))+
-  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
-                           stackgroups = TRUE,
-                           binwidth = 1,
-                           method = "histodot")+  
-  coord_cartesian(xlim = c(0,100))+ 
-  scale_y_continuous(NULL, breaks = NULL)+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
+# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
 
-girafe(code = print(plot8 + plot9 + plot10), 
-       width_svg = 6,
-       height_svg = 3,
-       options = list(
-         opts_tooltip(css = tooltip_css),
-         opts_hover(css = "fill: #ABEBC6;"),
-         opts_hover_inv(css = "opacity:0.2;")
-         )
-       )
+vars.cor = cor(stu_qqq_SGP_impute[, family_support],
+               use = "complete.obs")
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               number.cex = 0.6,
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+```{r}
+library(corrplot)
+
+digital_exposure = c(1050:1062, 1064)
+
+# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+
+vars.cor = cor(stu_qqq_SGP_impute[, digital_exposure],
+               use = "complete.obs")
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               number.cex = 0.6,
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+```{r}
+library(corrplot)
+
+selected_columns = c(990:1001, 1005:1006,
+                     1007:1015,
+                     1004, 1030:1039,
+                     1050:1062, 1064)
+
+# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+
+vars.cor = cor(stu_qqq_SGP_impute[, selected_columns],
+               use = "complete.obs")
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               number.cex = 0.5,
+               tl.cex = 0.5,
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
 ```

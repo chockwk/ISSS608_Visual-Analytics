@@ -20,7 +20,8 @@ website:
             href: Topics/IC1/IC1.html
           - text: Interactive Data Visualization
             href: Topics/HO3/HO3.html
-          - text: x
+          - text: Animated Data Visualization
+            href: Topics/HO4/HO4.html
           - text: x
             
       - text: "❄ Real-world Exercises"

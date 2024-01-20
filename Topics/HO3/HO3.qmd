@@ -453,4 +453,106 @@ girafe(code = print(plot8 + plot9 + plot10),
 
 # 5. Interactive Data Visualization using R Package: plotly
 
+`plotly` is an R package for creating interactive web-based graphs via the open source JavaScript graphing library `plotly.js`.
+
+## 4.1 plot_ly()
+
+
+::: panel-tabset
+
+### Basic plotly (2 variables)
+
+Each dot represents a student and the associated english and math score is displayed on the interactive graph.
+
+```{r}
+plot_ly(data = exam_data, 
+        x = ~MATHS, y = ~ENGLISH)
+```
+
+### Three variables
+
+`color` argument is mapped to a qualitative visual variable, in this example, RACE. This representation adds on a broad category to the visualization.
+
+```{r}
+plot_ly(data = exam_data, 
+        x = ~MATHS, y = ~ENGLISH,
+        color = ~RACE)
+```
+
+:::
+
+
+## 4.2 ggplotly()
+
+Requires ggplot() and then using ggplotly()
+
+:::panel-tabset
+### Basic ggplotly
+
+```{r}
+p <- ggplot(data=exam_data, 
+            aes(x = MATHS, y = ENGLISH))+
+  geom_point(size=1)+
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+
+ggplotly(p)
+```
+
+### Multiple ggplotly
+
+The creation of a coordinated linked plot by using plotly involves three steps:
+
+highlight_key() of plotly package is used as shared data.
+two scatterplots will be created by using ggplot2 functions.
+lastly, subplot() of plotly package is used to place them next to each other side-by-side.
+
+```{r}
+d <- highlight_key(exam_data)
+p1 <- ggplot(data=d, 
+            aes(x = MATHS,
+                y = ENGLISH)) +
+  geom_point(size=1) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+
+p2 <- ggplot(data=d, 
+            aes(x = MATHS,
+                y = SCIENCE)) +
+  geom_point(size=1) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+subplot(ggplotly(p1),
+        ggplotly(p2))
+```
+:::
+
 # 6. Interactive Data Visualization using R Package: crosstalk
+
+Crosstalk is an add-on to the htmlwidgets package. It extends htmlwidgets with a set of classes, functions, and conventions for implementing cross-widget interactions (currently, linked brushing and filtering).
+
+## 6.1 Data Table
+
+```{r}
+DT::datatable(exam_data, class= "compact")
+```
+
+## 6.2 Linked Brushing
+
+```{r}
+d <- highlight_key(exam_data) 
+p <- ggplot(d, 
+            aes(ENGLISH, 
+                MATHS)) + 
+  geom_point(size=1) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+
+gg <- highlight(ggplotly(p),        
+                "plotly_selected")  
+
+crosstalk::bscols(gg,               
+                  DT::datatable(d), 
+                  widths = 5)  
+```
+
