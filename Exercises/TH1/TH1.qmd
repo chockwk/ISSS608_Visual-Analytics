@@ -69,26 +69,40 @@ Using appropriate Exploratory Data Analysis (EDA) methods and ggplot2 functions,
 
 # 2. Load Packages
 
+::: {.callout-tip collapse="true"}
+## R package functions
+
 The following R packages will be used:
 
 -   `ggiraph` creates dynamic ggplot graphs.
 
 -   `ggrepel` provides geoms to repel overlapping text labels
 
+-   `ggridges` creates ridgeline plots in ggplot2.
+
+-   `ggdist` made for visualizing distributions and uncertainty.
+
 -   `ggthemes` provides themes, geoms, and scales
 
 -   `hrbrthemes` provides typography-centric themes and theme components
+
+-   `likert` and `plyr` create stacked bar charts for survey items.
 
 -   `patchwork` prepares composite figures
 
 -   `haven` reads and writes various data formats used by other statistical packages
 
+-   `corrplot` enables multivariate data visualisation and analysis.
+
+-   `DT` enables R data objects to be displayed as tables on HTML pages.
+
 -   `tidyverse` supports data science, analysis and communication task
 
 -   `kableExtra` builds common complex tables and manipulate table styles
+:::
 
 ```{r}
-pacman::p_load(ggiraph, ggrepel, ggridges, ggdist, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse) 
+pacman::p_load(ggiraph, ggrepel, ggridges, ggdist, ggalluvial, reshape2, corrplot, DT, likert, plyr, kableExtra, patchwork, ggthemes, hrbrthemes, haven, tidyverse, dplyr) 
 ```
 
 # 3. Import Data
@@ -230,9 +244,9 @@ stu_qqq_SGP <- stu_qqq_SGP %>%
 ```
 :::
 
-## Data Scheme
+## 4.4 Data Schema
 
-With **1,279 variables**, we can find out
+The data schema presented map the **complex interrelations** between students' academic performance and various demographic, social, and educational factors. By analyzing performance data in conjunction with demographic variables like gender and socioeconomic status, we aim to identify patterns and correlations that might inform educational strategies. This will involve the use of visual tools such as box plots to compare distributions, scatter plots to discern correlations, and bar charts to display categorical data. The relationship between academic performance and variables like immigrant background will also be examined to understand how educational outcomes are influenced by broader social contexts. The visualizations will serve as a **narrative**, outlining the interplay between various factors and academic success, thereby contributing to a holistic understanding of the educational landscape in Singapore.
 
 ```{mermaid}
 %%| code-fold: true
@@ -243,7 +257,7 @@ flowchart LR
   B --> C[Student ID]
   C --> D{Student \n Performance}
   D --> E[Maths]
-  E --> H[Anxiety \n Cognitive Activation \n Exposure \n Self-efficacy \n Teacher Support]
+  E --> H[Anxiety \n Cognitive Activation \n Exposure \n Self-efficacy \n Teacher Support \n Sense of Belonging \n School Safety \n Perseverance \n Curiosity \n Cooperation \n Stress Resistance \n Emotional Control]
   D --> F[Reading]
   D --> G[Science]
   F --> H
@@ -254,12 +268,13 @@ flowchart LR
   C --> L{Economic \n Social \n Cultural \n Status}
   L --> M[Parents Highest Level of Education\n Parents highest occupational status \n Home Possessions]
   C --> N{Well-being}
-  N --> O[Sense of Belonging \n School Safety \n Perseverance \n Curiosity \n Cooperation \n Stress Resistance \n Emotional Control]
+  N --> H
+  C --> P{Immigrant Background}
+  P --> Q[Native \n First Generation \n Second Generation] 
+  Q --> H
 ```
 
-# 5. Visualize Data
-
-# 5.1 What is the demographics and environment of the students?
+## 4.5 Demographics
 
 To understand the student demographics, we will visualize the distribution and summary statistics of gender, age and nationality. We will also have an overview of the students' time invested in studying and exposure to digital device, and their parent's education level.
 
@@ -284,6 +299,7 @@ plot1 <- ggplot(stu_qqq_SGP, aes(x = ST004D01T))+
   geom_text(stat = "Count",
             aes(label = after_stat(count)),
             vjust = -1)+
+  scale_x_discrete(breaks = c(1, 2), labels = c("Female", "Male")) +
   theme_minimal()
 
 plot2 <- ggplot(stu_qqq_SGP, aes(y = AGE))+
@@ -341,19 +357,19 @@ plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
 ```
 
 ::: {.callout-note appearance="simple"}
-## Observations
+### Insights
 
-1.  **Gender**: The distribution between male and female is relatively even.
+1.  **Gender**: The distribution between genders is fairly balanced. This suggests an almost equal representation of students in terms of gender within the dataset.
 
-2.  **Age**: The median age is 15.75.
+2.  **Age**: The median age is 15.75. There are no apparent outliers, indicating that the ages of the students are within a narrow range, typical of a targeted survey.
 
-3.  **Nationality**: Assuming value 1 is Singapore, majority of the students are local.
+3.  **Nationality**: There are three distinct groups, with the majority of students belonging to nationality. Assuming `1` represents local students, majority of the students are local.
 
-4.  **Study Time**: Most students spend 1 or 6 days studying or doing homework. (In comparison, Masters students spend 7 days studying.)
+4.  **Study Days**: The bar chart suggests most students study 1 to 2 days per week, with numbers dropping as the number of study days increases. One quarter of the students study 6 days, as hardworking as Masters students.
 
-5.  **Digital Exposure**: Manjority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
+5.  **Digital Exposure**: Majority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
 
-6.  **Parents' Education**: Short-cycle tertiary education is not applicable in Singapore. Most parents (70%) hold tertiary and above education.
+6.  **Parents' Education**: The data shows a progressive decrease in the number of parents as the level of education increases. Most parents (70%) are in Level 6 and 7 and hold tertiary and above education.
 
     | ISCED Level | Education Level             |
     |-------------|-----------------------------|
@@ -367,9 +383,145 @@ plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
     | Level 8     | Doctoral or equivalent      |
 :::
 
-## 5.1 How did Singaporean students perform in Maths, Reading and Science?
+# 5. Visualize Data
+
+In our investigation, we will employ data visualization to explore multiple facets of **Singaporean students' educational experiences and outcomes**. Primarily, we aim to understand the emotional, social, and economic aspect of studnets and their performances in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.
+
+## 5.1 What is the students' experience in school?
+
+We delve into the subjective realm of **students' school experiences**. This includes their feelings of safety, respect, and overall well-being within the school environment. We will visualize this data to uncover insights into the emotional and social aspects of their education.
+
+::: panel-tabset
+### Attribute Selection
+
+The selected attributes encompass both the academic and social aspects of school life that can significantly influence a student's well-being and sense of belonging. The output reveals a structured set of responses where students have rated these experiences on a numerical scale, likely ranging from strong disagreement to strong agreement.
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+schsys <- select(stu_qqq_SGP, starts_with(c("ST267", "ST265")))
+
+names(schsys) <- c(
+  ST267Q01JA = "The teachers at my school are respectful towards me.",
+  ST267Q02JA = "If I walked into my classes upset, my teachers would be concerned about me.",
+  ST267Q03JA = "If I came back to visit my school 3 years from now, my teachers would be excited to see me.",
+  ST267Q04JA = "I feel intimidated by the teachers at my school.",
+  ST267Q05JA = "When my teachers ask how I am doing, they are really interested in my answer.",
+  ST267Q06JA = "The teachers at my school are friendly towards me.",
+  ST267Q07JA = "The teachers at my school are interested in students' well-being.",
+  ST267Q08JA = "The teachers at my school are mean towards me.",
+  ST265Q01JA = "I feel safe on my way to school.",
+  ST265Q02JA = "I feel safe on my way home from school.",
+  ST265Q03JA = "I feel safe in my classrooms at school.",
+  ST265Q04JA = "I feel safe at other places at school (e.g. hallway, cafeteria, restroom).")
+
+likert_recode <- function(x) {
+  y <- ifelse(is.na(x), NA, 
+              ifelse(x == 1, "Strongly disagree",
+              ifelse(x == 2, "Disagree",
+              ifelse(x == 3, "Agree",
+              "Strongly agree"))))
+  y <- factor(y, levels = c("Strongly disagree", "Disagree", "Agree", "Strongly agree"))
+  return(y)
+}
+
+schsys_likert <- schsys %>%
+  mutate(across(everything(), likert_recode))
+
+glimpse(schsys_likert)
+```
+
+### Data Transformation
+
+The data transformation process depicted in the R code involves several steps to prepare the data for analysis and visualization:
+
+-   Conversion to Long Format: `pivot_longer()` function is used to convert the dataset into a long format. This restructuring transforms the dataset so that each row represents a single response to a question, with one column for the question text (question) and one column for the response (response).
+
+-   Filtering NA Values: `filter()` function removes rows with NA (missing) responses to ensure they do not affect the visualization and analysis.
+
+-   Factor Recoding: `mutate()` and `factor()` is used to recode the responses into a factor variable. This recoding process labels the numerical values with their corresponding textual responses, such as "Strongly disagree," "Disagree," "Agree," and "Strongly agree."
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+schsys_likert_long <- schsys_likert %>%
+  pivot_longer(cols = 1:12, names_to = "question", values_to = "response") %>%
+  filter(!is.na(response)) %>%
+  mutate(response = factor(response, levels = c(1, 2, 3, 4), labels = c("Strongly disagree", "Disagree", "Agree", "Strongly agree")))
+
+schsys_likert_long <- schsys_likert %>%
+  pivot_longer(
+    cols = everything(), 
+    names_to = "question", 
+    values_to = "response"
+  ) %>%
+  filter(!is.na(response)) %>%
+  mutate(
+    response = factor(
+      response,
+      levels = c(1, 2, 3, 4),
+      labels = c("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+    )
+  )
+
+schsys_likert_long <- schsys_likert_long %>%
+  mutate(short_question = case_when(
+    question == "The teachers at my school are respectful towards me." ~ "The teachers at my school are respectful towards me.",
+    question == "If I walked into my classes upset, my teachers would be concerned about me." ~ "The teachers will be concerned about me if I am upset.",
+    question == "If I came back to visit my school 3 years from now, my teachers would be excited to see me." ~ "The teachers will be excited to see me in future.",
+    question == "I feel intimidated by the teachers at my school." ~ "I feel intimidated by the teachers at my school.",
+    question == "When my teachers ask how I am doing, they are really interested in my answer." ~ "The teachers are genuinely interested when listening to me.",
+    question == "I feel safe at other places at school (e.g. hallway, cafeteria, restroom)." ~ "I feel safe at other places at school.",
+    TRUE ~ question
+  ))
+
+glimpse(schsys_likert_long)
+```
+:::
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+stacked_bar_chart <- ggplot(schsys_likert_long, aes(x = short_question, fill = response)) +
+  geom_bar(position = "fill", stat = "count") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(title = "What is the students' experience in school?", x = NULL, y = "Percentage", fill = "Response") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "RdYlGn") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")+
+  coord_flip()
+
+stacked_bar_chart
+```
+
+::: {.callout-note appearance="simple"}
+### Insights
+
+**Safety**: Students generally feel safe in various school settings, with a significant number agreeing or strongly agreeing that they feel safe on their way to school, at home from school, in their classrooms, and in other places at school. This indicates a positive perception of physical safety within the school environment.
+
+**Respect and Concern**: A substantial proportion of students feel that their teachers are respectful towards them and would be concerned if they were upset. This suggests that students perceive a caring and respectful relationship with their teachers, which is fundamental to a supportive educational atmosphere.
+
+**Teacher Interest and Friendliness**: There is a noticeable agreement among students that teachers are genuinely interested in their answers and are friendly towards them. This highlights the positive social interactions between students and teachers, which can contribute to a more engaging and motivating learning experience.
+
+**Teacher Support for Future and Well-being**: Many students believe that their teachers will be excited to see them if they return in the future and are interested in their well-being. This suggests that students feel supported not just academically but also personally, which can have a positive impact on their overall school experience.
+
+**Negative Experiences**: While the majority of feedback is positive, there are small indications of negative experiences, such as a minority of students feeling intimidated by their teachers or perceiving them as mean. Addressing these negative perceptions is crucial for improving the school climate for all students.
+:::
+
+## 5.2 How did Singaporean students perform in Maths, Reading and Science?
+
+We aim to understand the performance of these students in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.
+
+For each group, the mean scores for mathematics `MATH`, reading `READING`, and science `SCIENCE` are calculated using the mean function applied to a series of plausible values (PV1MATH to PV5MATH for math, PV1READ to PV5READ for reading, and PV1SCIE to PV5SCIE for science). These plausible values represent multiple imputations of the student's likely performance and are averaged to get a single score estimation.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
 stu_qqq_SGP_perf <- stu_qqq_SGP %>%
   group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID, ST004D01T, ESCS) %>%
   summarise(MATH = round(mean(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH, 
@@ -378,19 +530,12 @@ stu_qqq_SGP_perf <- stu_qqq_SGP %>%
                                  PV6READ, PV7READ, PV8READ, PV9READ, PV10READ), 1),
             SCIENCE = round(mean(PV1SCIE, PV2SCIE, PV3SCIE, PV4SCIE, PV5SCIE,
                                  PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
-```
-
-```{r}
-glimpse(stu_qqq_SGP_perf)
-```
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
 
 stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$MATH)
 stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$READING)
 stu_qqq_SGP_perf$MATH <- as.integer(stu_qqq_SGP_perf$SCIENCE)
+
+glimpse(stu_qqq_SGP_perf)
 ```
 
 ```{r}
@@ -401,6 +546,7 @@ plot7 <- ggplot(stu_qqq_SGP_perf,
                 aes(x = MATH, y = ST004D01T,
                     fill = ST004D01T, colour = ST004D01T))+
   geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  scale_y_discrete(breaks = c(1, 2), labels = c("Female", "Male"))+
   geom_vline(aes(xintercept = 472), 
              colour = "azure4",
              linetype = "dashed") +
@@ -431,9 +577,10 @@ plot8 <- ggplot(stu_qqq_SGP_perf,
                 aes(x = READING, y = ST004D01T,
                     fill = ST004D01T, colour = ST004D01T))+
   geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  scale_y_discrete(breaks = c(1, 2), labels = c("Female", "Male"))+
   geom_vline(aes(xintercept = 476), 
              colour = "azure4",
-             linetype = "dashed") +
+             linetype = "dashed")+
   annotate(geom = "text", x = 500, y = 3,  
            label = "OECD Mean Reading Score = 476",
            vjust = -0.5,  
@@ -441,12 +588,12 @@ plot8 <- ggplot(stu_qqq_SGP_perf,
            size = 3.5) +
   geom_vline(aes(xintercept = 543), 
              colour = "azure4",
-             linetype = "dashed") +
+             linetype = "dashed")+
   annotate(geom = "text", x = 1000, y = 3,  
            label = "SGP Mean Reading Score = 543",
            vjust = -0.5,  
            hjust = 1.2,
-           size = 3.5) +
+           size = 3.5)+
   geom_boxplot(colour = "black",
                width = .20,
                outlier.shape = NA,
@@ -461,9 +608,10 @@ plot9 <- ggplot(stu_qqq_SGP_perf,
                 aes(x = SCIENCE, y = ST004D01T,
                     fill = ST004D01T, colour = ST004D01T))+
   geom_density_ridges(bandwidth = 7, alpha = 0.6)+
+  scale_y_discrete(breaks = c(1, 2), labels = c("Female", "Male"))+
   geom_vline(aes(xintercept = 485), 
              colour = "azure4",
-             linetype = "dashed") +
+             linetype = "dashed")+
   annotate(geom = "text", x = 500, y = 3,  
            label = "OECD Mean Science Score = 485",
            vjust = -0.5,  
@@ -471,7 +619,7 @@ plot9 <- ggplot(stu_qqq_SGP_perf,
            size = 3.5) +
   geom_vline(aes(xintercept = 561), 
              colour = "azure4",
-             linetype = "dashed") +
+             linetype = "dashed")+
   annotate(geom = "text", x = 1000, y = 3,  
            label = "SGP Mean Maths Score = 561",
            vjust = -0.5,  
@@ -486,23 +634,60 @@ plot9 <- ggplot(stu_qqq_SGP_perf,
   theme_minimal()+
   theme(legend.position = "none")
 
-plot7 / plot8 / plot9
+combined_plot <- plot7 / plot8 / plot9 + 
+  plot_layout(guides = "collect") + 
+  plot_annotation(
+    title = "How did Singaporean students perform in Maths, Reading and Science?",
+    theme = theme(plot.title = element_text(hjust = 0))
+  )
+combined_plot
 ```
 
+::: {.callout-note appearance="simple"}
+### Insights
 
-## 5.2 Does the school system affect Singaporean students' performance in Maths, Reading and Science?
+Singapore mean score for Mathematics, Reading and Science is **higher than the OECD mean**, it suggests that Singaporean students perform better than the OECD average in across the three aspects assessed. The **position of the peaks** (modes) of the distributions for male and female students, which indicates the most common score range for each gender, are fairly **close**. The **spread of the distributions**, which can show the range of scores and variability within each gender group, is also **similar**. There is a minor performance variation observed in reading where the mean score for female is higher than that of male.
+:::
 
-## 5.2 Does socio-economic background affect Singaporean students' performance in Maths, Reading and Science?
+## 5.3 Does socio-economic background affect Singaporean students' performance in Maths, Reading and Science?
 
-PISA index of economic, social, and cultural status ESCS is a composite score that combines into a single score information from three components: parents’ highest level of education (PARED index1); parents’ highest occupational status (HISEI index1); and home possessions (HOMEPOS index1, which is a proxy for family wealth).
+A critical component of our analysis will focus on the impact of **socio-economic status** on academic performance. We will create visualizations that relates various socio-economic indicators with student achievement in the three core study areas mentioned above. By doing so, we hope to reveal the extent to which socio-economic factors play a role in educational success or challenges.
+
+PISA index of economic, social, and cultural status (**ESCS**) is a **composite score** that combines into a single score information from three components: **parents’ highest level of education** (PARED index1); **parents’ highest occupational status** (HISEI index1); and **home possessions** (HOMEPOS index1, which is a proxy for family wealth).
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+model_maths <- lm(ESCS ~ MATH, data = stu_qqq_SGP_perf)
+summary_model_maths <- summary(model_maths)
+rsquared_maths <- summary_model_maths$r.squared
+pvalue_maths <- round(summary_model_maths$coefficients[2,4], 5)
+
+model_reading <- lm(ESCS ~ READING, data = stu_qqq_SGP_perf)
+summary_model_reading <- summary(model_reading)
+rsquared_reading <- summary_model_reading$r.squared
+pvalue_reading <- round(summary_model_reading$coefficients[2,4], 5)
+
+model_science <- lm(ESCS ~ SCIENCE, data = stu_qqq_SGP_perf)
+summary_model_science <- summary(model_science)
+rsquared_science <- summary_model_science$r.squared
+pvalue_science <- round(summary_model_science$coefficients[2,4], 5)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
 plot10 <- ggplot(data = stu_qqq_SGP_perf,
                  aes(y = ESCS, x = MATH, 
                      fill = ST004D01T, colour = ST004D01T))+
   geom_point(alpha = 0.3)+
   geom_smooth(size = 0.8)+
-  labs(title = "ESCS and MATH", x = "Maths", y = "Socio-economic Index (ESCS)")+
+  annotate("text", x = 500, y = 2, 
+           label = paste("R^2 = ", round(rsquared_maths, 3), "\np-value = ", pvalue_maths), 
+           hjust = 0, vjust = 0, size = 3)+
+  labs(title = NULL, x = "Maths Score", y = "Socio-economic Index (ESCS)")+
   theme_minimal()+
   xlim(100,900)+
   theme(legend.position = "none",
@@ -515,7 +700,10 @@ plot11 <- ggplot(data = stu_qqq_SGP_perf,
                      fill = ST004D01T, colour = ST004D01T))+
   geom_point(alpha = 0.3)+
   geom_smooth(size = 0.8)+
-  labs(title = "ESCS and READING", x = "Reading", y = NULL)+
+  annotate("text", x = 500, y = 2, 
+           label = paste("R^2 = ", round(rsquared_reading, 3), "\np-value = ", pvalue_reading), 
+           hjust = 0, vjust = 0, size = 3)+
+  labs(title = NULL, x = "Reading Score", y = NULL)+
   theme_minimal()+
   xlim(100,900)+
   theme(legend.position = "none",
@@ -529,7 +717,10 @@ plot12 <- ggplot(data = stu_qqq_SGP_perf,
                      fill = ST004D01T, colour = ST004D01T))+
   geom_point(alpha = 0.3)+
   geom_smooth(size = 0.8)+
-  labs(title = "ESCS and SCIENCE", x = "Science", y = NULL)+
+  annotate("text", x = 500, y = 2, 
+           label = paste("R^2 = ", round(rsquared_science, 3), "\np-value = ", pvalue_science), 
+           hjust = 0, vjust = 0, size = 3)+
+  labs(title = NULL, x = "Science Score", y = NULL)+
   theme_minimal()+
   xlim(100,900)+
   theme(legend.position = "none",
@@ -538,11 +729,30 @@ plot12 <- ggplot(data = stu_qqq_SGP_perf,
         axis.line = element_line(colour = "grey"))+
   theme(axis.text.y = element_blank())
 
-plot10 + plot11 + plot12
+combined_plot <- plot10 + plot11 + plot12 + 
+  plot_layout(guides = "collect") + 
+  plot_annotation(
+    title = "Does socio-economic background affect Singaporean students' performance in \nMaths, Reading and Science?",
+    theme = theme(plot.title = element_text(hjust = 0))
+  )
+
+# Print the combined plot with the overall title
+combined_plot
 ```
 
+::: {.callout-note appearance="simple"}
+### Insights
 
-## 5.2 Does correlation exist between the weighted likelihood estimates (WLEs)?
+The scatter plots with overlaid trend lines demonstrate the relationship between students' scores in Mathematics, Reading, and Science, and their socio-economic status (ESCS). An observed positive trend indicates that students with higher socio-economic status tend to score higher in these subjects.
+
+The strength of this relationship can be quantified by the R-squared value; the closer it is to 1, the stronger the relationship. The p-value tests the significance of the relationship, with values less than 0.05 typically considered statistically significant.
+:::
+
+## 5.4 Does correlation exist between the weighted likelihood estimates (WLEs)?
+
+We examine the relationship between the weighted likelihood estimates (WLEs) for each student, which serve as **measures of ability** based on their responses to assessment items. Through correlation analysis, we will determine if there are any significant associations between these estimates across different subjects.
+
+For the analysis, we will impute the NA values with 0. After imputation, `is.na()` returns 0, where there is no NA values.
 
 ```{r}
 #| code-fold: true
@@ -551,19 +761,81 @@ plot10 + plot11 + plot12
 stu_qqq_SGP_impute <- stu_qqq_SGP %>%
   mutate_all(funs(ifelse(is.na(.), 0, .)))
 
-stu_qqq_SGP_impute$FAMSUP <- as.double(stu_qqq_SGP_impute$FAMSUP)
-stu_qqq_SGP_impute$DISCLIM <- as.double(stu_qqq_SGP_impute$DISCLIM)
-stu_qqq_SGP_impute$TEACHSUP<- as.double(stu_qqq_SGP_impute$TEACHSUP)
-stu_qqq_SGP_impute$COGACRCO<- as.double(stu_qqq_SGP_impute$COGACRCO)
-COGACRCO
+sum(is.na(stu_qqq_SGP_impute))
 ```
 
-```{r}
-library(corrplot)
+::: panel-tabset
+### Overall Corrplot
 
-emotional_wellbeing = c(990:1001, 1005:1006)
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+selected_columns = c(990:1001, 1005:1006,
+                     1007:1015,
+                     1004, 1030:1039,
+                     1050:1062, 1064)
 
 # stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+
+vars.cor = cor(stu_qqq_SGP_impute[, selected_columns],
+               use = "complete.obs")
+
+corrplot(vars.cor, 
+         method = 'circle',
+         order = "hclust", 
+         tl.cex = 0.5, 
+         tl.col = "black", 
+         addrect = 12)
+```
+
+### Overall Mixed Corrplot
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+corrplot.mixed(vars.cor,
+               lower = "ellipse", 
+               upper = "number",
+               number.cex = 0.3,
+               tl.cex = 0.5,
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black",
+               order = "hclust",
+               addrect = 3)
+```
+
+### Emotional Well-being
+
+-   RELATST Quality of student-teacher relationships (WLE)
+-   BELONG Sense of belonging (WLE)
+-   BULLIED Being bullied (WLE)
+-   FEELSAFE Feeling safe (WLE)
+-   SCHRISK School safety risks (WLE)
+-   PERSEVAGR Perseverance (agreement) (WLE) 
+-   CURIOAGR Curiosity (agreement) (WLE)
+
+-   COOPAGR Cooperation (agreement) (WLE)
+
+-   EMPATAGR Empathy (agreement) (WLE)
+
+-   ASSERAGR Assertiveness (agreement) (WLE)
+
+-   STRESAGR Stress resistance (agreement) (WLE)
+
+-   EMOCOAGR Emotional control (agreement) (WLE)
+
+-   DISCLIM Disciplinary climate in mathematics (WLE) T
+
+-   EACHSUP Mathematics Teacher Support (WLE)
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+emotional_wellbeing = c(990:1001, 1005:1006)
 
 vars.cor = cor(stu_qqq_SGP_impute[, emotional_wellbeing],
                use = "complete.obs")
@@ -576,16 +848,35 @@ corrplot.mixed(vars.cor,
                tl.col = "black")
 ```
 
+### School Support
+
+-   COGACRCO Cognitive activation in mathematics: Foster reasoning Version B (WLE)
+
+-   COGACMCO Cognitive activation in mathematics: Encourage mathematical thinking Version B (WLE)
+
+-   EXPOFA Exposure to Formal and Applied Mathematics Tasks (WLE)
+
+-   EXPO21ST Exposure to Mathematical Reasoning and 21st century mathematics tasks (WLE)
+
+-   MATHEFF Mathematics self-efficacy: formal and applied mathematics - response options reversed in 2022 (WLE)
+
+-   MATHEF21 Mathematics self-efficacy: mathematical reasoning and 21st century skills (WLE)
+
+-   FAMCON Subjective familiarity with mathematics concepts (WLE)
+
+-   ANXMAT Mathematics Anxiety (WLE)
+
+-   MATHPERS Effort and Persistence in Mathematics (WLE)
 
 ```{r}
-library(corrplot)
+#| code-fold: true
+#| code-summary: "Show the code"
 
-school_support = c(1007:1015)
-
-# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
+school_support = c(1006:1016)
 
 vars.cor = cor(stu_qqq_SGP_impute[, school_support],
                use = "complete.obs")
+
 corrplot.mixed(vars.cor,
                lower = "ellipse", 
                upper = "number",
@@ -595,12 +886,34 @@ corrplot.mixed(vars.cor,
                tl.col = "black")
 ```
 
+### Family Support
+
+-   FAMSUP Family support (WLE)
+
+-   MISCED Mother’s level of education (ISCED)
+
+-   FISCED Father’s level of education (ISCED)
+
+-   HISCED Highest level of education of parents (ISCED)
+
+-   PAREDINT Index highest parental education (international years of schooling scale)
+
+-   BMMJ1 Mother’s occupational status (ISEI) based on 4-digit human coded ISCO
+
+-   BFMJ2 Father’s occupational status (ISEI) based on 4-digit human coded ISCO
+
+-   HISEI Highest parental occupational status (ISEI) based on 4-digit human coded ISCO
+
+-   ICTRES ICT Resources (WLE) HOMEPOS Home possessions (WLE)
+
+-   ESCS Index of economic, social and cultural status
+
 ```{r}
-library(corrplot)
+#| code-fold: true
+#| code-summary: "Show the code"
+
 
 family_support = c(1004, 1030:1039)
-
-# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
 
 vars.cor = cor(stu_qqq_SGP_impute[, family_support],
                use = "complete.obs")
@@ -613,12 +926,42 @@ corrplot.mixed(vars.cor,
                tl.col = "black")
 ```
 
+### Digital exposure
+
+-   ICTSCH ICT availability at school (WLE)
+
+-   ICTAVSCH Availability and Usage of ICT at School
+
+-   ICTHOME ICT availability outside of school (WLE)
+
+-   ICTAVHOM Availability and Usage of ICT at Home
+
+-   ICTQUAL Quality of access to ICT (WLE)
+
+-   ICTSUBJ Subject-related ICT Use During Lessons (WLE)
+
+-   ICTENQ Use of ICT in enquiry-based learning activities (WLE)
+
+-   ICTFEED Support or feedback via ICT (WLE)
+
+-   ICTOUT Use of ICT for school activities outside of the classroom (WLE)
+
+-   ICTWKDY Frequency of ICT activity (weekday) (WLE)
+
+-   ICTWKEND Frequency of ICT activity (weekend) (WLE)
+
+-   ICTREG Views of regulated ICT use in school (WLE)
+
+-   ICTINFO Students’ practices regarding online information (WLE)
+
+-   ICTEFFIC Self-efficacy in digital competencies (WLE)
+
 ```{r}
-library(corrplot)
+#| code-fold: true
+#| code-summary: "Show the code"
+
 
 digital_exposure = c(1050:1062, 1064)
-
-# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
 
 vars.cor = cor(stu_qqq_SGP_impute[, digital_exposure],
                use = "complete.obs")
@@ -630,25 +973,169 @@ corrplot.mixed(vars.cor,
                diag = "l",
                tl.col = "black")
 ```
+:::
+
+::: {.callout-note appearance="simple"}
+#### Insights
+
+Positive Correlations
+
+Negative Correlations
+`BULLIED`
+`SCHRISK`
+`ANXMAT`
+:::
+
+## 5.5 Does immigration status affect students' sense of belonging in Singapore?
+
+The impact of immigration status on students' sense of belonging will be scrutinized. We will analyze how being a native, a first-generation immigrant, or a second-generation immigrant influences students' reported sense of integration and acceptance within their school community. The goal is to provide a comprehensive overview of the many dimensions that contribute to the educational experiences of students in Singapore.
+
+::: panel-tabset
+### Data Preparation
+
+The immigration status is converted into a factor with levels "Native", "First-Generation", and "Second-Generation" based on `IMMIG`.
+
+**Native**: Students are born in Singapore with parents who are Singapore citizens. They have likely spent their entire lives within the country's education system and culture. **First-Generation**: These students are the first in their family to be born in Singapore, with parents who have immigrated from another country. They are navigating a blend of cultural identities from their home environment and the broader Singaporean culture. **Second-Generation**: This group consists of students born in Singapore to first-generation immigrant parents. While they are born and brought up in Singapore, their household may still hold strong cultural ties to their parents' country of origin.
+
+Following this, the data is reshaped from a wide to a long format using the `melt` function, where columns are collapsed into two new variables: "question" and "response". The response variable is recoded into a factor with levels. This recoding process transforms numeric responses into descriptive labels, and the result is stored in a new variable response3.
 
 ```{r}
-library(corrplot)
+#| code-fold: true
+#| code-summary: "Show the code"
 
-selected_columns = c(990:1001, 1005:1006,
-                     1007:1015,
-                     1004, 1030:1039,
-                     1050:1062, 1064)
+data_long <- stu_qqq_SGP %>%
+  dplyr::mutate(gender = ifelse(ST004D01T == 1, "Female", "Male"),
+                 immigration = factor(ifelse(is.na(IMMIG), NA,
+                                             ifelse(IMMIG == 1, "Native", 
+                                                    ifelse(IMMIG == 2, "Second-Generation", 
+                                                           "First-Generation"))),
+                                      levels = c("Native", "First-Generation", "Second-Generation"))) %>%
+  dplyr::select(-ST004D01T, -IMMIG) %>%
+  dplyr::rename(grade = ST001D01T, student = CNTSTUID, age = AGE) %>% 
+  melt(data = .,
+       id.vars = c("student", "grade", "age", "gender", "immigration"),
+       variable.name = "question",
+       value.name = "response") %>%
+  mutate(response2 = (ifelse(is.na(response), "NA",
+                             ifelse(response == 1, "Strongly disagree",
+                                    ifelse(response == 2, "Disagree",
+                                           ifelse(response == 3, "Agree", "Strongly agree"))))),
+         response3 = factor(response2, levels = c("NA", "Strongly disagree", "Disagree", "Agree", "Strongly agree"))) 
 
-# stu_qqq_SGP_impute[, selected_columns] <- lapply(stu_qqq_SGP_impute[, selected_columns], as.numeric)
-
-vars.cor = cor(stu_qqq_SGP_impute[, selected_columns],
-               use = "complete.obs")
-corrplot.mixed(vars.cor,
-               lower = "ellipse", 
-               upper = "number",
-               number.cex = 0.5,
-               tl.cex = 0.5,
-               tl.pos = "lt",
-               diag = "l",
-               tl.col = "black")
+glimpse(data_long)
 ```
+
+### Mapping
+
+The responses are related to a specific question `ST267Q03JA`: **If I came back to visit my school 3 years from now, my teachers would be excited to see me.**
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+ST267Q03JA <- data_long %>%
+  filter(question == "ST267Q03JA") %>%
+  group_by(gender, immigration, response3) %>%
+  dplyr::summarise(Freq = dplyr::n())
+
+str(ST267Q03JA)
+```
+:::
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+ggplot(ST267Q03JA,
+       aes(y = Freq, axis1 = gender, axis2 = immigration, axis3 = response3)) +
+  geom_alluvium(aes(fill = gender), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("gender", "immigration", "response3"), expand = c(.1, .1)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("If I came back to visit my school 3 years from now,\nmy teachers would be excited to see me.")+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+```
+
+::: {.callout-note appearance="simple"}
+#### Insights
+
+The question "If I came back to visit my school 3 years from now, my teachers would be excited to see me." is a sentiment that can reflect a student's **perceived sense of belonging** and the success of the education system in creating an **inclusive** and **supportive** environment. A student's positive anticipation of a warm welcome upon return indicates a feeling of continued connection and support, which can be critical for the well-being and integration of immigrant students.
+
+Observations from the alluvial diagram suggest that there are **discernible differences** in how students of varying immigration statuses feel about the potential excitement of their teachers upon their return. For instance, if we focus on the thickness of the flows connecting to "Strongly agree", it may indicate that a considerable number of Native students feel positively about their teachers' reception to their return, which could imply a strong sense of belonging and positive school experience. First-Generation and Second-Generation students also show flows to "Strongly agree", but the relative thickness might suggest differences in intensity of this sentiment compared to Native students.
+:::
+
+# 6. Discussion
+
+The bar charts present students' self-reported effort levels in the PISA test across three different scenarios: actual effort put into the test, hypothetical effort if PISA scores counted towards school marks, and effort put into giving accurate answers. Notably, the highest frequency of students reported the maximum effort level (10) across all scenarios, which suggests a significant level of engagement with the PISA test.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+# ST331Q01JA How much effort did you put into doing well on the PISA test? 
+  
+plot100 <- ggplot(stu_qqq_SGP, aes(x = ST331Q01JA))+
+  geom_bar(colour = "black", 
+           fill = "aquamarine")+
+  labs(title = "How much effort did you\nput into doing well\non the PISA test?", x = NULL, y = NULL)+
+  xlim(0,10)+
+  ylim(0,2000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)+
+  theme_minimal()
+
+#ST331Q02JA How much effort would you have invested if your results from the PISA test were counted in your school marks? 
+
+plot101 <- ggplot(stu_qqq_SGP, aes(x = ST331Q02JA))+
+  geom_bar(colour = "black", 
+           fill = "aquamarine3")+
+  labs(title = "How much effort would\nyou have invested if\nyour results from the\nPISA test were counted\nin your school marks?", x = NULL, y = NULL)+
+  xlim(0,10)+
+  ylim(0,2000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)+
+  theme_minimal()
+
+#ST331Q03JA How much effort did you put into giving accurate answers?
+plot102 <- ggplot(stu_qqq_SGP, aes(x = ST331Q03JA))+
+  geom_bar(colour = "black", 
+           fill = "aquamarine4")+
+  labs(title = "How much effort did\nyou put into giving\naccurate answers?", x = NULL, y = NULL)+
+  xlim(0,10)+
+  ylim(0,2000)+
+  geom_text(stat = "Count",
+            aes(label = after_stat(count)),
+            vjust = -1)+
+  theme_minimal()
+
+combined_plot <- plot100 + plot101 + plot102 + 
+  plot_layout(guides = "collect") + 
+  plot_annotation(
+    title = "How accurate is PISA 2022?",
+    theme = theme(plot.title = element_text(hjust = 0, size = 15))
+  )
+combined_plot
+```
+
+Students' experience in school capture students' perceptions of their experience in school often reveal insights into the school environment, teacher-student relationships, and overall student well-being. Positive experiences can correlate with higher engagement and academic performance, while negative experiences may indicate areas where interventions are needed.
+
+The performance in Maths, Reading, and Science is often used as an indicator of the education system's effectiveness. High performance in these areas, especially when compared to international benchmarks like the OECD average, suggests a strong educational foundation and effective teaching methods.
+
+The socio-economic status (SES) of students can have a significant impact on their educational outcomes. A positive correlation between SES and performance indicates that socio-economic factors may provide advantages or disadvantages that affect student performance, suggesting a need for policies to promote educational equity.
+
+Investigating the correlation between weighted likelihood estimates can help understand how different student attributes relate to each other. Strong correlations may reveal underlying patterns, such as the link between students' self-beliefs in their abilities and their actual academic performance.
+
+The sense of belonging can be a crucial factor in a student's school experience, affecting both their well-being and academic outcomes. Analyzing the responses based on immigration status can shed light on how inclusive and supportive the school environment is towards diverse student backgrounds.
+
+# 7. Conclusion
+
+In conclusion, the analysis of student data across multiple dimensions—ranging from academic performance in key subjects to the impact of socio-economic factors—provides a nuanced picture of the educational landscape. The interplay between students' experiences within the school environment and their sense of belonging, particularly in the context of diverse backgrounds, underscores the importance of fostering inclusive and supportive educational spaces. The findings suggest that while Singaporean students perform well in areas like Maths, Reading, and Science, there are opportunities to enhance the educational experience by addressing disparities that may arise from socio-economic and immigration status differences. Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.
+
+# 8. References
