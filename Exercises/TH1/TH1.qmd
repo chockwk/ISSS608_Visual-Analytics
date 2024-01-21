@@ -511,9 +511,9 @@ stacked_bar_chart <- ggplot(schsys_likert_long, aes(x = short_question, fill = r
 stacked_bar_chart
 ```
 
-::: {.callout-note appearance="simple"}
 ![](images/Screenshot 2024-01-21 at 11.44.35PM.png)
 
+::: {.callout-note appearance="simple"}
 ### Insights
 
 **Safety**: Students generally feel safe in various school settings. This indicates a **positive perception of physical safety** within the school environment.
