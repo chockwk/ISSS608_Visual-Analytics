@@ -119,7 +119,9 @@ Source: [PISA 2022](https://www.oecd.org/pisa/data/2022database/) (data) and [PI
 stu_qqq <- read_sas("data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat")
 ```
 
-The output shows **613,744 observations** with **1,279 variables**. Being a global survey, the `stu_qqq` dataset contains several nominal data columns to label and categorize the students; namely country code `CNT`, country identifier `CNTRYID`, school ID `CNTSCHID` and student ID `CNTSTUID`. The other variables examine numerous aspects of well-being, education system, family background and pandemic-related impact on education.
+The output shows **613,744 observations** with **1,279 variables**.
+
+Being a global survey, the `stu_qqq` dataset contains several nominal data columns to label and categorize the students; namely country code `CNT`, country identifier `CNTRYID`, school ID `CNTSCHID` and student ID `CNTSTUID`. The other variables examine numerous aspects of well-being, education system, family background and pandemic-related impact on education.
 
 ## Singapore Dataset
 
@@ -131,7 +133,9 @@ stu_qqq_SGP <- stu_qqq %>%
   filter(CNT == "SGP")
 ```
 
-The output shows **6,606 observations** with **1,279 variables** where Singapore accounts for close to **1%** of the observations. The number of observations is likely to reflect the number of students who undergo the assessment. Based on the duplication check using student ID `CNTSTUID`, there are **zero observations** which indicates unique student ID with **no duplication**. To enable efficient loading of dataset, there will be save and load points to prevent import of large datasets.
+The output shows **6,606 observations** with **1,279 variables** where Singapore accounts for close to **1%** of the observations. The number of observations is likely to reflect the number of students who undergo the assessment.
+
+Based on the duplication check using student ID `CNTSTUID`, there are **zero observations** which indicates unique student ID with **no duplication**. To enable efficient loading of dataset, there will be save and load points to prevent import of large datasets.
 
 ::: {.callout-caution collapse="true"}
 ## Save Point
@@ -163,7 +167,7 @@ duplicate <- stu_qqq_SGP %>%
 # 4. Explore Data
 
 ::: panel-tabset
-## 4.1 Data Table
+## Data Table
 
 As of 2022, Singapore has **148 public secondary schools** under [MOE](https://www.moe.gov.sg/schoolfinder?journey=Secondary%20school) and **24 [international schools](https://en.wikipedia.org/wiki/List_of_international_schools_in_Singapore)**. From the data table, PISA 2022 database compiles the student assessment across **164 unique school ID**, surveying an impressive **95% of local schools**. In addition, Singapore is allocated a country ID `CNTRYID` 702 and the school ID `CNTSCHID` ranges from 70200001 to 70200165.
 
@@ -184,7 +188,7 @@ DT::datatable(SCH_table)
 Given that the index runs from 1 to 164 and the school ID `CNTSCHID` ranges from 70200001 to 70200165, there is no school allocated to '70200150'.
 :::
 
-There is an average of\* **40.28 students assessed per school**, equivalent to the **class size** of a level, in Singapore context, Secondary 3.
+There is an average of **40.28 students assessed per school**, equivalent to the **class size** of a level, in Singapore context, **Secondary 3**.
 
 ```{r}
 #| code-fold: true
@@ -193,7 +197,7 @@ There is an average of\* **40.28 students assessed per school**, equivalent to t
 summary(SCH_table$TOTAL_STUDENT)
 ```
 
-## 4.2 Data Structure
+## Data Structure
 
 The data structure can be obtained using `str()`, `glimpse()` or `head()`. Due to the large number of variables and display purposes, we will display up to 20 variables.
 
@@ -213,7 +217,7 @@ There is an observable number of `NA` values in the tibble table. Appropriate im
 sum(is.na(stu_qqq_SGP))
 ```
 
-## 4.3 Data Type
+## Data Type
 
 Casting to **character**:
 
@@ -231,6 +235,8 @@ stu_qqq_SGP <- stu_qqq_SGP %>%
 
 Casting to **factor**:
 
+`ST004D01T`, `ST294Q02JA`, `ST272Q01JA`, `ST019AQ01T` and `ST253Q01JA` are casted from `dbl` to `factor` as categorical variables.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -244,9 +250,13 @@ stu_qqq_SGP <- stu_qqq_SGP %>%
 ```
 :::
 
-## 4.4 Data Schema
+## Data Schema
 
-The data schema presented map the **complex interrelations** between students' academic performance and various demographic, social, and educational factors. By analyzing performance data in conjunction with demographic variables like gender and socioeconomic status, we aim to identify patterns and correlations that might inform educational strategies. This will involve the use of visual tools such as box plots to compare distributions, scatter plots to discern correlations, and bar charts to display categorical data. The relationship between academic performance and variables like immigrant background will also be examined to understand how educational outcomes are influenced by broader social contexts. The visualizations will serve as a **narrative**, outlining the interplay between various factors and academic success, thereby contributing to a holistic understanding of the educational landscape in Singapore.
+The data schema presented map the **complex interrelations** between students' academic performance and various demographic, social, and educational factors.
+
+By analyzing performance data in conjunction with demographic variables like gender and socioeconomic status, we aim to identify patterns and correlations that might inform educational strategies. This involves the use of visual tools such as box plots to compare distributions, scatter plots to discern correlations, and bar charts to display categorical data.
+
+The visualizations will serve as a **narrative**, outlining the interplay between various factors and academic success, thereby contributing to a holistic understanding of the educational landscape in Singapore.
 
 ```{mermaid}
 %%| code-fold: true
@@ -274,7 +284,7 @@ flowchart LR
   Q --> H
 ```
 
-## 4.5 Demographics
+## Demographics
 
 To understand the student demographics, we will visualize the distribution and summary statistics of gender, age and nationality. We will also have an overview of the students' time invested in studying and exposure to digital device, and their parent's education level.
 
@@ -353,23 +363,30 @@ plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
             size = 3)+
   theme_minimal()
 
-(plot1 + plot2 + plot3) / (plot4 + plot5 + plot6)
+combined_plot <- (plot1 + plot2 + plot3) / (plot4 + plot5 + plot6) + 
+  plot_layout(guides = "collect") + 
+  plot_annotation(
+    title = "Demographics of Singapore PISA 2022",
+    theme = theme(plot.title = element_text(hjust = 0))
+  )
+combined_plot
+
 ```
 
 ::: {.callout-note appearance="simple"}
 ### Insights
 
-1.  **Gender**: The distribution between genders is fairly balanced. This suggests an almost equal representation of students in terms of gender within the dataset.
+1.  **Gender**: The distribution between genders is **fairly balanced**. This suggests an almost equal representation of students in terms of gender within the dataset.
 
-2.  **Age**: The median age is 15.75. There are no apparent outliers, indicating that the ages of the students are within a narrow range, typical of a targeted survey.
+2.  **Age**: The median age is **15.75**. There are no apparent outliers, indicating that the ages of the students are **within a narrow range**, typical of a targeted survey.
 
-3.  **Nationality**: There are three distinct groups, with the majority of students belonging to nationality. Assuming `1` represents local students, majority of the students are local.
+3.  **Nationality**: There are three distinct groups, with the majority of students belonging to nationality. Assuming `1` represents local students, **majority of the students are local**.
 
-4.  **Study Days**: The bar chart suggests most students study 1 to 2 days per week, with numbers dropping as the number of study days increases. One quarter of the students study 6 days, as hardworking as Masters students.
+4.  **Study Days**: The bar chart suggests most students study **one to two days per week**, with numbers dropping as the number of study days increases. One quarter of the students study 6 days, as hardworking as Masters students.
 
-5.  **Digital Exposure**: Majority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
+5.  **Digital Exposure**: Majority of the students are exposed to **one device**, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.
 
-6.  **Parents' Education**: The data shows a progressive decrease in the number of parents as the level of education increases. Most parents (70%) are in Level 6 and 7 and hold tertiary and above education.
+6.  **Parents' Education**: The data shows a progressive decrease in the number of parents as the level of education increases. Most parents (70%) are in **Level 6 and 7** and hold **tertiary and above** education.
 
     | ISCED Level | Education Level             |
     |-------------|-----------------------------|
@@ -385,7 +402,7 @@ plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
 
 # 5. Visualize Data
 
-In our investigation, we will employ data visualization to explore multiple facets of **Singaporean students' educational experiences and outcomes**. Primarily, we aim to understand the emotional, social, and economic aspect of studnets and their performances in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.
+In our investigation, we will employ data visualization to explore multiple facets of **Singaporean students' educational experiences and outcomes**.
 
 ## 5.1 What is the students' experience in school?
 
@@ -394,13 +411,13 @@ We delve into the subjective realm of **students' school experiences**. This inc
 ::: panel-tabset
 ### Attribute Selection
 
-The selected attributes encompass both the academic and social aspects of school life that can significantly influence a student's well-being and sense of belonging. The output reveals a structured set of responses where students have rated these experiences on a numerical scale, likely ranging from strong disagreement to strong agreement.
+The selected attributes encompass both the **academic and social aspects of school life** that can significantly influence a student's well-being and sense of belonging. The output reveals a structured set of responses where students have rated these experiences on a **numerical scale**, likely ranging from strong disagreement to strong agreement.
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
-schsys <- select(stu_qqq_SGP, starts_with(c("ST267", "ST265")))
+schsys <- select(stu_qqq_SGP, starts_with(c("ST267")))
 
 names(schsys) <- c(
   ST267Q01JA = "The teachers at my school are respectful towards me.",
@@ -410,11 +427,7 @@ names(schsys) <- c(
   ST267Q05JA = "When my teachers ask how I am doing, they are really interested in my answer.",
   ST267Q06JA = "The teachers at my school are friendly towards me.",
   ST267Q07JA = "The teachers at my school are interested in students' well-being.",
-  ST267Q08JA = "The teachers at my school are mean towards me.",
-  ST265Q01JA = "I feel safe on my way to school.",
-  ST265Q02JA = "I feel safe on my way home from school.",
-  ST265Q03JA = "I feel safe in my classrooms at school.",
-  ST265Q04JA = "I feel safe at other places at school (e.g. hallway, cafeteria, restroom).")
+  ST267Q08JA = "The teachers at my school are mean towards me.")
 
 likert_recode <- function(x) {
   y <- ifelse(is.na(x), NA, 
@@ -436,18 +449,18 @@ glimpse(schsys_likert)
 
 The data transformation process depicted in the R code involves several steps to prepare the data for analysis and visualization:
 
--   Conversion to Long Format: `pivot_longer()` function is used to convert the dataset into a long format. This restructuring transforms the dataset so that each row represents a single response to a question, with one column for the question text (question) and one column for the response (response).
+-   **Conversion to Long Format**: `pivot_longer()` function is used to convert the dataset into a long format. This restructuring transforms the dataset so that each row represents a single response to a question, with one column for the question text (question) and one column for the response (response).
 
--   Filtering NA Values: `filter()` function removes rows with NA (missing) responses to ensure they do not affect the visualization and analysis.
+-   **Filtering `NA` Values**: `filter()` function removes rows with NA (missing) responses to ensure they do not affect the visualization and analysis.
 
--   Factor Recoding: `mutate()` and `factor()` is used to recode the responses into a factor variable. This recoding process labels the numerical values with their corresponding textual responses, such as "Strongly disagree," "Disagree," "Agree," and "Strongly agree."
+-   **Factor Recoding**: `mutate()` and `factor()` is used to recode the responses into a factor variable. This recoding process labels the numerical values with their corresponding textual responses, such as **"Strongly disagree," "Disagree," "Agree," and "Strongly agree"**.
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
 schsys_likert_long <- schsys_likert %>%
-  pivot_longer(cols = 1:12, names_to = "question", values_to = "response") %>%
+  pivot_longer(cols = 1:8, names_to = "question", values_to = "response") %>%
   filter(!is.na(response)) %>%
   mutate(response = factor(response, levels = c(1, 2, 3, 4), labels = c("Strongly disagree", "Disagree", "Agree", "Strongly agree")))
 
@@ -473,7 +486,6 @@ schsys_likert_long <- schsys_likert_long %>%
     question == "If I came back to visit my school 3 years from now, my teachers would be excited to see me." ~ "The teachers will be excited to see me in future.",
     question == "I feel intimidated by the teachers at my school." ~ "I feel intimidated by the teachers at my school.",
     question == "When my teachers ask how I am doing, they are really interested in my answer." ~ "The teachers are genuinely interested when listening to me.",
-    question == "I feel safe at other places at school (e.g. hallway, cafeteria, restroom)." ~ "I feel safe at other places at school.",
     TRUE ~ question
   ))
 
@@ -484,6 +496,7 @@ glimpse(schsys_likert_long)
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
+#| eval: false
 
 stacked_bar_chart <- ggplot(schsys_likert_long, aes(x = short_question, fill = response)) +
   geom_bar(position = "fill", stat = "count") +
@@ -499,24 +512,26 @@ stacked_bar_chart
 ```
 
 ::: {.callout-note appearance="simple"}
+![](images/Screenshot 2024-01-21 at 11.44.35PM.png)
+
 ### Insights
 
-**Safety**: Students generally feel safe in various school settings, with a significant number agreeing or strongly agreeing that they feel safe on their way to school, at home from school, in their classrooms, and in other places at school. This indicates a positive perception of physical safety within the school environment.
+**Safety**: Students generally feel safe in various school settings. This indicates a **positive perception of physical safety** within the school environment.
 
-**Respect and Concern**: A substantial proportion of students feel that their teachers are respectful towards them and would be concerned if they were upset. This suggests that students perceive a caring and respectful relationship with their teachers, which is fundamental to a supportive educational atmosphere.
+**Respect and Concern**: A substantial proportion of students feel that their teachers are respectful towards them and would be concerned if they were upset. This suggests that students perceive a caring and respectful relationship with their teachers, which is fundamental to a **supportive educational atmosphere**.
 
-**Teacher Interest and Friendliness**: There is a noticeable agreement among students that teachers are genuinely interested in their answers and are friendly towards them. This highlights the positive social interactions between students and teachers, which can contribute to a more engaging and motivating learning experience.
+**Teacher Interest and Friendliness**: There is a noticeable agreement among students that teachers are genuinely interested in their answers and are friendly towards them. This highlights the positive social interactions between students and teachers, which can contribute to a more **engaging and motivating learning experience**.
 
-**Teacher Support for Future and Well-being**: Many students believe that their teachers will be excited to see them if they return in the future and are interested in their well-being. This suggests that students feel supported not just academically but also personally, which can have a positive impact on their overall school experience.
+**Teacher Support for Future and Well-being**: Many students believe that their teachers will be excited to see them if they return in the future and are interested in their well-being. This suggests that students feel supported not just academically but also **personally**, which can have a positive impact on their overall school experience.
 
 **Negative Experiences**: While the majority of feedback is positive, there are small indications of negative experiences, such as a minority of students feeling intimidated by their teachers or perceiving them as mean. Addressing these negative perceptions is crucial for improving the school climate for all students.
 :::
 
 ## 5.2 How did Singaporean students perform in Maths, Reading and Science?
 
-We aim to understand the performance of these students in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.
+We aim to understand the performance of these students in **key academic areas**: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.
 
-For each group, the mean scores for mathematics `MATH`, reading `READING`, and science `SCIENCE` are calculated using the mean function applied to a series of plausible values (PV1MATH to PV5MATH for math, PV1READ to PV5READ for reading, and PV1SCIE to PV5SCIE for science). These plausible values represent multiple imputations of the student's likely performance and are averaged to get a single score estimation.
+For each group, the mean scores for mathematics `MATH`, reading `READING`, and science `SCIENCE` are calculated using the mean function applied to a series of plausible values (PV1MATH to PV5MATH for math, PV1READ to PV5READ for reading, and PV1SCIE to PV5SCIE for science). These plausible values represent multiple imputations of the student's likely performance and are **averaged** to get a **single score estimation**.
 
 ```{r}
 #| code-fold: true
@@ -637,8 +652,8 @@ plot9 <- ggplot(stu_qqq_SGP_perf,
 combined_plot <- plot7 / plot8 / plot9 + 
   plot_layout(guides = "collect") + 
   plot_annotation(
-    title = "How did Singaporean students perform in Maths, Reading and Science?",
-    theme = theme(plot.title = element_text(hjust = 0))
+    title = "How did Singaporean students perform in Maths,\nReading and Science?",
+    theme = theme(plot.title = element_text(hjust = 0, size = 20))
   )
 combined_plot
 ```
@@ -732,8 +747,8 @@ plot12 <- ggplot(data = stu_qqq_SGP_perf,
 combined_plot <- plot10 + plot11 + plot12 + 
   plot_layout(guides = "collect") + 
   plot_annotation(
-    title = "Does socio-economic background affect Singaporean students' performance in \nMaths, Reading and Science?",
-    theme = theme(plot.title = element_text(hjust = 0))
+    title = "Does socio-economic background affect Singaporean\nstudents' performance in Maths, Reading and Science?",
+    theme = theme(plot.title = element_text(hjust = 0, size = 20))
   )
 
 # Print the combined plot with the overall title
@@ -743,7 +758,7 @@ combined_plot
 ::: {.callout-note appearance="simple"}
 ### Insights
 
-The scatter plots with overlaid trend lines demonstrate the relationship between students' scores in Mathematics, Reading, and Science, and their socio-economic status (ESCS). An observed positive trend indicates that students with higher socio-economic status tend to score higher in these subjects.
+The scatter plots with overlaid trend lines demonstrate the relationship between students' scores in Mathematics, Reading, and Science, and their socio-economic status (ESCS). An observed **positive trend** indicates that students with **higher socio-economic status** tend to **score higher** in these subjects.
 
 The strength of this relationship can be quantified by the R-squared value; the closer it is to 1, the stronger the relationship. The p-value tests the significance of the relationship, with values less than 0.05 typically considered statistically significant.
 :::
@@ -767,6 +782,8 @@ sum(is.na(stu_qqq_SGP_impute))
 ::: panel-tabset
 ### Overall Corrplot
 
+This is a correlation matrix graph based on hierarchical clustering.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -782,7 +799,7 @@ vars.cor = cor(stu_qqq_SGP_impute[, selected_columns],
                use = "complete.obs")
 
 corrplot(vars.cor, 
-         method = 'circle',
+         method = "circle",
          order = "hclust", 
          tl.cex = 0.5, 
          tl.col = "black", 
@@ -810,11 +827,17 @@ corrplot.mixed(vars.cor,
 ### Emotional Well-being
 
 -   RELATST Quality of student-teacher relationships (WLE)
+
 -   BELONG Sense of belonging (WLE)
+
 -   BULLIED Being bullied (WLE)
+
 -   FEELSAFE Feeling safe (WLE)
+
 -   SCHRISK School safety risks (WLE)
--   PERSEVAGR Perseverance (agreement) (WLE) 
+
+-   PERSEVAGR Perseverance (agreement) (WLE)
+
 -   CURIOAGR Curiosity (agreement) (WLE)
 
 -   COOPAGR Cooperation (agreement) (WLE)
@@ -978,24 +1001,39 @@ corrplot.mixed(vars.cor,
 ::: {.callout-note appearance="simple"}
 #### Insights
 
-Positive Correlations
+**Positive Correlations**
 
-Negative Correlations
-`BULLIED`
-`SCHRISK`
-`ANXMAT`
+-   Students who report being bullied `BULLIED` tend to report higher school safety risks `SCHRISK`, suggesting a shared underlying issue affecting students' well-being.
+
+-   Home possessions `HOMEPOS` and the Index of economic, social and cultural status `ESCS` are positively correlated, which is expected as both are indicators of socioeconomic status.
+
+-   Emotional control `EMOCOAGR` and stress resistance `STRESAGAR` are positively linked, indicating that students who manage their emotions well are also better at handling stress.
+
+-   A quality student-teacher relationship `RELATST` is positively associated with teacher support in mathematics `TEACHSUP`, quality access to ICT `ICTQUAL`, and a sense of belonging `BELONG`, suggesting a holistic benefit from strong support systems in school.
+
+**Negative Correlations**
+
+-   Being bullied `BULLIED` is negatively correlated with most weighted likelihood estimates, meaning that as experiences of bullying increase, metrics of student achievement or well-being typically decrease.
+
+-   Perceptions of school safety risks `SCHRISK` are negatively correlated with WLEs, indicating that a sense of insecurity at school is detrimental to students' academic and emotional outcomes.
+
+-   Anxiety in mathematics `ANXMAT` and lack of stress resistance `STRESGAR`, along with lower familiarity with math concepts `FAMCON` and self-efficacy in mathematics `MATHEFF` and `MATHEF21`, are all negatively related, suggesting that anxiety and low confidence in one's math abilities are linked to greater stress and poorer perceived competence.
 :::
 
-## 5.5 Does immigration status affect students' sense of belonging in Singapore?
+## 5.5 Does immigrant status affect students' sense of belonging in Singapore?
 
-The impact of immigration status on students' sense of belonging will be scrutinized. We will analyze how being a native, a first-generation immigrant, or a second-generation immigrant influences students' reported sense of integration and acceptance within their school community. The goal is to provide a comprehensive overview of the many dimensions that contribute to the educational experiences of students in Singapore.
+The impact of immigrant status on students' sense of belonging will be scrutinized. We will analyze how being a native, a first-generation immigrant, or a second-generation immigrant influences students' reported sense of integration and acceptance within their school community. The goal is to provide a comprehensive overview of the many dimensions that contribute to the educational experiences of students in Singapore.
 
 ::: panel-tabset
 ### Data Preparation
 
-The immigration status is converted into a factor with levels "Native", "First-Generation", and "Second-Generation" based on `IMMIG`.
+The immigrant status is converted into a factor with levels "Native", "First-Generation", and "Second-Generation" based on `IMMIG`.
 
-**Native**: Students are born in Singapore with parents who are Singapore citizens. They have likely spent their entire lives within the country's education system and culture. **First-Generation**: These students are the first in their family to be born in Singapore, with parents who have immigrated from another country. They are navigating a blend of cultural identities from their home environment and the broader Singaporean culture. **Second-Generation**: This group consists of students born in Singapore to first-generation immigrant parents. While they are born and brought up in Singapore, their household may still hold strong cultural ties to their parents' country of origin.
+-   **Native**: Students are born in Singapore with parents who are Singapore citizens. They have likely spent their entire lives within the country's education system and culture.
+
+-   **First-Generation**: These students are the first in their family to be born in Singapore, with parents who have immigrated from another country. They are navigating a blend of cultural identities from their home environment and the broader Singaporean culture.
+
+-   **Second-Generation**: This group consists of students born in Singapore to first-generation immigrant parents. While they are born and brought up in Singapore, their household may still hold strong cultural ties to their parents' country of origin.
 
 Following this, the data is reshaped from a wide to a long format using the `melt` function, where columns are collapsed into two new variables: "question" and "response". The response variable is recoded into a factor with levels. This recoding process transforms numeric responses into descriptive labels, and the result is stored in a new variable response3.
 
@@ -1071,7 +1109,15 @@ Observations from the alluvial diagram suggest that there are **discernible diff
 
 # 6. Discussion
 
-The bar charts present students' self-reported effort levels in the PISA test across three different scenarios: actual effort put into the test, hypothetical effort if PISA scores counted towards school marks, and effort put into giving accurate answers. Notably, the highest frequency of students reported the maximum effort level (10) across all scenarios, which suggests a significant level of engagement with the PISA test.
+Students' experience in school capture students' perceptions of their experience in school often reveal insights into the school environment, teacher-student relationships, and overall student well-being. Positive experiences can correlate with higher engagement and academic performance, while negative experiences may indicate areas where interventions are needed.
+
+The performance in Maths, Reading, and Science is often used as an indicator of the education system's effectiveness. High performance in these areas, especially when compared to international benchmarks like the OECD average, suggests a strong educational foundation and effective teaching methods.
+
+The socio-economic status (SES) of students can have a significant impact on their educational outcomes. A positive correlation between SES and performance indicates that socio-economic factors may provide advantages or disadvantages that affect student performance, suggesting a need for policies to promote educational equity.
+
+Investigating the correlation between weighted likelihood estimates can help understand how different student attributes relate to each other. Strong correlations may reveal underlying patterns, such as the link between students' self-beliefs in their abilities and their actual academic performance.
+
+The sense of belonging can be a crucial factor in a student's school experience, affecting both their well-being and academic outcomes. Analyzing the responses based on immigration status can shed light on how inclusive and supportive the school environment is towards diverse student backgrounds.
 
 ```{r}
 #| code-fold: true
@@ -1119,23 +1165,25 @@ combined_plot <- plot100 + plot101 + plot102 +
   plot_layout(guides = "collect") + 
   plot_annotation(
     title = "How accurate is PISA 2022?",
-    theme = theme(plot.title = element_text(hjust = 0, size = 15))
+    theme = theme(plot.title = element_text(hjust = 0, size = 20))
   )
 combined_plot
 ```
 
-Students' experience in school capture students' perceptions of their experience in school often reveal insights into the school environment, teacher-student relationships, and overall student well-being. Positive experiences can correlate with higher engagement and academic performance, while negative experiences may indicate areas where interventions are needed.
-
-The performance in Maths, Reading, and Science is often used as an indicator of the education system's effectiveness. High performance in these areas, especially when compared to international benchmarks like the OECD average, suggests a strong educational foundation and effective teaching methods.
-
-The socio-economic status (SES) of students can have a significant impact on their educational outcomes. A positive correlation between SES and performance indicates that socio-economic factors may provide advantages or disadvantages that affect student performance, suggesting a need for policies to promote educational equity.
-
-Investigating the correlation between weighted likelihood estimates can help understand how different student attributes relate to each other. Strong correlations may reveal underlying patterns, such as the link between students' self-beliefs in their abilities and their actual academic performance.
-
-The sense of belonging can be a crucial factor in a student's school experience, affecting both their well-being and academic outcomes. Analyzing the responses based on immigration status can shed light on how inclusive and supportive the school environment is towards diverse student backgrounds.
+The bar charts present students' self-reported effort levels in the PISA test across three different scenarios: actual effort put into the test, hypothetical effort if PISA scores counted towards school marks, and effort put into giving accurate answers. Notably, the highest frequency of students reported the maximum effort level (10) across all scenarios, which suggests a significant level of engagement with the PISA test.
 
 # 7. Conclusion
 
-In conclusion, the analysis of student data across multiple dimensions—ranging from academic performance in key subjects to the impact of socio-economic factors—provides a nuanced picture of the educational landscape. The interplay between students' experiences within the school environment and their sense of belonging, particularly in the context of diverse backgrounds, underscores the importance of fostering inclusive and supportive educational spaces. The findings suggest that while Singaporean students perform well in areas like Maths, Reading, and Science, there are opportunities to enhance the educational experience by addressing disparities that may arise from socio-economic and immigration status differences. Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.
+In conclusion, the analysis of student data across multiple dimensions—ranging from academic performance in key subjects to the impact of socio-economic factors—provides a nuanced picture of the educational landscape.
+
+The interplay between students' experiences within the school environment and their sense of belonging, particularly in the context of diverse backgrounds, underscores the importance of fostering inclusive and supportive educational spaces. The findings suggest that while Singaporean students perform well in areas like Maths, Reading, and Science, there are opportunities to enhance the educational experience by addressing disparities that may arise from socio-economic and immigration status differences.
+
+Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.
 
 # 8. References
+
+1.  [PISA Student Questionaire](https://www.oecd.org/pisa/data/2022database/CY8_202111_QST_MS_STQ_CBA_NoNotes.pdf)
+
+2.  [PISA Singapore Results](https://www.oecd.org/publication/pisa-2022-results/country-notes/singapore-2f72624e/)
+
+3.  [Introduction to corrplot Package](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html)

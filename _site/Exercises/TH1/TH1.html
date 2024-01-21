@@ -204,8 +204,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">3. Import Data</a></li>
   <li><a href="#explore-data" id="toc-explore-data" class="nav-link" data-scroll-target="#explore-data">4. Explore Data</a>
   <ul class="collapse">
-  <li><a href="#data-schema" id="toc-data-schema" class="nav-link" data-scroll-target="#data-schema">4.4 Data Schema</a></li>
-  <li><a href="#demographics" id="toc-demographics" class="nav-link" data-scroll-target="#demographics">4.5 Demographics</a></li>
+  <li><a href="#data-schema" id="toc-data-schema" class="nav-link" data-scroll-target="#data-schema">Data Schema</a></li>
+  <li><a href="#demographics" id="toc-demographics" class="nav-link" data-scroll-target="#demographics">Demographics</a></li>
   </ul></li>
   <li><a href="#visualize-data" id="toc-visualize-data" class="nav-link" data-scroll-target="#visualize-data">5. Visualize Data</a>
   <ul class="collapse">
@@ -213,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#how-did-singaporean-students-perform-in-maths-reading-and-science" id="toc-how-did-singaporean-students-perform-in-maths-reading-and-science" class="nav-link" data-scroll-target="#how-did-singaporean-students-perform-in-maths-reading-and-science">5.2 How did Singaporean students perform in Maths, Reading and Science?</a></li>
   <li><a href="#does-socio-economic-background-affect-singaporean-students-performance-in-maths-reading-and-science" id="toc-does-socio-economic-background-affect-singaporean-students-performance-in-maths-reading-and-science" class="nav-link" data-scroll-target="#does-socio-economic-background-affect-singaporean-students-performance-in-maths-reading-and-science">5.3 Does socio-economic background affect Singaporean students’ performance in Maths, Reading and Science?</a></li>
   <li><a href="#does-correlation-exist-between-the-weighted-likelihood-estimates-wles" id="toc-does-correlation-exist-between-the-weighted-likelihood-estimates-wles" class="nav-link" data-scroll-target="#does-correlation-exist-between-the-weighted-likelihood-estimates-wles">5.4 Does correlation exist between the weighted likelihood estimates (WLEs)?</a></li>
-  <li><a href="#does-immigration-status-affect-students-sense-of-belonging-in-singapore" id="toc-does-immigration-status-affect-students-sense-of-belonging-in-singapore" class="nav-link" data-scroll-target="#does-immigration-status-affect-students-sense-of-belonging-in-singapore">5.5 Does immigration status affect students’ sense of belonging in Singapore?</a></li>
+  <li><a href="#does-immigrant-status-affect-students-sense-of-belonging-in-singapore" id="toc-does-immigrant-status-affect-students-sense-of-belonging-in-singapore" class="nav-link" data-scroll-target="#does-immigrant-status-affect-students-sense-of-belonging-in-singapore">5.5 Does immigrant status affect students’ sense of belonging in Singapore?</a></li>
   </ul></li>
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">6. Discussion</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">7. Conclusion</a></li>
@@ -360,7 +360,8 @@ R package functions
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>stu_qqq <span class="ot">&lt;-</span> <span class="fu">read_sas</span>(<span class="st">"data/STU_QQQ_SAS/cy08msp_stu_qqq.sas7bdat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The output shows <strong>613,744 observations</strong> with <strong>1,279 variables</strong>. Being a global survey, the <code>stu_qqq</code> dataset contains several nominal data columns to label and categorize the students; namely country code <code>CNT</code>, country identifier <code>CNTRYID</code>, school ID <code>CNTSCHID</code> and student ID <code>CNTSTUID</code>. The other variables examine numerous aspects of well-being, education system, family background and pandemic-related impact on education.</p>
+<p>The output shows <strong>613,744 observations</strong> with <strong>1,279 variables</strong>.</p>
+<p>Being a global survey, the <code>stu_qqq</code> dataset contains several nominal data columns to label and categorize the students; namely country code <code>CNT</code>, country identifier <code>CNTRYID</code>, school ID <code>CNTSCHID</code> and student ID <code>CNTSTUID</code>. The other variables examine numerous aspects of well-being, education system, family background and pandemic-related impact on education.</p>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>For relevance, we filter <code>stu_qqq</code> by the column <code>country code (CNT)</code> for <em>SGP</em> to obtain the survery results from Singapore students.</p>
@@ -368,7 +369,8 @@ R package functions
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stu_qqq_SGP <span class="ot">&lt;-</span> stu_qqq <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CNT <span class="sc">==</span> <span class="st">"SGP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The output shows <strong>6,606 observations</strong> with <strong>1,279 variables</strong> where Singapore accounts for close to <strong>1%</strong> of the observations. The number of observations is likely to reflect the number of students who undergo the assessment. Based on the duplication check using student ID <code>CNTSTUID</code>, there are <strong>zero observations</strong> which indicates unique student ID with <strong>no duplication</strong>. To enable efficient loading of dataset, there will be save and load points to prevent import of large datasets.</p>
+<p>The output shows <strong>6,606 observations</strong> with <strong>1,279 variables</strong> where Singapore accounts for close to <strong>1%</strong> of the observations. The number of observations is likely to reflect the number of students who undergo the assessment.</p>
+<p>Based on the duplication check using student ID <code>CNTSTUID</code>, there are <strong>zero observations</strong> which indicates unique student ID with <strong>no duplication</strong>. To enable efficient loading of dataset, there will be save and load points to prevent import of large datasets.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -420,7 +422,7 @@ Load Point
 <section id="explore-data" class="level1">
 <h1>4. Explore Data</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">4.1 Data Table</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">4.2 Data Structure</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">4.3 Data Type</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Data Table</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Data Structure</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Data Type</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>As of 2022, Singapore has <strong>148 public secondary schools</strong> under <a href="https://www.moe.gov.sg/schoolfinder?journey=Secondary%20school">MOE</a> and <strong>24 <a href="https://en.wikipedia.org/wiki/List_of_international_schools_in_Singapore">international schools</a></strong>. From the data table, PISA 2022 database compiles the student assessment across <strong>164 unique school ID</strong>, surveying an impressive <strong>95% of local schools</strong>. In addition, Singapore is allocated a country ID <code>CNTRYID</code> 702 and the school ID <code>CNTSCHID</code> ranges from 70200001 to 70200165.</p>
@@ -435,8 +437,8 @@ Load Point
 </details>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-4e5f18a18ca0078edf88" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-4e5f18a18ca0078edf88">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164"],["SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP"],[702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702],[70200001,70200002,70200003,70200004,70200005,70200006,70200007,70200008,70200009,70200010,70200011,70200012,70200013,70200014,70200015,70200016,70200017,70200018,70200019,70200020,70200021,70200022,70200023,70200024,70200025,70200026,70200027,70200028,70200029,70200030,70200031,70200032,70200033,70200034,70200035,70200036,70200037,70200038,70200039,70200040,70200041,70200042,70200043,70200044,70200045,70200046,70200047,70200048,70200049,70200050,70200051,70200052,70200053,70200054,70200055,70200056,70200057,70200058,70200059,70200060,70200061,70200062,70200063,70200064,70200065,70200066,70200067,70200068,70200069,70200070,70200071,70200072,70200073,70200074,70200075,70200076,70200077,70200078,70200079,70200080,70200081,70200082,70200083,70200084,70200085,70200086,70200087,70200088,70200089,70200090,70200091,70200092,70200093,70200094,70200095,70200096,70200097,70200098,70200099,70200100,70200101,70200102,70200103,70200104,70200105,70200106,70200107,70200108,70200109,70200110,70200111,70200112,70200113,70200114,70200115,70200116,70200117,70200118,70200119,70200120,70200121,70200122,70200123,70200124,70200125,70200126,70200127,70200128,70200129,70200130,70200131,70200132,70200133,70200134,70200135,70200136,70200137,70200138,70200139,70200140,70200141,70200142,70200143,70200144,70200145,70200146,70200147,70200148,70200149,70200151,70200152,70200153,70200154,70200155,70200156,70200157,70200158,70200159,70200160,70200161,70200162,70200163,70200164,70200165],[55,38,36,56,38,36,38,38,36,36,56,57,58,36,34,37,39,52,39,60,37,37,35,36,38,56,54,22,39,30,56,37,33,36,56,38,36,40,37,57,5,37,54,55,58,37,37,36,56,30,36,55,39,36,35,33,28,36,39,29,39,57,39,38,39,58,56,39,33,36,56,34,38,37,60,37,35,22,31,37,36,56,36,39,37,37,37,36,36,40,35,38,38,56,28,36,35,34,36,34,35,36,36,39,57,39,35,37,36,57,55,40,34,51,33,38,37,57,54,37,37,36,32,32,36,38,37,40,36,56,39,57,35,38,37,37,39,15,54,38,58,55,36,37,55,38,30,31,28,40,38,37,35,55,37,34,29,59,36,36,40,37,37,39]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>CNT<\/th>\n      <th>CNTRYID<\/th>\n      <th>CNTSCHID<\/th>\n      <th>TOTAL_STUDENT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"CNT","targets":1},{"name":"CNTRYID","targets":2},{"name":"CNTSCHID","targets":3},{"name":"TOTAL_STUDENT","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-114285f360d5ee2234b3" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-114285f360d5ee2234b3">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164"],["SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP","SGP"],[702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702,702],[70200001,70200002,70200003,70200004,70200005,70200006,70200007,70200008,70200009,70200010,70200011,70200012,70200013,70200014,70200015,70200016,70200017,70200018,70200019,70200020,70200021,70200022,70200023,70200024,70200025,70200026,70200027,70200028,70200029,70200030,70200031,70200032,70200033,70200034,70200035,70200036,70200037,70200038,70200039,70200040,70200041,70200042,70200043,70200044,70200045,70200046,70200047,70200048,70200049,70200050,70200051,70200052,70200053,70200054,70200055,70200056,70200057,70200058,70200059,70200060,70200061,70200062,70200063,70200064,70200065,70200066,70200067,70200068,70200069,70200070,70200071,70200072,70200073,70200074,70200075,70200076,70200077,70200078,70200079,70200080,70200081,70200082,70200083,70200084,70200085,70200086,70200087,70200088,70200089,70200090,70200091,70200092,70200093,70200094,70200095,70200096,70200097,70200098,70200099,70200100,70200101,70200102,70200103,70200104,70200105,70200106,70200107,70200108,70200109,70200110,70200111,70200112,70200113,70200114,70200115,70200116,70200117,70200118,70200119,70200120,70200121,70200122,70200123,70200124,70200125,70200126,70200127,70200128,70200129,70200130,70200131,70200132,70200133,70200134,70200135,70200136,70200137,70200138,70200139,70200140,70200141,70200142,70200143,70200144,70200145,70200146,70200147,70200148,70200149,70200151,70200152,70200153,70200154,70200155,70200156,70200157,70200158,70200159,70200160,70200161,70200162,70200163,70200164,70200165],[55,38,36,56,38,36,38,38,36,36,56,57,58,36,34,37,39,52,39,60,37,37,35,36,38,56,54,22,39,30,56,37,33,36,56,38,36,40,37,57,5,37,54,55,58,37,37,36,56,30,36,55,39,36,35,33,28,36,39,29,39,57,39,38,39,58,56,39,33,36,56,34,38,37,60,37,35,22,31,37,36,56,36,39,37,37,37,36,36,40,35,38,38,56,28,36,35,34,36,34,35,36,36,39,57,39,35,37,36,57,55,40,34,51,33,38,37,57,54,37,37,36,32,32,36,38,37,40,36,56,39,57,35,38,37,37,39,15,54,38,58,55,36,37,55,38,30,31,28,40,38,37,35,55,37,34,29,59,36,36,40,37,37,39]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>CNT<\/th>\n      <th>CNTRYID<\/th>\n      <th>CNTSCHID<\/th>\n      <th>TOTAL_STUDENT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"CNT","targets":1},{"name":"CNTRYID","targets":2},{"name":"CNTSCHID","targets":3},{"name":"TOTAL_STUDENT","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -452,7 +454,7 @@ Observation
 <p>Given that the index runs from 1 to 164 and the school ID <code>CNTSCHID</code> ranges from 70200001 to 70200165, there is no school allocated to ‘70200150’.</p>
 </div>
 </div>
-<p>There is an average of* <strong>40.28 students assessed per school</strong>, equivalent to the <strong>class size</strong> of a level, in Singapore context, Secondary 3.</p>
+<p>There is an average of <strong>40.28 students assessed per school</strong>, equivalent to the <strong>class size</strong> of a level, in Singapore context, <strong>Secondary 3</strong>.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
@@ -518,6 +520,7 @@ Observation
 </details>
 </div>
 <p>Casting to <strong>factor</strong>:</p>
+<p><code>ST004D01T</code>, <code>ST294Q02JA</code>, <code>ST272Q01JA</code>, <code>ST019AQ01T</code> and <code>ST253Q01JA</code> are casted from <code>dbl</code> to <code>factor</code> as categorical variables.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
@@ -533,8 +536,10 @@ Observation
 </div>
 </div>
 <section id="data-schema" class="level2">
-<h2 class="anchored" data-anchor-id="data-schema">4.4 Data Schema</h2>
-<p>The data schema presented map the <strong>complex interrelations</strong> between students’ academic performance and various demographic, social, and educational factors. By analyzing performance data in conjunction with demographic variables like gender and socioeconomic status, we aim to identify patterns and correlations that might inform educational strategies. This will involve the use of visual tools such as box plots to compare distributions, scatter plots to discern correlations, and bar charts to display categorical data. The relationship between academic performance and variables like immigrant background will also be examined to understand how educational outcomes are influenced by broader social contexts. The visualizations will serve as a <strong>narrative</strong>, outlining the interplay between various factors and academic success, thereby contributing to a holistic understanding of the educational landscape in Singapore.</p>
+<h2 class="anchored" data-anchor-id="data-schema">Data Schema</h2>
+<p>The data schema presented map the <strong>complex interrelations</strong> between students’ academic performance and various demographic, social, and educational factors.</p>
+<p>By analyzing performance data in conjunction with demographic variables like gender and socioeconomic status, we aim to identify patterns and correlations that might inform educational strategies. This involves the use of visual tools such as box plots to compare distributions, scatter plots to discern correlations, and bar charts to display categorical data.</p>
+<p>The visualizations will serve as a <strong>narrative</strong>, outlining the interplay between various factors and academic success, thereby contributing to a holistic understanding of the educational landscape in Singapore.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -589,7 +594,7 @@ Observation
 </div>
 </section>
 <section id="demographics" class="level2">
-<h2 class="anchored" data-anchor-id="demographics">4.5 Demographics</h2>
+<h2 class="anchored" data-anchor-id="demographics">Demographics</h2>
 <p>To understand the student demographics, we will visualize the distribution and summary statistics of gender, age and nationality. We will also have an overview of the students’ time invested in studying and exposure to digital device, and their parent’s education level.</p>
 <table class="table">
 <thead>
@@ -690,7 +695,13 @@ Observation
 <span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
 <span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>(plot1 <span class="sc">+</span> plot2 <span class="sc">+</span> plot3) <span class="sc">/</span> (plot4 <span class="sc">+</span> plot5 <span class="sc">+</span> plot6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span> (plot1 <span class="sc">+</span> plot2 <span class="sc">+</span> plot3) <span class="sc">/</span> (plot4 <span class="sc">+</span> plot5 <span class="sc">+</span> plot6) <span class="sc">+</span> </span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>) <span class="sc">+</span> </span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Demographics of Singapore PISA 2022"</span>,</span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>))</span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="TH1_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
@@ -707,12 +718,12 @@ Insights
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li><p><strong>Gender</strong>: The distribution between genders is fairly balanced. This suggests an almost equal representation of students in terms of gender within the dataset.</p></li>
-<li><p><strong>Age</strong>: The median age is 15.75. There are no apparent outliers, indicating that the ages of the students are within a narrow range, typical of a targeted survey.</p></li>
-<li><p><strong>Nationality</strong>: There are three distinct groups, with the majority of students belonging to nationality. Assuming <code>1</code> represents local students, majority of the students are local.</p></li>
-<li><p><strong>Study Days</strong>: The bar chart suggests most students study 1 to 2 days per week, with numbers dropping as the number of study days increases. One quarter of the students study 6 days, as hardworking as Masters students.</p></li>
-<li><p><strong>Digital Exposure</strong>: Majority of the students are exposed to one device, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.</p></li>
-<li><p><strong>Parents’ Education</strong>: The data shows a progressive decrease in the number of parents as the level of education increases. Most parents (70%) are in Level 6 and 7 and hold tertiary and above education.</p>
+<li><p><strong>Gender</strong>: The distribution between genders is <strong>fairly balanced</strong>. This suggests an almost equal representation of students in terms of gender within the dataset.</p></li>
+<li><p><strong>Age</strong>: The median age is <strong>15.75</strong>. There are no apparent outliers, indicating that the ages of the students are <strong>within a narrow range</strong>, typical of a targeted survey.</p></li>
+<li><p><strong>Nationality</strong>: There are three distinct groups, with the majority of students belonging to nationality. Assuming <code>1</code> represents local students, <strong>majority of the students are local</strong>.</p></li>
+<li><p><strong>Study Days</strong>: The bar chart suggests most students study <strong>one to two days per week</strong>, with numbers dropping as the number of study days increases. One quarter of the students study 6 days, as hardworking as Masters students.</p></li>
+<li><p><strong>Digital Exposure</strong>: Majority of the students are exposed to <strong>one device</strong>, relatively low considering TV as a baseline screen in most homes and most students having their personal mobile devices.</p></li>
+<li><p><strong>Parents’ Education</strong>: The data shows a progressive decrease in the number of parents as the level of education increases. Most parents (70%) are in <strong>Level 6 and 7</strong> and hold <strong>tertiary and above</strong> education.</p>
 <table class="table">
 <thead>
 <tr class="header">
@@ -762,7 +773,7 @@ Insights
 </section>
 <section id="visualize-data" class="level1">
 <h1>5. Visualize Data</h1>
-<p>In our investigation, we will employ data visualization to explore multiple facets of <strong>Singaporean students’ educational experiences and outcomes</strong>. Primarily, we aim to understand the emotional, social, and economic aspect of studnets and their performances in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.</p>
+<p>In our investigation, we will employ data visualization to explore multiple facets of <strong>Singaporean students’ educational experiences and outcomes</strong>.</p>
 <section id="what-is-the-students-experience-in-school" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-the-students-experience-in-school">5.1 What is the students’ experience in school?</h2>
 <p>We delve into the subjective realm of <strong>students’ school experiences</strong>. This includes their feelings of safety, respect, and overall well-being within the school environment. We will visualize this data to uncover insights into the emotional and social aspects of their education.</p>
@@ -770,11 +781,11 @@ Insights
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Attribute Selection</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Data Transformation</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p>The selected attributes encompass both the academic and social aspects of school life that can significantly influence a student’s well-being and sense of belonging. The output reveals a structured set of responses where students have rated these experiences on a numerical scale, likely ranging from strong disagreement to strong agreement.</p>
+<p>The selected attributes encompass both the <strong>academic and social aspects of school life</strong> that can significantly influence a student’s well-being and sense of belonging. The output reveals a structured set of responses where students have rated these experiences on a <strong>numerical scale</strong>, likely ranging from strong disagreement to strong agreement.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>schsys <span class="ot">&lt;-</span> <span class="fu">select</span>(stu_qqq_SGP, <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"ST267"</span>, <span class="st">"ST265"</span>)))</span>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>schsys <span class="ot">&lt;-</span> <span class="fu">select</span>(stu_qqq_SGP, <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"ST267"</span>)))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(schsys) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q01JA =</span> <span class="st">"The teachers at my school are respectful towards me."</span>,</span>
@@ -784,30 +795,26 @@ Insights
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q05JA =</span> <span class="st">"When my teachers ask how I am doing, they are really interested in my answer."</span>,</span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q06JA =</span> <span class="st">"The teachers at my school are friendly towards me."</span>,</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q07JA =</span> <span class="st">"The teachers at my school are interested in students' well-being."</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q08JA =</span> <span class="st">"The teachers at my school are mean towards me."</span>,</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST265Q01JA =</span> <span class="st">"I feel safe on my way to school."</span>,</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST265Q02JA =</span> <span class="st">"I feel safe on my way home from school."</span>,</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST265Q03JA =</span> <span class="st">"I feel safe in my classrooms at school."</span>,</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST265Q04JA =</span> <span class="st">"I feel safe at other places at school (e.g. hallway, cafeteria, restroom)."</span>)</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>likert_recode <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(x), <span class="cn">NA</span>, </span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Strongly disagree"</span>,</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">2</span>, <span class="st">"Disagree"</span>,</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">3</span>, <span class="st">"Agree"</span>,</span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Strongly agree"</span>))))</span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">factor</span>(y, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Strongly disagree"</span>, <span class="st">"Disagree"</span>, <span class="st">"Agree"</span>, <span class="st">"Strongly agree"</span>))</span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y)</span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>schsys_likert <span class="ot">&lt;-</span> schsys <span class="sc">%&gt;%</span></span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), likert_recode))</span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(schsys_likert)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ST267Q08JA =</span> <span class="st">"The teachers at my school are mean towards me."</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>likert_recode <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(x), <span class="cn">NA</span>, </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Strongly disagree"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">2</span>, <span class="st">"Disagree"</span>,</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(x <span class="sc">==</span> <span class="dv">3</span>, <span class="st">"Agree"</span>,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Strongly agree"</span>))))</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">factor</span>(y, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Strongly disagree"</span>, <span class="st">"Disagree"</span>, <span class="st">"Agree"</span>, <span class="st">"Strongly agree"</span>))</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>schsys_likert <span class="ot">&lt;-</span> schsys <span class="sc">%&gt;%</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), likert_recode))</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(schsys_likert)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6,606
-Columns: 12
+Columns: 8
 $ `The teachers at my school are respectful towards me.`                                        &lt;fct&gt; …
 $ `If I walked into my classes upset, my teachers would be concerned about me.`                 &lt;fct&gt; …
 $ `If I came back to visit my school 3 years from now, my teachers would be excited to see me.` &lt;fct&gt; …
@@ -815,26 +822,22 @@ $ `I feel intimidated by the teachers at my school.`                            
 $ `When my teachers ask how I am doing, they are really interested in my answer.`               &lt;fct&gt; …
 $ `The teachers at my school are friendly towards me.`                                          &lt;fct&gt; …
 $ `The teachers at my school are interested in students' well-being.`                           &lt;fct&gt; …
-$ `The teachers at my school are mean towards me.`                                              &lt;fct&gt; …
-$ `I feel safe on my way to school.`                                                            &lt;fct&gt; …
-$ `I feel safe on my way home from school.`                                                     &lt;fct&gt; …
-$ `I feel safe in my classrooms at school.`                                                     &lt;fct&gt; …
-$ `I feel safe at other places at school (e.g. hallway, cafeteria, restroom).`                  &lt;fct&gt; …</code></pre>
+$ `The teachers at my school are mean towards me.`                                              &lt;fct&gt; …</code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p>The data transformation process depicted in the R code involves several steps to prepare the data for analysis and visualization:</p>
 <ul>
-<li><p>Conversion to Long Format: <code>pivot_longer()</code> function is used to convert the dataset into a long format. This restructuring transforms the dataset so that each row represents a single response to a question, with one column for the question text (question) and one column for the response (response).</p></li>
-<li><p>Filtering NA Values: <code>filter()</code> function removes rows with NA (missing) responses to ensure they do not affect the visualization and analysis.</p></li>
-<li><p>Factor Recoding: <code>mutate()</code> and <code>factor()</code> is used to recode the responses into a factor variable. This recoding process labels the numerical values with their corresponding textual responses, such as “Strongly disagree,” “Disagree,” “Agree,” and “Strongly agree.”</p></li>
+<li><p><strong>Conversion to Long Format</strong>: <code>pivot_longer()</code> function is used to convert the dataset into a long format. This restructuring transforms the dataset so that each row represents a single response to a question, with one column for the question text (question) and one column for the response (response).</p></li>
+<li><p><strong>Filtering <code>NA</code> Values</strong>: <code>filter()</code> function removes rows with NA (missing) responses to ensure they do not affect the visualization and analysis.</p></li>
+<li><p><strong>Factor Recoding</strong>: <code>mutate()</code> and <code>factor()</code> is used to recode the responses into a factor variable. This recoding process labels the numerical values with their corresponding textual responses, such as <strong>“Strongly disagree,” “Disagree,” “Agree,” and “Strongly agree”</strong>.</p></li>
 </ul>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>schsys_likert_long <span class="ot">&lt;-</span> schsys_likert <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">names_to =</span> <span class="st">"question"</span>, <span class="at">values_to =</span> <span class="st">"response"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="at">names_to =</span> <span class="st">"question"</span>, <span class="at">values_to =</span> <span class="st">"response"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(response)) <span class="sc">%&gt;%</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">response =</span> <span class="fu">factor</span>(response, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Strongly disagree"</span>, <span class="st">"Disagree"</span>, <span class="st">"Agree"</span>, <span class="st">"Strongly agree"</span>)))</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
@@ -860,14 +863,13 @@ $ `I feel safe at other places at school (e.g. hallway, cafeteria, restroom).`  
 <span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>    question <span class="sc">==</span> <span class="st">"If I came back to visit my school 3 years from now, my teachers would be excited to see me."</span> <span class="sc">~</span> <span class="st">"The teachers will be excited to see me in future."</span>,</span>
 <span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>    question <span class="sc">==</span> <span class="st">"I feel intimidated by the teachers at my school."</span> <span class="sc">~</span> <span class="st">"I feel intimidated by the teachers at my school."</span>,</span>
 <span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    question <span class="sc">==</span> <span class="st">"When my teachers ask how I am doing, they are really interested in my answer."</span> <span class="sc">~</span> <span class="st">"The teachers are genuinely interested when listening to me."</span>,</span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    question <span class="sc">==</span> <span class="st">"I feel safe at other places at school (e.g. hallway, cafeteria, restroom)."</span> <span class="sc">~</span> <span class="st">"I feel safe at other places at school."</span>,</span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> question</span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(schsys_likert_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> question</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(schsys_likert_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 59,019
+<pre><code>Rows: 32,771
 Columns: 3
 $ question       &lt;chr&gt; "If I walked into my classes upset, my teachers would b…
 $ response       &lt;fct&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
@@ -892,32 +894,30 @@ $ short_question &lt;chr&gt; "The teachers will be concerned about me if I am up
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>stacked_bar_chart</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="TH1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Insights
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Safety</strong>: Students generally feel safe in various school settings, with a significant number agreeing or strongly agreeing that they feel safe on their way to school, at home from school, in their classrooms, and in other places at school. This indicates a positive perception of physical safety within the school environment.</p>
-<p><strong>Respect and Concern</strong>: A substantial proportion of students feel that their teachers are respectful towards them and would be concerned if they were upset. This suggests that students perceive a caring and respectful relationship with their teachers, which is fundamental to a supportive educational atmosphere.</p>
-<p><strong>Teacher Interest and Friendliness</strong>: There is a noticeable agreement among students that teachers are genuinely interested in their answers and are friendly towards them. This highlights the positive social interactions between students and teachers, which can contribute to a more engaging and motivating learning experience.</p>
-<p><strong>Teacher Support for Future and Well-being</strong>: Many students believe that their teachers will be excited to see them if they return in the future and are interested in their well-being. This suggests that students feel supported not just academically but also personally, which can have a positive impact on their overall school experience.</p>
+<div class="callout-body-container">
+<p><img src="images/Screenshot 2024-01-21 at 11.44.35PM.png" class="img-fluid"></p>
+<section id="insights-1" class="level3">
+<h3 class="anchored" data-anchor-id="insights-1">Insights</h3>
+<p><strong>Safety</strong>: Students generally feel safe in various school settings. This indicates a <strong>positive perception of physical safety</strong> within the school environment.</p>
+<p><strong>Respect and Concern</strong>: A substantial proportion of students feel that their teachers are respectful towards them and would be concerned if they were upset. This suggests that students perceive a caring and respectful relationship with their teachers, which is fundamental to a <strong>supportive educational atmosphere</strong>.</p>
+<p><strong>Teacher Interest and Friendliness</strong>: There is a noticeable agreement among students that teachers are genuinely interested in their answers and are friendly towards them. This highlights the positive social interactions between students and teachers, which can contribute to a more <strong>engaging and motivating learning experience</strong>.</p>
+<p><strong>Teacher Support for Future and Well-being</strong>: Many students believe that their teachers will be excited to see them if they return in the future and are interested in their well-being. This suggests that students feel supported not just academically but also <strong>personally</strong>, which can have a positive impact on their overall school experience.</p>
 <p><strong>Negative Experiences</strong>: While the majority of feedback is positive, there are small indications of negative experiences, such as a minority of students feeling intimidated by their teachers or perceiving them as mean. Addressing these negative perceptions is crucial for improving the school climate for all students.</p>
+</section>
+</div>
 </div>
 </div>
 </section>
 <section id="how-did-singaporean-students-perform-in-maths-reading-and-science" class="level2">
 <h2 class="anchored" data-anchor-id="how-did-singaporean-students-perform-in-maths-reading-and-science">5.2 How did Singaporean students perform in Maths, Reading and Science?</h2>
-<p>We aim to understand the performance of these students in key academic areas: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.</p>
-<p>For each group, the mean scores for mathematics <code>MATH</code>, reading <code>READING</code>, and science <code>SCIENCE</code> are calculated using the mean function applied to a series of plausible values (PV1MATH to PV5MATH for math, PV1READ to PV5READ for reading, and PV1SCIE to PV5SCIE for science). These plausible values represent multiple imputations of the student’s likely performance and are averaged to get a single score estimation.</p>
+<p>We aim to understand the performance of these students in <strong>key academic areas</strong>: Mathematics, Reading, and Science. This will involve assessing their scores and identifying patterns or trends within the data.</p>
+<p>For each group, the mean scores for mathematics <code>MATH</code>, reading <code>READING</code>, and science <code>SCIENCE</code> are calculated using the mean function applied to a series of plausible values (PV1MATH to PV5MATH for math, PV1READ to PV5READ for reading, and PV1SCIE to PV5SCIE for science). These plausible values represent multiple imputations of the student’s likely performance and are <strong>averaged</strong> to get a <strong>single score estimation</strong>.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
@@ -1049,8 +1049,8 @@ $ SCIENCE   &lt;dbl&gt; 795.3, 671.9, 781.1, 750.4, 639.2, 596.6, 711.3, 702.6, 
 <span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span> plot7 <span class="sc">/</span> plot8 <span class="sc">/</span> plot9 <span class="sc">+</span> </span>
 <span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>) <span class="sc">+</span> </span>
 <span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"How did Singaporean students perform in Maths, Reading and Science?"</span>,</span>
-<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>))</span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"How did Singaporean students perform in Maths,</span><span class="sc">\n</span><span class="st">Reading and Science?"</span>,</span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">20</span>))</span>
 <span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -1151,8 +1151,8 @@ Insights
 <span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span> plot10 <span class="sc">+</span> plot11 <span class="sc">+</span> plot12 <span class="sc">+</span> </span>
 <span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>) <span class="sc">+</span> </span>
 <span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Does socio-economic background affect Singaporean students' performance in </span><span class="sc">\n</span><span class="st">Maths, Reading and Science?"</span>,</span>
-<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>))</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Does socio-economic background affect Singaporean</span><span class="sc">\n</span><span class="st">students' performance in Maths, Reading and Science?"</span>,</span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">20</span>))</span>
 <span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the combined plot with the overall title</span></span>
@@ -1172,7 +1172,7 @@ Insights
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The scatter plots with overlaid trend lines demonstrate the relationship between students’ scores in Mathematics, Reading, and Science, and their socio-economic status (ESCS). An observed positive trend indicates that students with higher socio-economic status tend to score higher in these subjects.</p>
+<p>The scatter plots with overlaid trend lines demonstrate the relationship between students’ scores in Mathematics, Reading, and Science, and their socio-economic status (ESCS). An observed <strong>positive trend</strong> indicates that students with <strong>higher socio-economic status</strong> tend to <strong>score higher</strong> in these subjects.</p>
 <p>The strength of this relationship can be quantified by the R-squared value; the closer it is to 1, the stronger the relationship. The p-value tests the significance of the relationship, with values less than 0.05 typically considered statistically significant.</p>
 </div>
 </div>
@@ -1197,6 +1197,7 @@ Insights
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Overall Corrplot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Overall Mixed Corrplot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Emotional Well-being</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">School Support</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-5" role="tab" aria-controls="tabset-5-5" aria-selected="false">Family Support</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-6" role="tab" aria-controls="tabset-5-6" aria-selected="false">Digital exposure</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>This is a correlation matrix graph based on hierarchical clustering.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
@@ -1211,7 +1212,7 @@ Insights
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(vars.cor, </span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">'circle'</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">"circle"</span>,</span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">"hclust"</span>, </span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.5</span>, </span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, </span>
@@ -1394,20 +1395,35 @@ Insights
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Positive Correlations</p>
-<p>Negative Correlations <code>BULLIED</code> <code>SCHRISK</code> <code>ANXMAT</code></p>
+<p><strong>Positive Correlations</strong></p>
+<ul>
+<li><p>Students who report being bullied <code>BULLIED</code> tend to report higher school safety risks <code>SCHRISK</code>, suggesting a shared underlying issue affecting students’ well-being.</p></li>
+<li><p>Home possessions <code>HOMEPOS</code> and the Index of economic, social and cultural status <code>ESCS</code> are positively correlated, which is expected as both are indicators of socioeconomic status.</p></li>
+<li><p>Emotional control <code>EMOCOAGR</code> and stress resistance <code>STRESAGAR</code> are positively linked, indicating that students who manage their emotions well are also better at handling stress.</p></li>
+<li><p>A quality student-teacher relationship <code>RELATST</code> is positively associated with teacher support in mathematics <code>TEACHSUP</code>, quality access to ICT <code>ICTQUAL</code>, and a sense of belonging <code>BELONG</code>, suggesting a holistic benefit from strong support systems in school.</p></li>
+</ul>
+<p><strong>Negative Correlations</strong></p>
+<ul>
+<li><p>Being bullied <code>BULLIED</code> is negatively correlated with most weighted likelihood estimates, meaning that as experiences of bullying increase, metrics of student achievement or well-being typically decrease.</p></li>
+<li><p>Perceptions of school safety risks <code>SCHRISK</code> are negatively correlated with WLEs, indicating that a sense of insecurity at school is detrimental to students’ academic and emotional outcomes.</p></li>
+<li><p>Anxiety in mathematics <code>ANXMAT</code> and lack of stress resistance <code>STRESGAR</code>, along with lower familiarity with math concepts <code>FAMCON</code> and self-efficacy in mathematics <code>MATHEFF</code> and <code>MATHEF21</code>, are all negatively related, suggesting that anxiety and low confidence in one’s math abilities are linked to greater stress and poorer perceived competence.</p></li>
+</ul>
 </div>
 </div>
 </section>
-<section id="does-immigration-status-affect-students-sense-of-belonging-in-singapore" class="level2">
-<h2 class="anchored" data-anchor-id="does-immigration-status-affect-students-sense-of-belonging-in-singapore">5.5 Does immigration status affect students’ sense of belonging in Singapore?</h2>
-<p>The impact of immigration status on students’ sense of belonging will be scrutinized. We will analyze how being a native, a first-generation immigrant, or a second-generation immigrant influences students’ reported sense of integration and acceptance within their school community. The goal is to provide a comprehensive overview of the many dimensions that contribute to the educational experiences of students in Singapore.</p>
+<section id="does-immigrant-status-affect-students-sense-of-belonging-in-singapore" class="level2">
+<h2 class="anchored" data-anchor-id="does-immigrant-status-affect-students-sense-of-belonging-in-singapore">5.5 Does immigrant status affect students’ sense of belonging in Singapore?</h2>
+<p>The impact of immigrant status on students’ sense of belonging will be scrutinized. We will analyze how being a native, a first-generation immigrant, or a second-generation immigrant influences students’ reported sense of integration and acceptance within their school community. The goal is to provide a comprehensive overview of the many dimensions that contribute to the educational experiences of students in Singapore.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Data Preparation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Mapping</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<p>The immigration status is converted into a factor with levels “Native”, “First-Generation”, and “Second-Generation” based on <code>IMMIG</code>.</p>
-<p><strong>Native</strong>: Students are born in Singapore with parents who are Singapore citizens. They have likely spent their entire lives within the country’s education system and culture. <strong>First-Generation</strong>: These students are the first in their family to be born in Singapore, with parents who have immigrated from another country. They are navigating a blend of cultural identities from their home environment and the broader Singaporean culture. <strong>Second-Generation</strong>: This group consists of students born in Singapore to first-generation immigrant parents. While they are born and brought up in Singapore, their household may still hold strong cultural ties to their parents’ country of origin.</p>
+<p>The immigrant status is converted into a factor with levels “Native”, “First-Generation”, and “Second-Generation” based on <code>IMMIG</code>.</p>
+<ul>
+<li><p><strong>Native</strong>: Students are born in Singapore with parents who are Singapore citizens. They have likely spent their entire lives within the country’s education system and culture.</p></li>
+<li><p><strong>First-Generation</strong>: These students are the first in their family to be born in Singapore, with parents who have immigrated from another country. They are navigating a blend of cultural identities from their home environment and the broader Singaporean culture.</p></li>
+<li><p><strong>Second-Generation</strong>: This group consists of students born in Singapore to first-generation immigrant parents. While they are born and brought up in Singapore, their household may still hold strong cultural ties to their parents’ country of origin.</p></li>
+</ul>
 <p>Following this, the data is reshaped from a wide to a long format using the <code>melt</code> function, where columns are collapsed into two new variables: “question” and “response”. The response variable is recoded into a factor with levels. This recoding process transforms numeric responses into descriptive labels, and the result is stored in a new variable response3.</p>
 <div class="cell">
 <details>
@@ -1524,7 +1540,11 @@ Insights
 </section>
 <section id="discussion" class="level1">
 <h1>6. Discussion</h1>
-<p>The bar charts present students’ self-reported effort levels in the PISA test across three different scenarios: actual effort put into the test, hypothetical effort if PISA scores counted towards school marks, and effort put into giving accurate answers. Notably, the highest frequency of students reported the maximum effort level (10) across all scenarios, which suggests a significant level of engagement with the PISA test.</p>
+<p>Students’ experience in school capture students’ perceptions of their experience in school often reveal insights into the school environment, teacher-student relationships, and overall student well-being. Positive experiences can correlate with higher engagement and academic performance, while negative experiences may indicate areas where interventions are needed.</p>
+<p>The performance in Maths, Reading, and Science is often used as an indicator of the education system’s effectiveness. High performance in these areas, especially when compared to international benchmarks like the OECD average, suggests a strong educational foundation and effective teaching methods.</p>
+<p>The socio-economic status (SES) of students can have a significant impact on their educational outcomes. A positive correlation between SES and performance indicates that socio-economic factors may provide advantages or disadvantages that affect student performance, suggesting a need for policies to promote educational equity.</p>
+<p>Investigating the correlation between weighted likelihood estimates can help understand how different student attributes relate to each other. Strong correlations may reveal underlying patterns, such as the link between students’ self-beliefs in their abilities and their actual academic performance.</p>
+<p>The sense of belonging can be a crucial factor in a student’s school experience, affecting both their well-being and academic outcomes. Analyzing the responses based on immigration status can shed light on how inclusive and supportive the school environment is towards diverse student backgrounds.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
@@ -1570,7 +1590,7 @@ Insights
 <span id="cb41-40"><a href="#cb41-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>) <span class="sc">+</span> </span>
 <span id="cb41-41"><a href="#cb41-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
 <span id="cb41-42"><a href="#cb41-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"How accurate is PISA 2022?"</span>,</span>
-<span id="cb41-43"><a href="#cb41-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">15</span>))</span>
+<span id="cb41-43"><a href="#cb41-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">20</span>))</span>
 <span id="cb41-44"><a href="#cb41-44" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb41-45"><a href="#cb41-45" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -1578,18 +1598,21 @@ Insights
 <p><img src="TH1_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Students’ experience in school capture students’ perceptions of their experience in school often reveal insights into the school environment, teacher-student relationships, and overall student well-being. Positive experiences can correlate with higher engagement and academic performance, while negative experiences may indicate areas where interventions are needed.</p>
-<p>The performance in Maths, Reading, and Science is often used as an indicator of the education system’s effectiveness. High performance in these areas, especially when compared to international benchmarks like the OECD average, suggests a strong educational foundation and effective teaching methods.</p>
-<p>The socio-economic status (SES) of students can have a significant impact on their educational outcomes. A positive correlation between SES and performance indicates that socio-economic factors may provide advantages or disadvantages that affect student performance, suggesting a need for policies to promote educational equity.</p>
-<p>Investigating the correlation between weighted likelihood estimates can help understand how different student attributes relate to each other. Strong correlations may reveal underlying patterns, such as the link between students’ self-beliefs in their abilities and their actual academic performance.</p>
-<p>The sense of belonging can be a crucial factor in a student’s school experience, affecting both their well-being and academic outcomes. Analyzing the responses based on immigration status can shed light on how inclusive and supportive the school environment is towards diverse student backgrounds.</p>
+<p>The bar charts present students’ self-reported effort levels in the PISA test across three different scenarios: actual effort put into the test, hypothetical effort if PISA scores counted towards school marks, and effort put into giving accurate answers. Notably, the highest frequency of students reported the maximum effort level (10) across all scenarios, which suggests a significant level of engagement with the PISA test.</p>
 </section>
 <section id="conclusion" class="level1">
 <h1>7. Conclusion</h1>
-<p>In conclusion, the analysis of student data across multiple dimensions—ranging from academic performance in key subjects to the impact of socio-economic factors—provides a nuanced picture of the educational landscape. The interplay between students’ experiences within the school environment and their sense of belonging, particularly in the context of diverse backgrounds, underscores the importance of fostering inclusive and supportive educational spaces. The findings suggest that while Singaporean students perform well in areas like Maths, Reading, and Science, there are opportunities to enhance the educational experience by addressing disparities that may arise from socio-economic and immigration status differences. Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.</p>
+<p>In conclusion, the analysis of student data across multiple dimensions—ranging from academic performance in key subjects to the impact of socio-economic factors—provides a nuanced picture of the educational landscape.</p>
+<p>The interplay between students’ experiences within the school environment and their sense of belonging, particularly in the context of diverse backgrounds, underscores the importance of fostering inclusive and supportive educational spaces. The findings suggest that while Singaporean students perform well in areas like Maths, Reading, and Science, there are opportunities to enhance the educational experience by addressing disparities that may arise from socio-economic and immigration status differences.</p>
+<p>Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.</p>
 </section>
 <section id="references" class="level1">
 <h1>8. References</h1>
+<ol type="1">
+<li><p><a href="https://www.oecd.org/pisa/data/2022database/CY8_202111_QST_MS_STQ_CBA_NoNotes.pdf">PISA Student Questionaire</a></p></li>
+<li><p><a href="https://www.oecd.org/publication/pisa-2022-results/country-notes/singapore-2f72624e/">PISA Singapore Results</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html">Introduction to corrplot Package</a></p></li>
+</ol>
 
 
 </section>
