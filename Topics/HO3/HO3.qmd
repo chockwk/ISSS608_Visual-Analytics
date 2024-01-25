@@ -11,6 +11,8 @@ execute:
 editor: source
 ---
 
+![](plot9_anim.gif)
+
 # 1. Learning Objectives
 
 1.  Create interactive data visualization using `ggiraph`, `plotlyr`, `crosstalk`
@@ -19,11 +21,27 @@ editor: source
 
 # 2. Load Packages
 
-The following R packages will be used: - `DT` provides an R interface to the JavaScript library DataTables that create interactive table on html page - `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs - `patchwork` combines multiple ggplot2 graphs into one figure
+The following R packages will be used:
 
-Interactive data visualisation: - `ggiraph` makes `ggplot` graphics interactive - `plotly` plots interactive statistical graphs
+-   `DT` provides an R interface to the JavaScript library DataTables that create interactive table on html page
 
-Animated data visualization: `gganimate`, an ggplot extension for creating animated statistical graphs. `gifski` converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame. `gapminder`: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.
+-   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
+
+-   `patchwork` combines multiple ggplot2 graphs into one figure
+
+Interactive data visualisation:
+
+-   `ggiraph` makes `ggplot` graphics interactive
+
+-   `plotly` plots interactive statistical graphs
+
+Animated data visualization:
+
+-   `gganimate`, an ggplot extension for creating animated statistical graphs.
+
+-   `gifski` converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame.
+
+-   `gapminder`: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.
 
 ```{r}
 pacman::p_load(readxl, ggiraph, plotly, patchwork, DT, tidyverse, gifski, gapminder, gganimate) 
@@ -677,13 +695,12 @@ anim_save("plot9_anim.gif", plot9_anim)
 plot9_anim
 ```
 
-To adjust the speed of animation, `animate()` contains `fps` argument. 
+To adjust the speed of animation, `animate()` contains `fps` argument.
 
-::: {.callout-tip}
+::: callout-tip
 ### Specific fps for certain Year
 
-Artificially stretch the required timeline so that it is multiple years long.
-Scale the transition length to the numerical difference between each state.
+Artificially stretch the required timeline so that it is multiple years long. Scale the transition length to the numerical difference between each state.
 :::
 
 ```{r}
@@ -710,12 +727,11 @@ In Plotly R package, both ggplotly() and plot_ly() support key frame animations 
 
 ## 9.1 Animated bubble plot: ggplotly()
 
-Appropriate ggplot2 functions are used to create a static bubble plot. The output is then saved as an R object called gg.
-`ggplotly()` is then used to convert the R graphic object into an animated svg object.
+Appropriate ggplot2 functions are used to create a static bubble plot. The output is then saved as an R object called gg. `ggplotly()` is then used to convert the R graphic object into an animated svg object.
 
 ::: panel-tabset
-
 ### Legend
+
 ```{r}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -757,7 +773,6 @@ gg <- ggplot(globalPop,
 
 ggplotly(gg)
 ```
-
 :::
 
 ## 9.2 Animated bubble plot: plot_ly()
@@ -778,4 +793,3 @@ bp <- globalPop %>%
   layout(showlegend = FALSE)
 bp
 ```
-

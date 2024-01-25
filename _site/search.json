@@ -338,9 +338,9 @@
   {
     "objectID": "Topics/HO4/HO4.html",
     "href": "Topics/HO4/HO4.html",
-    "title": "Animated Data Visualization",
+    "title": "Statistical Visualization",
     "section": "",
-    "text": "1. Learning Objectives\n\n\n2. Load Packages\n\n\n3. Import Data"
+    "text": "Source: Ohio.edu\n\n1. Learning Objectives\n\nNew statistical graphic methods for visualising distribution, namely ridgeline plot and raincloud plot by using ggplot2 and its extensions.\n\n\n\n2. Load Packages\ntidyverse is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs ggridges is an ggplot2 extension specially designed for plotting ridgeline plots ggdist for visualising distribution and uncertainty\n\npacman::p_load(ggdist, ggridges, ggthemes, colorspace, tidyverse)\n\n\n\n3. Import Data\nexam_data is a year end examination grades of a cohort of Primary 3 students from a local school.\n\nexam_data &lt;- read.csv(\"data/Exam_data.csv\")\n\nError in file(file, \"rt\"): cannot open the connection\n\nglimpse(exam_data)\n\nError in eval(expr, envir, enclos): object 'exam_data' not found"
   },
   {
     "objectID": "Exercises/TH1/TH1.html#data-demographics",

@@ -1,5 +1,5 @@
 ---
-title: "Animated Data Visualization"
+title: "Statistical Visualization"
 author: "Wan Kee"
 date: "20 January 2024"
 date-modified: "last-modified"
@@ -11,9 +11,27 @@ execute:
 editor: source
 ---
 
+![](images/ggridge.png)
+
+Source: [Ohio.edu](https://people.ohio.edu/ruhil/RBookNew/visualizing-data.html)
+
 # 1. Learning Objectives
+
+1.  New statistical graphic methods for visualising distribution, namely **ridgeline plot** and **raincloud plot** by using ggplot2 and its extensions.
 
 # 2. Load Packages
 
+`tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs `ggridges` is an ggplot2 extension specially designed for plotting ridgeline plots `ggdist` for visualising distribution and uncertainty
+
+```{r}
+pacman::p_load(ggdist, ggridges, ggthemes, colorspace, tidyverse)
+```
 
 # 3. Import Data
+
+exam_data is a year end examination grades of a cohort of Primary 3 students from a local school.
+
+```{r}
+exam_data <- read.csv("data/Exam_data.csv")
+glimpse(exam_data)
+```
