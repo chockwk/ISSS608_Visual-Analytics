@@ -1,5 +1,5 @@
 ---
-title: "Interactive Data Visualization"
+title: "Interactive and Animated Data Visualization"
 author: "Wan Kee"
 date: "13 January 2024"
 date-modified: "last-modified"
@@ -15,17 +15,18 @@ editor: source
 
 1.  Create interactive data visualization using `ggiraph`, `plotlyr`, `crosstalk`
 
+2.  Create animated data visualization using `gganimate`, `gifski`, `gapminder`
+
 # 2. Load Packages
 
-The following R packages will be used:
--   `ggiraph` makes `ggplot` graphics interactive
--   `plotly` plots interactive statistical graphs
--   `DT` provides an R interface to the JavaScript library DataTables that create interactive table on html page
--   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
--   `patchwork` combines multiple ggplot2 graphs into one figure
+The following R packages will be used: - `DT` provides an R interface to the JavaScript library DataTables that create interactive table on html page - `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs - `patchwork` combines multiple ggplot2 graphs into one figure
+
+Interactive data visualisation: - `ggiraph` makes `ggplot` graphics interactive - `plotly` plots interactive statistical graphs
+
+Animated data visualization: `gganimate`, an ggplot extension for creating animated statistical graphs. `gifski` converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame. `gapminder`: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.
 
 ```{r}
-pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse) 
+pacman::p_load(readxl, ggiraph, plotly, patchwork, DT, tidyverse, gifski, gapminder, gganimate) 
 ```
 
 # 3. Import Data
@@ -34,6 +35,20 @@ pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse)
 
 ```{r}
 exam_data <- read.csv("data/Exam_data.csv")
+glimpse(exam_data)
+```
+
+`globalPop`
+
+```{r}
+col <- c("Country", "Continent")
+
+globalPop <- read_xls("data/GlobalPopulation.xls",
+                      sheet="Data") %>%
+  mutate(across(col, as.factor)) %>%
+  mutate(Year = as.integer(Year))
+
+glimpse(globalPop)
 ```
 
 # 4. Interactive Data Visualization using R Package: ggiraph
@@ -67,9 +82,15 @@ We can replace
 ## 4.1 Tooltip
 
 ::: panel-tabset
-### Tooltip (single attribute)
+### Single Attribute
 
-To plot an interactive statistical graph by using ggiraph package, - Create an ggplot object using `ggplot()` and `geom_dotplot_interactive()` - Indiate `aes()` to include an attribute `tooltip = ID` - Create an interactive svg object using `girafe()` to be displayed on an html page
+To plot an interactive statistical graph with one attributes `ID` by using `ggiraph` package,
+
+1.  Create an ggplot object using `ggplot()` and `geom_dotplot_interactive()`
+
+2.  Indiate `aes()` to include an attribute `tooltip = ID`
+
+3.  Create an interactive svg object using `girafe()` to be displayed on an html page
 
 ```{r}
 #| code-fold: true
@@ -95,7 +116,7 @@ girafe(
 )
 ```
 
-### Tooltip (multiple attributes)
+### Multiple Attributes
 
 `paste0()` concatenate strings or vectors, in this example, two attributes, namely `ID` and `CLASS`. Note the change in `aes()` to `tooltip = exam_data$tooltip`
 
@@ -126,15 +147,14 @@ girafe(
 )
 ```
 
-### Tooltip (customization)
+### Customization
 
 The customization is indicated by `tooltip_css` below, which changes the `background-colour` to white and the font `colour` to black and `font-style` bold.
 
 `opts_tooltip()` within `giraph()` customize the tooltip rendering by add `css` declarations.
 
-::: {.callout-tip title="Usage"} 
-
-opts_tooltip( css = NULL, offx = 10, offy = 0, use_cursor_pos = TRUE, opacity = 0.9, use_fill = FALSE, use_stroke = FALSE, delay_mouseover = 200, delay_mouseout = 500, placement = c("auto", "doc", "container"), zindex = 999 )
+::: {.callout-tip title="Usage"}
+Arguments of `opts_tooltip()`: css = NULL, offx = 10, offy = 0, use_cursor_pos = TRUE, opacity = 0.9, use_fill = FALSE, use_stroke = FALSE, delay_mouseover = 200, delay_mouseout = 500, placement = c("auto", "doc", "container"), zindex = 999
 :::
 
 ```{r}
@@ -146,48 +166,9 @@ tooltip_css <- "background-color: white; font-style: bold; color: black"
 exam_data$tooltip <- c(paste0("Name = ", exam_data$ID, 
                               "\n Class = ", exam_data$CLASS))
 
-plot2 <- ggplot(data = exam_data, 
+plot3 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(tooltip = exam_data$tooltip),
-                           stackgroups = TRUE, 
-                           binwidth = 1, 
-                           method = "histodot") +
-  scale_y_continuous(NULL, breaks = NULL)+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-
-girafe(
-  ggobj = plot2,
-  width_svg = 6,
-  height_svg = 6*0.618,
-  options = list(opts_tooltip(css = tooltip_css))
-)
-```
-
-### Tooltip (statistics)
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
-
-exam_data$Average_Score <- round(rowMeans(exam_data[, c("ENGLISH", "MATHS", "SCIENCE")]),
-                                 digits = 2)
-
-# tooltip_css <- "background-color: white; font-style: bold; color: black"
-
-exam_data$tooltip2 <- paste0("Name = ", exam_data$ID, 
-                            "\nClass = ", exam_data$CLASS,
-                            "\nEnglish = ", exam_data$ENGLISH,
-                            "\nMaths = ", exam_data$MATHS,
-                            "\nScience = ", exam_data$SCIENCE,
-                            "\nAverage Score = ", exam_data$Average_Score)
-
-plot3 <- ggplot(data = exam_data, 
-                aes(x = Average_Score))+
-  geom_dotplot_interactive(aes(tooltip = exam_data$tooltip2),
                            stackgroups = TRUE, 
                            binwidth = 1, 
                            method = "histodot") +
@@ -206,9 +187,52 @@ girafe(
 )
 ```
 
+### Statistics
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+exam_data$Average_Score <- round(rowMeans(exam_data[, c("ENGLISH", "MATHS", "SCIENCE")]),
+                                 digits = 2)
+
+# tooltip_css <- "background-color: white; font-style: bold; color: black"
+
+exam_data$tooltip2 <- paste0("Name = ", exam_data$ID, 
+                            "\nClass = ", exam_data$CLASS,
+                            "\nEnglish = ", exam_data$ENGLISH,
+                            "\nMaths = ", exam_data$MATHS,
+                            "\nScience = ", exam_data$SCIENCE,
+                            "\nAverage Score = ", exam_data$Average_Score)
+
+plot4 <- ggplot(data = exam_data, 
+                aes(x = Average_Score))+
+  geom_dotplot_interactive(aes(tooltip = exam_data$tooltip2),
+                           stackgroups = TRUE, 
+                           binwidth = 1, 
+                           method = "histodot") +
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(
+  ggobj = plot4,
+  width_svg = 6,
+  height_svg = 6*0.618,
+  options = list(opts_tooltip(css = tooltip_css))
+)
+```
+
 ::: callout-tip
 The top student is Student036 from Class 3A!
 :::
+
+### Statistics
+
+`stat_summary()` operates on unique x or y to create visualizations that display summary metrics.
 
 ```{r}
 #| code-fold: true
@@ -220,7 +244,7 @@ tooltip <- function(y, ymax, accuracy = 0.01) {
   paste("Mean maths scores:", mean, "+/-", sem)
 }
 
-plot4 <- ggplot(data = exam_data, 
+plot5 <- ggplot(data = exam_data, 
                    aes(x = RACE))+
   stat_summary(aes(y = MATHS, tooltip = after_stat(tooltip(y, ymax))),
                fun.data = "mean_se", geom = GeomInteractiveCol, fill = "lightblue")+
@@ -232,60 +256,27 @@ plot4 <- ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-girafe(ggobj = plot4,
+girafe(ggobj = plot5,
        width_svg = 6,
        height_svg = 6*0.618,
        options = list(opts_tooltip(css = tooltip_css)))
 ```
-
 :::
 
-## 4.2 Data_id
+## 4.2 Hover Effect
+
+To create the **hover effect**, `data_id()` is specified as an `aes()` argument in the interactive geom functions. Note the change in `aes()` to `data_id = CLASS` from the previous example.
 
 ::: panel-tabset
-### data_id
+### Single Attribute
 
-Note the change in `aes()` to `data_id = CLASS`.
-
-Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
+Elements associated with a data_id (i.e CLASS) will be **highlighted** upon mouse over.
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
-plot5 <- ggplot(data=exam_data, 
-                aes(x = MATHS))+
-  geom_dotplot_interactive(aes(data_id = CLASS),
-                           stackgroups = TRUE,
-                           binwidth = 1,
-                           method = "histodot")+
-  scale_y_continuous(NULL, breaks = NULL)+
-  theme_minimal()+
-  theme(legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "grey"))
-
-girafe(                                  
-  ggobj = plot5,                             
-  width_svg = 6,                         
-  height_svg = 6*0.618                      
-)                                        
-```
-
-### data_id (customization)
-
-`opts_tooltip()`, `opts_hover()` and `opts_hover_inv()` customize the tooltip and data_id rendering by add `css` declarations.
-
-::: callout-note
-The default value of the hover css is hover_css = “fill:orange;”. In this example, we will use `fill: #ABEBC6;`.
-:::
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
-
-plot6 <- ggplot(data = exam_data, 
+plot6 <- ggplot(data=exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(data_id = CLASS),
                            stackgroups = TRUE,
@@ -301,6 +292,40 @@ plot6 <- ggplot(data = exam_data,
 girafe(                                  
   ggobj = plot6,                             
   width_svg = 6,                         
+  height_svg = 6*0.618                      
+)                                        
+```
+
+### Customization
+
+`opts_tooltip()`, `opts_hover()` and `opts_hover_inv()` customize the tooltip and data_id rendering by add `css` declarations.
+
+**Effect on geometries**: opts_hover(css = NULL, reactive = FALSE, nearest_distance = NULL) **Effect on other geometries**: opts_hover_inv(css = NULL) **Interactive scales**: opts_hover_key(css = NULL, reactive = FALSE) **Interactive theme elements**: opts_hover_theme(css = NULL, reactive = FALSE)
+
+::: callout-note
+The default value of the hover css is hover_css = “fill:orange;”. In this example, we will use `fill: #ABEBC6;`.
+:::
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+plot7 <- ggplot(data = exam_data, 
+                aes(x = MATHS))+
+  geom_dotplot_interactive(aes(data_id = CLASS),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(                                  
+  ggobj = plot7,                             
+  width_svg = 6,                         
   height_svg = 6*0.618,
   options = list(                        
     opts_hover(css = "fill: #ABEBC6;"),  
@@ -309,7 +334,7 @@ girafe(
 )                                        
 ```
 
-### data_id with tooltip
+### Hover Effect with tooltip
 
 `opts_hover()` and `opts_hover_inv()` customize the data_id rendering by add `css` declarations.
 
@@ -322,7 +347,7 @@ tooltip_css <- "background-color: white; font-style: bold; color: black"
 exam_data$tooltip <- c(paste0("Name = ", exam_data$ID, 
                               "\n Class = ", exam_data$CLASS))
 
-plot6 <- ggplot(data = exam_data, 
+plot8 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(tooltip = exam_data$tooltip, data_id = CLASS),
                            stackgroups = TRUE,
@@ -336,7 +361,7 @@ plot6 <- ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 
 girafe(                                  
-  ggobj = plot6,                             
+  ggobj = plot8,                             
   width_svg = 6,                         
   height_svg = 6*0.618,
   options = list(
@@ -362,7 +387,7 @@ exam_data$onclick <- sprintf("window.open(\"%s%s\")",
 "https://www.moe.gov.sg/schoolfinder?journey=Primary%20school",
 as.character(exam_data$ID))
 
-plot7 <- ggplot(data = exam_data, 
+plot9 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(onclick = onclick),
                            stackgroups = TRUE,
@@ -376,7 +401,7 @@ plot7 <- ggplot(data = exam_data,
         axis.line = element_line(colour = "grey"))
 
 girafe(                                  
-  ggobj = plot7,                             
+  ggobj = plot9,                             
   width_svg = 6,                         
   height_svg = 6*0.618)                                        
 ```
@@ -392,19 +417,20 @@ Note that click actions must be a **string** column in the dataset containing va
 The following programming strategy will be used:
 
 -   Appropriate interactive functions of `ggiraph` will be used to create the multiple views.
--   `patchwork`  will be used inside girafe function to create the interactive coordinated multiple views.
+-   `patchwork` will be used inside girafe function to create the interactive coordinated multiple views.
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
-plot8 <- ggplot(data = exam_data, 
+plot10 <- ggplot(data = exam_data, 
                 aes(x = ENGLISH))+
   geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
                            stackgroups = TRUE,
                            binwidth = 1,
                            method = "histodot")+  
-  coord_cartesian(xlim = c(0,100))+ 
+  coord_cartesian(xlim = c(0,100))+
+  labs(title = "ENGLISH", x = NULL)+
   scale_y_continuous(NULL, breaks = NULL)+
   theme_minimal()+
   theme(legend.position = "none",
@@ -412,13 +438,14 @@ plot8 <- ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-plot9 <- ggplot(data = exam_data, 
+plot11 <- ggplot(data = exam_data, 
                 aes(x = MATHS))+
   geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
                            stackgroups = TRUE,
                            binwidth = 1,
                            method = "histodot")+  
-  coord_cartesian(xlim = c(0,100))+ 
+  coord_cartesian(xlim = c(0,100))+
+  labs(title = "MATHS", x = NULL)+
   scale_y_continuous(NULL, breaks = NULL)+
   theme_minimal()+
   theme(legend.position = "none",
@@ -426,12 +453,13 @@ plot9 <- ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-plot10 <- ggplot(data = exam_data, 
+plot12 <- ggplot(data = exam_data, 
                 aes(x = SCIENCE))+
   geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
                            stackgroups = TRUE,
                            binwidth = 1,
                            method = "histodot")+  
+  labs(title = "SCIENCE", x = NULL)+
   coord_cartesian(xlim = c(0,100))+ 
   scale_y_continuous(NULL, breaks = NULL)+
   theme_minimal()+
@@ -440,7 +468,7 @@ plot10 <- ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-girafe(code = print(plot8 + plot9 + plot10), 
+girafe(code = print(plot10 / plot11 / plot12), 
        width_svg = 6,
        height_svg = 3,
        options = list(
@@ -453,14 +481,12 @@ girafe(code = print(plot8 + plot9 + plot10),
 
 # 5. Interactive Data Visualization using R Package: plotly
 
-`plotly` is an R package for creating interactive web-based graphs via the open source JavaScript graphing library `plotly.js`.
+`plotly` is an R package for creating interactive web-based graphs via the open source JavaScript graphing library `plotly.js`. It creates a variety of interactive graphics.
 
-## 4.1 plot_ly()
-
+There are two main ways to creating a plotly object: either by transforming a ggplot2 object `ggplotly()` into a plotly object or by directly initializing a plotly object with `plot_ly()`/`plot_geo()`/`plot_mapbox()`.
 
 ::: panel-tabset
-
-### Basic plotly (2 variables)
+### Two variables
 
 Each dot represents a student and the associated english and math score is displayed on the interactive graph.
 
@@ -478,23 +504,43 @@ plot_ly(data = exam_data,
         x = ~MATHS, y = ~ENGLISH,
         color = ~RACE)
 ```
-
 :::
 
-
-## 4.2 ggplotly()
+# 6. Interactive Data Visualization using R Package: ggplotly
 
 Requires ggplot() and then using ggplotly()
 
-:::panel-tabset
-### Basic ggplotly
+::: panel-tabset
+### Two Variables
 
 ```{r}
 p <- ggplot(data=exam_data, 
             aes(x = MATHS, y = ENGLISH))+
   geom_point(size=1)+
   coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))
+                  ylim=c(0,100))+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+ggplotly(p)
+```
+
+### Three Variables
+
+```{r}
+p <- ggplot(data=exam_data, 
+            aes(x = MATHS, y = ENGLISH, colour = RACE))+
+  geom_point(size=1)+
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
 
 ggplotly(p)
 ```
@@ -503,50 +549,67 @@ ggplotly(p)
 
 The creation of a coordinated linked plot by using plotly involves three steps:
 
-highlight_key() of plotly package is used as shared data.
-two scatterplots will be created by using ggplot2 functions.
-lastly, subplot() of plotly package is used to place them next to each other side-by-side.
+1.  `highlight_key()` of `plotly` package is used as shared data.
+
+2.  Two scatterplots will be created by using ggplot2 functions.
+
+3.  `subplot()` of `plotly` package is used to place them next to each other side-by-side.
 
 ```{r}
 d <- highlight_key(exam_data)
+
 p1 <- ggplot(data=d, 
-            aes(x = MATHS,
-                y = ENGLISH)) +
-  geom_point(size=1) +
+            aes(x = MATHS, y = ENGLISH,
+                text = paste("<b>Maths Score:</b>", MATHS,"<br><b>English Score:", ENGLISH))) +
+  geom_point(size=1, shape = 12) +
   coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))
+                  ylim=c(0,100))+ 
+  theme_minimal()
 
 p2 <- ggplot(data=d, 
-            aes(x = MATHS,
-                y = SCIENCE)) +
-  geom_point(size=1) +
+            aes(x = MATHS, y = SCIENCE,
+                text = paste("<b>Maths Score:</b>", MATHS,"<br><b>Science Score:", SCIENCE))) +
+  geom_point(size=1, shape = 5) +
   coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))
-subplot(ggplotly(p1),
-        ggplotly(p2))
+                  ylim=c(0,100))+
+  theme_minimal()
+
+subplot(ggplotly(p1, tooltip = "text"),
+        ggplotly(p2, tooltip = "text"))
 ```
 :::
 
-# 6. Interactive Data Visualization using R Package: crosstalk
+# 7. Interactive Data Visualization using R Package: crosstalk
 
-Crosstalk is an add-on to the htmlwidgets package. It extends htmlwidgets with a set of classes, functions, and conventions for implementing cross-widget interactions (currently, linked brushing and filtering).
+`Crosstalk` is an add-on to the htmlwidgets package. It extends htmlwidgets with a set of classes, functions, and conventions for implementing cross-widget interactions (currently, linked brushing and filtering).
+
+Limitations of Crosstalk:
+
+1.  HTML widgets must be specifically modified to support Crosstalk
+
+2.  Only works for linked brushing and filtering of views that show individual data points, not aggregate or summary views
+
+3.  Not appropriate for large data sets
 
 ## 6.1 Data Table
 
 ```{r}
-DT::datatable(exam_data, class= "compact")
+DT::datatable(exam_data[c("ID","CLASS","GENDER","RACE","ENGLISH","MATHS","SCIENCE")],
+              class= "compact")
 ```
 
 ## 6.2 Linked Brushing
 
 ```{r}
 d <- highlight_key(exam_data) 
-p <- ggplot(d, 
-            aes(ENGLISH, 
-                MATHS)) + 
-  geom_point(size=1) +
+
+p <- ggplot(data=d, 
+            aes(x = MATHS, y = ENGLISH,
+                text = paste("<b>Maths Score:</b>", MATHS,"<br><b>English Score:", ENGLISH))) +
+  geom_point(size=1, shape = 12) +
   coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))
+                  ylim=c(0,100))+ 
+  theme_minimal()
 
 gg <- highlight(ggplotly(p),        
                 "plotly_selected")  
@@ -554,5 +617,165 @@ gg <- highlight(ggplotly(p),
 crosstalk::bscols(gg,               
                   DT::datatable(d), 
                   widths = 5)  
+```
+
+# 8. Animated Data Visualization using gganimate
+
+When creating animations, the plot does not actually move. Instead, many individual plots are built and then stitched together as movie frames. Each frame is a different plot when conveying motion, which is built using some relevant subset of the aggregate data. The subset drives the flow of the animation when stitched back together.
+
+`gganimate` extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.
+
+-   **transition\_*() defines how the data should be spread out and how it relates to itself across time.***
+
+-   *view\_*() defines how the positional scales should change along the animation.
+
+-   \*\*shadow\_*() **defines how data from other points in time should be presented in the given point in time.***
+
+-   *enter\_*()/exit\_\*() **defines how new data should appear and how old data should disappear during the course of the animation.**
+
+-   ease_aes()\*\* defines how different aesthetics should be eased during transitions.
+
+[![](images/gganimate_cheatsheet.png){width="500"}](https://rstudio.github.io/cheatsheets/gganimate.pdf)
+
+## 8.1 Static Bubble Plot
+
+The basic `ggplot2` functions creates a static bubble plot.
+
+```{r}
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', x = '% Aged', y = '% Young')+
+  theme_minimal()
+```
+
+## 8.2 Animated bubble plot
+
+`transition_time()` of `gganimate` is used to create transition through distinct states in time (i.e. Year). Other transitions include transition_components(), transition_events(), transition_filter(), transition_layers(), transition_manual(), transition_null(), transition_reveal(), transition_states()
+
+`ease_aes()` is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
+
+```{r}
+plot9 <- ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country))+
+  geom_point(alpha = 0.7, show.legend = FALSE)+
+  scale_colour_manual(values = country_colors)+
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', x = '% Aged', y = '% Young')+
+  transition_time(Year)+       
+  ease_aes('linear')+
+  theme_minimal()
+
+plot9_anim <- animate(plot9, nframes = 30, fps = 4)
+anim_save("plot9_anim.gif", plot9_anim)
+
+plot9_anim
+```
+
+To adjust the speed of animation, `animate()` contains `fps` argument. 
+
+::: {.callout-tip}
+### Specific fps for certain Year
+
+Artificially stretch the required timeline so that it is multiple years long.
+Scale the transition length to the numerical difference between each state.
+:::
+
+```{r}
+plot10 <- ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country))+
+  geom_point(alpha = 0.7, show.legend = FALSE)+
+  scale_colour_manual(values = country_colors)+
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', x = '% Aged', y = '% Young')+
+  transition_time(Year)+       
+  ease_aes('linear')+
+  theme_minimal()
+
+plot10_anim <- animate(plot10, nframes = 30, fps = 10)
+anim_save("plot10_anim.gif", plot10_anim)
+
+plot10_anim
+```
+
+# 9. Animated Data Visualisation: plotly
+
+In Plotly R package, both ggplotly() and plot_ly() support key frame animations through the frame argument/aesthetic. They also support an ids argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
+
+## 9.1 Animated bubble plot: ggplotly()
+
+Appropriate ggplot2 functions are used to create a static bubble plot. The output is then saved as an R object called gg.
+`ggplotly()` is then used to convert the R graphic object into an animated svg object.
+
+::: panel-tabset
+
+### Legend
+```{r}
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young')+
+  theme_minimal()
+
+ggplotly(gg)
+```
+
+### No Legend
+
+Although show.legend = FALSE argument was used, the legend still appears on the plot. To overcome this problem, theme(legend.position='none') should be used.
+
+```{r}
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young') + 
+  theme(legend.position='none')+
+  theme_minimal()
+
+ggplotly(gg)
+```
+
+:::
+
+## 9.2 Animated bubble plot: plot_ly()
+
+```{r}
+bp <- globalPop %>%
+  plot_ly(x = ~Old, 
+          y = ~Young, 
+          size = ~Population, 
+          color = ~Continent,
+          sizes = c(2, 100),
+          frame = ~Year, 
+          text = ~Country, 
+          hoverinfo = "text",
+          type = 'scatter',
+          mode = 'markers'
+          ) %>%
+  layout(showlegend = FALSE)
+bp
 ```
 

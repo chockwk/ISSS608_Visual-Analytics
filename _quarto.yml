@@ -18,9 +18,9 @@ website:
             href: Topics/HO2/HO2.html
           - text: Statistical Data Formats
             href: Topics/IC1/IC1.html
-          - text: Interactive Data Visualization
+          - text: Interactive and Animated Data Visualization
             href: Topics/HO3/HO3.html
-          - text: Animated Data Visualization
+          - text: Visual Statistical Analysis
             href: Topics/HO4/HO4.html
           - text: x
             
