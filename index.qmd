@@ -8,6 +8,7 @@ listing:
   - "IC1.qmd"
   - "TH1.qmd"
   - "HO4.qmd"
+  - "TH2.qmd"
   - "HO5.qmd"
 type: grid
 sort: "date"
@@ -23,19 +24,14 @@ Source: [Autodesk](https://www.research.autodesk.com/publications/same-stats-dif
 
 This is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.
 
-![](_site/images/datasaurus_all.png)
+![](_site/images/datasaurus_all.png){width="600"}
 
 # Visual Analytics?
 
-Visual Analytics is the craft of **analytical reasoning** supported by:
--   Data Science and Analytics
--   Data Visualisation
--   Human-Computing-Interaction (HCI)
--   Interface Design
--   Visual Storytelling
+Visual Analytics is the craft of **analytical reasoning** supported by: - Data Science and Analytics - Data Visualization - Human-Computing-Interaction (HCI) - Interface Design - Visual Storytelling
 
 The learning objective is to understand the **basic concepts, theories and methodologies** of visual analytics, analyse data using appropriate **visual thinking and visual analytics techniques**, and implement cutting-edge **visual analytics system** for **decision making**.
 
-![](_site/images/VA.png)
+![](_site/images/VA.png){width="600"}
 
 # Topic Overview

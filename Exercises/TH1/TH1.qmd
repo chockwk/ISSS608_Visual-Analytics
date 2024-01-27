@@ -303,7 +303,7 @@ To understand the student demographics, we will visualize the distribution and s
 
 plot1 <- ggplot(stu_qqq_SGP, aes(x = ST004D01T))+
   geom_bar(colour = "black", 
-           fill = "aquamarine")+
+           fill = "thistle")+
   labs(title = "Students' Gender", x = NULL, y = NULL)+
   ylim(0,4000)+
   geom_text(stat = "Count",
@@ -314,13 +314,13 @@ plot1 <- ggplot(stu_qqq_SGP, aes(x = ST004D01T))+
 
 plot2 <- ggplot(stu_qqq_SGP, aes(y = AGE))+
   geom_boxplot(notch = TRUE,
-               fill = "aquamarine3")+
+               fill = "rosybrown3")+
   labs(title = "Students' Age", x = NULL, y = NULL)+
   theme_minimal()
 
 plot3 <- ggplot(stu_qqq_SGP, aes(x = ST019AQ01T))+
   geom_bar(colour = "black",
-           fill = "aquamarine4",
+           fill = "lightpink4",
            na.rm = TRUE)+
   labs(title = "Students' Nationality", x = NULL, y = NULL)+
   ylim(0,6000)+
@@ -331,7 +331,7 @@ plot3 <- ggplot(stu_qqq_SGP, aes(x = ST019AQ01T))+
 
 plot4 <- ggplot(stu_qqq_SGP, aes(x = ST294Q02JA))+
   geom_bar(colour = "black",
-           fill = "aquamarine4",
+           fill = "rosybrown1",
            na.rm = TRUE)+
   labs(title = "Students' Study (Days)", x = NULL, y = NULL)+
   ylim(0,3500)+
@@ -343,7 +343,7 @@ plot4 <- ggplot(stu_qqq_SGP, aes(x = ST294Q02JA))+
 
 plot5 <- ggplot(stu_qqq_SGP, aes(x = ST253Q01JA))+
   geom_bar(colour = "black",
-           fill = "aquamarine",
+           fill = "plum4",
            na.rm = TRUE)+
   labs(title = "Students' Digital Expose", x = NULL, y = NULL)+
   ylim(0,6000)+
@@ -354,7 +354,7 @@ plot5 <- ggplot(stu_qqq_SGP, aes(x = ST253Q01JA))+
 
 plot6 <- ggplot(stu_qqq_SGP, aes(x = HISCED))+
   geom_bar(colour = "black",
-           fill = "aquamarine3")+
+           fill = "thistle3")+
   labs(title = "Parents' Education", x = NULL, y = NULL)+
   ylim(0,2000)+
   geom_text(stat = "Count",
@@ -1127,7 +1127,7 @@ The sense of belonging can be a crucial factor in a student's school experience,
   
 plot100 <- ggplot(stu_qqq_SGP, aes(x = ST331Q01JA))+
   geom_bar(colour = "black", 
-           fill = "aquamarine")+
+           fill = "thistle")+
   labs(title = "How much effort did you\nput into doing well\non the PISA test?", x = NULL, y = NULL)+
   xlim(0,10)+
   ylim(0,2000)+
@@ -1140,7 +1140,7 @@ plot100 <- ggplot(stu_qqq_SGP, aes(x = ST331Q01JA))+
 
 plot101 <- ggplot(stu_qqq_SGP, aes(x = ST331Q02JA))+
   geom_bar(colour = "black", 
-           fill = "aquamarine3")+
+           fill = "rosybrown3")+
   labs(title = "How much effort would\nyou have invested if\nyour results from the\nPISA test were counted\nin your school marks?", x = NULL, y = NULL)+
   xlim(0,10)+
   ylim(0,2000)+
@@ -1152,7 +1152,7 @@ plot101 <- ggplot(stu_qqq_SGP, aes(x = ST331Q02JA))+
 #ST331Q03JA How much effort did you put into giving accurate answers?
 plot102 <- ggplot(stu_qqq_SGP, aes(x = ST331Q03JA))+
   geom_bar(colour = "black", 
-           fill = "aquamarine4")+
+           fill = "plum4")+
   labs(title = "How much effort did\nyou put into giving\naccurate answers?", x = NULL, y = NULL)+
   xlim(0,10)+
   ylim(0,2000)+
@@ -1180,33 +1180,7 @@ The interplay between students' experiences within the school environment and th
 
 Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.
 
-# 8. Peer Critique and Visualization Makeover
-
-The purpose of the makeover is to improve on the original visualization.
-
-1.  Critic the submission in terms of clarity and aesthetics
-
-2.  Prepare a sketch for the alternative design by using the data visualisation design principles and best practices
-
-3.  Remake the original design using `ggplot2` and its extensions, and `tidyverse`package.
-
-## 8.1 Data Visualization Critique
-
-Original Visualization
-
-![](images/makeover.png)
-
-::: panel-tabset
-### Clarity
-
-### Aesthetics
-:::
-
-## 8.2 Design Makeover
-
-## 8.3 Plot Makeover
-
-# 9. References
+# 8. References
 
 1.  [PISA Student Questionaire](https://www.oecd.org/pisa/data/2022database/CY8_202111_QST_MS_STQ_CBA_NoNotes.pdf)
 

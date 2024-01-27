@@ -1,0 +1,226 @@
+---
+title: "Peer Critique and Visualization Makeover"
+author: "Wan Kee"
+date: "23 January 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+# ![](images/alternativedesign.png)
+
+# 1. Task
+
+The purpose of the makeover is to improve on the original visualization.
+
+1.  Critic the submission in terms of clarity and aesthetics
+
+2.  Prepare a sketch for the alternative design by using the data visualisation design principles and best practices
+
+3.  Remake the original design using `ggplot2` and its extensions, and `tidyverse`package.
+
+# 2. Data Visualization Critique
+
+Original visualization
+
+![](images/makeover.png)
+
+Multiple box plots are used to investigate on the relationship between the parent's occupation and education, home possessions and the child's performance.
+
+::: panel-tabset
+## Clarity
+
+1.  The use of **box plots** to represent correlation is misleading because box plots are typically used for displaying distributions rather than relationships between two variables. A different type of visualization, such as **a scatter plot with a regression line**, would be more appropriate for showing correlation.
+
+2.  The **outliers** are marked with different colours but no legend is provided to explain what these colors signify, which can be confusing for the viewer. Clarification through a **legend** or **consistent colouring** would improve understanding.
+
+3.  The **long whiskers** on the boxplots are not explained, leaving the viewer uncertain about what they represent. This could be rectified by including a note on what the whiskers signify, such as 1.5 times the **interquartile range** or **standard deviations** from the mean.
+
+4.  The absence of statistical results, such as **correlation coefficients** or **p-values**, makes it difficult to quantify the strength of any relationships depicted in the plots. Including this information would enhance the interpretability of the data.
+
+## Aesthetics
+
+1.  Sorting **performance levels** in ascending order with labels that are not intuitive makes the chart harder to interpret at a glance. Reordering the levels or providing a more descriptive labeling system would be more visually intuitive.
+
+2.  The inclusion of **mean** indicators within the box plots is useful, but they blend in with individual data points. Making these indicators stand out more, perhaps with a different shape or size, would improve the visual distinction.
+:::
+
+# 3. Design Makeover
+
+1.  Identify the Objective
+
+    Shift from comparing distributions within socioeconomic categories to exploring linear relationships between students' scores and socioeconomic factors. The objective is to understand the correlation between maths, reading and science scores and socioeconomic status.
+
+2.  Data Transformation
+
+    Aggregate individual student scores into **average scores** for socioeconomic categories. The average scores and socioeconomic status are **continuous data** used for **scatter plots**.
+
+3.  Plot Type Selection
+
+    Change from box plots to **scatter plots** to visualize data points and **correlation**.
+
+4.  Visual Encoding
+
+    Represent socioeconomic status (ESCS, HISEI, HOMEPOS) and scores (MATH, READING, SCIENCE) on the x and y axes, respectively.
+
+    Use points to mark individual student data and lines to indicate the **linear regression**.
+
+5.  Statistical Representation
+
+    **Correlation coefficients** (R) and **p-values** quantify the strength and significance of the relationships.
+
+6.  Aesthetic Enhancements
+
+    Apply a consistent color scheme across all plots to visually tie them together. Ensure that text and statistical annotations are legible and use appropriate sizes for the scatter plot.
+
+7.  Layout Adjustments
+
+    Arrange the scatter plots in a grid layout using `facet_wrap()` or similar functions to allow for easy comparison across different socioeconomic status and subject scores.
+
+8.  Refinement and Simplification
+
+    Remove any unnecessary elements that do not contribute to understanding the correlations. Focus on clarity by removing distracting elements like gridlines or excessive tick marks.
+
+9.  Title and Labeling
+
+    Add an overarching title that summarizes the theme of the visualizations. Ensure that axis labels are clear and represent the variables accurately.
+
+# 4. Load Packages
+
+::: {.callout-tip collapse="true"}
+## R package functions
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `haven` reads and writes various data formats used by other statistical packages
+
+-   `ggpubr` provides easy-to-use functions for creating and customizing plots
+:::
+
+```{r}
+pacman::p_load(tidyverse, haven, ggpubr) 
+```
+
+# 5. Import Data
+
+The PISA 2022 database contains the full set of responses from individual students, school principals and parents. It is conducted every three years to assess the education systems worldwide through testing 15 year-old students in the subjects of mathematics, reading, and science.
+
+::: {.callout-caution collapse="true"}
+## Load Point
+
+```{r}
+stu_qqq_SGP <-read_rds("data/stu_qqq_SGP.rds")
+```
+:::
+
+# 6. Prepare Data
+
+::: panel-tabset
+## Grouping and Summarization
+
+`group_by()` from the `dplyr` package is used to create groups within the data based on specified variables. The data is grouped by various identifiers and demographic variables like country code, school ID, student ID, gender (ST004D01T), and socioeconomic indices (ESCS, HISEI, HOMEPOS).
+
+`summarise()` is then used to create summary statistics for each group. Specifically, it computes the **mean** of 10 plausible values for Math, Reading, and Science scores, rounding to one decimal place.
+
+```{r}
+stu_qqq_SGP_perf <- stu_qqq_SGP %>%
+  group_by(CNT, CNTRYID, CNTSCHID, CNTSTUID, ST004D01T, ESCS, HISEI, HOMEPOS) %>%
+  summarise(MATH = round(mean(PV1MATH, PV2MATH, PV3MATH, PV4MATH, PV5MATH, 
+                              PV6MATH, PV7MATH, PV8MATH, PV9MATH, PV10MATH), 1),
+            READING = round(mean(PV1READ, PV2READ, PV3READ, PV4READ, PV5READ,
+                                 PV6READ, PV7READ, PV8READ, PV9READ, PV10READ), 1),
+            SCIENCE = round(mean(PV1SCIE, PV2SCIE, PV3SCIE, PV4SCIE, PV5SCIE,
+                                 PV6SCIE, PV7SCIE, PV8SCIE, PV9SCIE, PV10SCIE), 1))
+```
+
+## Type Conversion
+
+`mutate()` is combined with `across()` to change the data types of the Math, Reading, and Science scores from their current type to **numeric**. This is important for ensuring that further analysis treats these variables as quantitative data.
+
+```{r}
+stu_qqq_SGP_perf <- stu_qqq_SGP_perf %>%
+  mutate(across(c(MATH, READING, SCIENCE), as.numeric))
+```
+
+## Reshaping Data
+
+`pivot_longer()` from the `tidyr` package is used.
+
+1.  Transforms the data from wide to long format, gathering the separate Math, Reading, and Science score columns into two columns: SUBJECT and SCORE.
+
+2.  Gathers the socioeconomic variables into two columns: SES_VARIABLE and VALUE.
+
+`mutate()` creates an interaction term **category** that combines the SUBJECT and SES_VARIABLE into a single factor that can be used for **faceting plots** or other grouped analyses.
+
+```{r}
+stu_qqq_SGP_perf_long <- stu_qqq_SGP_perf %>% 
+  pivot_longer(cols = c(MATH, READING, SCIENCE), 
+               names_to = "SUBJECT", 
+               values_to = "SCORE") %>% 
+  pivot_longer(cols = c(ESCS, HOMEPOS, HISEI), 
+               names_to = "SES_VARIABLE", 
+               values_to = "VALUE") %>%
+  mutate(category = interaction(SUBJECT, SES_VARIABLE))
+```
+:::
+
+```{r}
+glimpse(stu_qqq_SGP_perf_long)
+```
+
+# 7. Plot Makeover
+
+A combination of functions from the **`ggplot2`** package in R to create a set of plots that display the relationship between student scores and various socioeconomic variables:
+
+1.  **`ggplot()`**: Initializes the plotting object with a dataset and a default set of aesthetics to be used for all plots.
+
+2.  **`aes()`**: Sets up the aesthetic mappings by mapping the **`score`** variable to the x-axis and the **`value`** variable to the y-axis.
+
+3.  **`geom_point()`**: Adds a layer of points to the plot, which represent the individual data points with the **`score`** on the x-axis and the **`value`** on the y-axis.
+
+4.  **`geom_smooth()`**: Adds a smoothed conditional mean to the plot. The **`method = "lm"`** specifies that a **linear model** should be used for the smoothing, and **`size = 0.5`** sets the thickness of the smoothing line.
+
+5.  **`facet_wrap()`**: Creates a multi-panel plot by wrapping into an array of panels based on the **`category`** variable. The **`scales = "free"`** argument allows the scales of each facet to be independent of the others.
+
+6.  **`stat_cor()`**: Computes and adds the **correlation coefficient (R)** and the associated **p-value** to the plot. The **`method = "pearson"`** specifies the use of Pearson's correlation, **`label.x = 3`** positions the label on the x-axis, **`p.accuracy = 0.001`** sets the rounding accuracy for the p-value, **`r.accuracy = 0.01`** sets the rounding accuracy for the correlation coefficient, and **`color = "brown"`** sets the color of the correlation coefficient text.
+
+7.  **`theme_minimal()`**: Applies a minimal theme to the plot, which provides a clean and minimalist aesthetic by removing most of the background elements and gridlines.
+
+```{r}
+p <- ggplot(stu_qqq_SGP_perf_long, aes(x = SCORE, y = VALUE))+
+  geom_point(alpha = 0.2, colour = "grey")+
+  geom_smooth(method = "lm", size = 0.5)+
+  facet_wrap(~ category, scales = "free")+
+  stat_cor(method = "pearson", 
+           label.x = 3, 
+           p.accuracy = 0.001, 
+           r.accuracy = 0.01, 
+           color = "indianred")+
+  ggtitle("Correlation between Subject Scores and SES")+
+  theme_minimal()
+p
+```
+
+The output showing the correlation between students' scores in Mathematics, Reading, and Science, and various socioeconomic status (SES) indicators, namely Economic, Social and Cultural Status (ESCS), Highest Parental Occupational Status (HISEI), Home Possessions (HOMEPOS).
+
+Each plot displays a cloud of points indicating the distribution of scores against SES indicators for each subject. The blue line represents a linear model (least squares fit) showing the trend in the data. The strength and direction of the correlation between scores and SES factors are indicated by the correlation coefficient (R) and the significance level (p-value) displayed on each plot.
+
+::: {.callout-note appearance="simple"}
+
+## Key observations
+
+1.  There is a positive correlation between the students' scores in all three subjects and each of the SES indicators. This suggests that higher SES is associated with higher academic performance across the subjects.
+
+2.  The correlation coefficients (R) are fairly similar across the subjects for each SES indicator, hovering around 0.39 to 0.42, indicating a moderate positive relationship.
+
+3.  The p-values are all below 0.001, which suggests that the correlations are statistically significant. The consistency of these findings across different SES indicators and subjects might imply that SES is a robust predictor of academic performance in the Singapore context.
+
+4.  However, it's important to note that correlation does not imply causation, and these results would require further investigation to determine causal relationships.
+
+:::
