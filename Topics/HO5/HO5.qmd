@@ -1,0 +1,27 @@
+---
+title: "Model Diagnostics"
+author: "Wan Kee"
+date: "27 January 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+# 1. Learning Objectives
+
+1.  Visualise **model diagnostic** and **model parameters** by using `parameters` package.
+
+# 2. Load Packages
+
+The following packages 
+```{r}
+pacman::p_load(readxl, performance, parameters, see)
+```
+
+# 3. Import Data
+
+Toyota Corolla case study will be used. The purpose of study is to build a model to discover factors affecting prices of used-cars by taking into consideration a set of explanatory variables.

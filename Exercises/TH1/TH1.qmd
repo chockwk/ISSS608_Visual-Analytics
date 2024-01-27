@@ -511,7 +511,7 @@ stacked_bar_chart <- ggplot(schsys_likert_long, aes(x = short_question, fill = r
 stacked_bar_chart
 ```
 
-![](images/Screenshot 2024-01-21 at 11.44.35PM.png)
+![](images/Screenshot%202024-01-21%20at%2011.44.35PM.png)
 
 ::: {.callout-note appearance="simple"}
 ### Insights
@@ -1180,7 +1180,33 @@ The interplay between students' experiences within the school environment and th
 
 Ultimately, data-driven insights can guide policies and practices aimed at promoting equity and excellence in education, ensuring that all students are equipped to reach their full potential.
 
-# 8. References
+# 8. Peer Critique and Visualization Makeover
+
+The purpose of the makeover is to improve on the original visualization.
+
+1.  Critic the submission in terms of clarity and aesthetics
+
+2.  Prepare a sketch for the alternative design by using the data visualisation design principles and best practices
+
+3.  Remake the original design using `ggplot2` and its extensions, and `tidyverse`package.
+
+## 8.1 Data Visualization Critique
+
+Original Visualization
+
+![](images/makeover.png)
+
+::: panel-tabset
+### Clarity
+
+### Aesthetics
+:::
+
+## 8.2 Design Makeover
+
+## 8.3 Plot Makeover
+
+# 9. References
 
 1.  [PISA Student Questionaire](https://www.oecd.org/pisa/data/2022database/CY8_202111_QST_MS_STQ_CBA_NoNotes.pdf)
 

@@ -22,7 +22,8 @@ website:
             href: Topics/HO3/HO3.html
           - text: Visual Statistical Analysis
             href: Topics/HO4/HO4.html
-          - text: x
+          - text: Model Diagnostics
+            href: Topics/HO5/HO5.html
             
       - text: "❄ Real-world Exercises"
         menu: 
@@ -38,7 +39,7 @@ website:
   back-to-top-navigation: false
   
   page-footer:
-    background: "#ABEBC6"
+    background: "#c27ba0"
     center:
       - href: https://chockwk-visual-analytics.netlify.app
         icon: house-fill
@@ -57,7 +58,9 @@ website:
 
 format:
   html:
-    theme: minty
+    theme: 
+      - minty
+      - minty_custom.scss
     css: styles.css
     toc: true
 

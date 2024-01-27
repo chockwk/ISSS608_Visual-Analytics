@@ -191,6 +191,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">3. Import Data</a></li>
   <li><a href="#ridgeline-plot" id="toc-ridgeline-plot" class="nav-link" data-scroll-target="#ridgeline-plot">4. Ridgeline Plot</a></li>
   <li><a href="#raincloud-plot" id="toc-raincloud-plot" class="nav-link" data-scroll-target="#raincloud-plot">5. Raincloud Plot</a></li>
+  <li><a href="#statistical-tests" id="toc-statistical-tests" class="nav-link" data-scroll-target="#statistical-tests">6. Statistical Tests</a>
+  <ul class="collapse">
+  <li><a href="#one-sample-test" id="toc-one-sample-test" class="nav-link" data-scroll-target="#one-sample-test">6.1 One-sample Test</a></li>
+  <li><a href="#two-sample-mean-test" id="toc-two-sample-mean-test" class="nav-link" data-scroll-target="#two-sample-mean-test">6.2 Two-sample mean test</a></li>
+  <li><a href="#one-way-anova-test" id="toc-one-way-anova-test" class="nav-link" data-scroll-target="#one-way-anova-test">6.2 One-way ANOVA Test</a></li>
+  <li><a href="#significant-test-of-correlation" id="toc-significant-test-of-correlation" class="nav-link" data-scroll-target="#significant-test-of-correlation">6.3 Significant Test of Correlation</a></li>
+  <li><a href="#significant-test-of-association" id="toc-significant-test-of-association" class="nav-link" data-scroll-target="#significant-test-of-association">6.4 Significant Test of Association</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">10. References</a></li>
   </ul>
 </nav>
     </div>
@@ -232,8 +241,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p><img src="images/ggridge.png" class="img-fluid"></p>
-<p>Source: <a href="https://people.ohio.edu/ruhil/RBookNew/visualizing-data.html">Ohio.edu</a></p>
+<p><img src="images/logo.png" class="img-fluid"></p>
 <section id="learning-objectives" class="level1">
 <h1>1. Learning Objectives</h1>
 <ol type="1">
@@ -248,10 +256,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><p><code>tidyverse</code> is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs</p></li>
 <li><p><code>ggridges</code> is an ggplot2 extension specially designed for plotting ridgeline plots</p></li>
-<li><p><code>ggdist</code> for visualising distribution and uncertainty</p></li>
+<li><p><code>ggdist</code> is an ggplot2 extension for visualising distribution and uncertainty</p></li>
+<li><p><code>ggthemes</code> and <code>colourspace</code></p></li>
+<li><p><code>ggstatsplot</code> is an ggplot2 extension for creating graphics with details from statistical tests</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(ggdist, ggridges, ggthemes, colorspace, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, ggridges, ggdist, ggthemes, colorspace, ggstatsplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-data" class="level1">
@@ -513,9 +523,112 @@ $ SCIENCE &lt;int&gt; 15, 16, 16, 31, 25, 16, 25, 27, 15, 37, 42, 22, 32, 36, 35
 </div>
 </div>
 </div>
-<p>References</p>
-<p>https://www.data-to-viz.com/graph/ridgeline.html</p>
-<p>https://rpubs.com/rana2hin/raincloud</p>
+</section>
+<section id="statistical-tests" class="level1">
+<h1>6. Statistical Tests</h1>
+<p><code>ggstatsplot</code> is an extension of ggplot2 package for creating graphics with details from <strong>statistical tests</strong> to be included in the information-rich plots themselves.</p>
+<ul>
+<li><p>Provide <strong>alternative statistical inference</strong> methods by default.</p></li>
+<li><p>Follow <strong>best practices</strong> for statistical reporting. The default template abides by the APA gold standard for statistical reporting.</p></li>
+</ul>
+<section id="one-sample-test" class="level2">
+<h2 class="anchored" data-anchor-id="one-sample-test">6.1 One-sample Test</h2>
+<p><code>gghistostats</code> can be used for data exploration to <strong>inspect distribution of a continuous variable</strong> and to test if the <strong>mean</strong> of a sample variable is different from a specified value (population parameter).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Bayes factor
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Bayes factor</strong> is <strong>the ratio of the likelihood</strong> of one particular hypothesis to the likelihood of another. It can be interpreted as a measure of the strength of evidence in favor of one theory among two competing theories. A Bayes Factor can be any <strong>positive number</strong>.</p>
+<p>It gives us a way to evaluate the data in favor of a null hypothesis, and to use external information to do so. It tells us what the weight of the evidence is in favor of a given hypothesis.</p>
+<p>When comparing two hypotheses, H1 (the alternate hypothesis) and H0 (the null hypothesis), the Bayes Factor is often written as <strong>B10</strong>.</p>
+</div>
+</div>
+<p><code>gghistostats</code> computed <strong>Bayes Factors</strong> to quantify the likelihood of the English Score (BF10) and the null hypothesis (BF01). In our example, the Bayes Factor value indicates these English scores are similar to the population mean generated from <strong>set.seed(1234)</strong>. The log(Bayes factor) of 31.45 means the odds are low that this sample is different.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gghistostats</span>(<span class="at">data =</span> exam_data,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">x =</span> ENGLISH,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">type =</span> <span class="st">"bayes"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">test.value =</span> <span class="dv">60</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">xlab =</span> <span class="st">"English Scores"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO4_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="two-sample-mean-test" class="level2">
+<h2 class="anchored" data-anchor-id="two-sample-mean-test">6.2 Two-sample mean test</h2>
+<p>ggbetweenstats() is used to build a visual for two-sample mean test of Maths scores by gender.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> exam_data,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> GENDER, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> MATHS,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"np"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">messages =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO4_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="one-way-anova-test" class="level2">
+<h2 class="anchored" data-anchor-id="one-way-anova-test">6.2 One-way ANOVA Test</h2>
+<p>ggbetweenstats() is used to build a visual for One-way ANOVA test on English score by race.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(<span class="at">data =</span> exam_data,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">x =</span> RACE, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">y =</span> ENGLISH,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"p"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mean.ci =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">pairwise.comparisons =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">pairwise.display =</span> <span class="st">"s"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">p.adjust.method =</span> <span class="st">"fdr"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">messages =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO4_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="significant-test-of-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="significant-test-of-correlation">6.3 Significant Test of Correlation</h2>
+<p>ggscatterstats() is used to build a visual for Significant Test of Correlation between Maths scores and English scores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatterstats</span>(<span class="at">data =</span> exam_data,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">x =</span> MATHS,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">y =</span> ENGLISH,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">marginal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO4_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="significant-test-of-association" class="level2">
+<h2 class="anchored" data-anchor-id="significant-test-of-association">6.4 Significant Test of Association</h2>
+<p>Maths scores is binned into a 4-class variable by using cut(). ggbarstats() is used to build a visual for Significant Test of Association</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>exam1 <span class="ot">&lt;-</span> exam_data <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MATHS_bins =</span> <span class="fu">cut</span>(MATHS, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">60</span>,<span class="dv">75</span>,<span class="dv">85</span>,<span class="dv">100</span>)))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbarstats</span>(exam1, <span class="at">x =</span> MATHS_bins, <span class="at">y =</span> GENDER)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO4_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>10. References</h1>
+<p>Ridgeline: https://www.data-to-viz.com/graph/ridgeline.html</p>
+<p>Raincloud: https://rpubs.com/rana2hin/raincloud</p>
+<p>ggstatsplot: https://indrajeetpatil.github.io/ggstatsplot/articles/ggstatsplot.html</p>
 
 
 </section>

@@ -18,7 +18,7 @@
     "href": "index.html",
     "title": "Visual Analytics",
     "section": "",
-    "text": "Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!\nThis page documents my learning journey of geospatial analytics taught by Prof Kam Tin Seong.\n\nSource: Autodesk\nThis is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.\n\n\nVisual Analytics?\nVisual Analytics is the craft of analytical reasoning supported by: - Data Science and Analytics - Data Visualisation - Human-Computing-Interaction (HCI) - Interface Design - Visual Storytelling\nThe learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.\n\n\n\nTopic Overview\n\n\n\n\n\n\n\n\n\n  \n\n\n\n\nExtensions of ggplot2\n\n\n\n\n\n\n\n\n\n\n\n\nJan 9, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nFundamentals of ggplot2\n\n\n\n\n\n\n\n\n\n\n\n\nJan 8, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nImport of Statistical Data Formats\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nInteractive and Animated Data Visualization\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nOECD PISA Global Education\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\nNo matching items"
+    "text": "Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!\nThis page documents my learning journey of geospatial analytics taught by Prof Kam Tin Seong.\n\nSource: Autodesk\nThis is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.\n\n\nVisual Analytics?\nVisual Analytics is the craft of analytical reasoning supported by: - Data Science and Analytics - Data Visualisation - Human-Computing-Interaction (HCI) - Interface Design - Visual Storytelling\nThe learning objective is to understand the basic concepts, theories and methodologies of visual analytics, analyse data using appropriate visual thinking and visual analytics techniques, and implement cutting-edge visual analytics system for decision making.\n\n\n\nTopic Overview\n\n\n\n\n\n\n\n\n\n  \n\n\n\n\nExtensions of ggplot2\n\n\n\n\n\n\n\n\n\n\n\n\nJan 9, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nFundamentals of ggplot2\n\n\n\n\n\n\n\n\n\n\n\n\nJan 8, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nImport of Statistical Data Formats\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nInteractive and Animated Data Visualization\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nModel Diagnostics\n\n\n\n\n\n\n\n\n\n\n\n\nJan 27, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nOECD PISA Global Education\n\n\n\n\n\n\n\n\n\n\n\n\nJan 13, 2024\n\n\nWan Kee\n\n\n\n\n\n\n  \n\n\n\n\nVisual Statistical Analysis\n\n\n\n\n\n\n\n\n\n\n\n\nJan 20, 2024\n\n\nWan Kee\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "Topics/A_Introduction to ggplot2/HO1_Introduction to ggplot2.html",
@@ -425,5 +425,68 @@
     "title": "Interactive and Animated Data Visualization",
     "section": "9.2 Animated bubble plot: plot_ly()",
     "text": "9.2 Animated bubble plot: plot_ly()\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp"
+  },
+  {
+    "objectID": "Topics/HO4/HO4.html#one-sample-test",
+    "href": "Topics/HO4/HO4.html#one-sample-test",
+    "title": "Visual Statistical Analysis",
+    "section": "6.1 One-sample Test",
+    "text": "6.1 One-sample Test\ngghistostats can be used for data exploration to inspect distribution of a continuous variable and to test if the mean of a sample variable is different from a specified value (population parameter).\n\n\n\n\n\n\nBayes factor\n\n\n\nBayes factor is the ratio of the likelihood of one particular hypothesis to the likelihood of another. It can be interpreted as a measure of the strength of evidence in favor of one theory among two competing theories. A Bayes Factor can be any positive number.\nIt gives us a way to evaluate the data in favor of a null hypothesis, and to use external information to do so. It tells us what the weight of the evidence is in favor of a given hypothesis.\nWhen comparing two hypotheses, H1 (the alternate hypothesis) and H0 (the null hypothesis), the Bayes Factor is often written as B10.\n\n\ngghistostats computed Bayes Factors to quantify the likelihood of the English Score (BF10) and the null hypothesis (BF01). In our example, the Bayes Factor value indicates these English scores are similar to the population mean generated from set.seed(1234). The log(Bayes factor) of 31.45 means the odds are low that this sample is different.\n\nset.seed(1234)\n\ngghistostats(data = exam_data,\n             x = ENGLISH,\n             type = \"bayes\",\n             test.value = 60,\n             xlab = \"English Scores\")"
+  },
+  {
+    "objectID": "Exercises/TH1/TH1.html#data-visualization-critique",
+    "href": "Exercises/TH1/TH1.html#data-visualization-critique",
+    "title": "OECD PISA Global Education",
+    "section": "8.1 Data Visualization Critique",
+    "text": "8.1 Data Visualization Critique\nOriginal Visualization\n\n\nClarityAesthetics"
+  },
+  {
+    "objectID": "Exercises/TH1/TH1.html#design-makeover",
+    "href": "Exercises/TH1/TH1.html#design-makeover",
+    "title": "OECD PISA Global Education",
+    "section": "8.2 Design Makeover",
+    "text": "8.2 Design Makeover"
+  },
+  {
+    "objectID": "Exercises/TH1/TH1.html#plot-makeover",
+    "href": "Exercises/TH1/TH1.html#plot-makeover",
+    "title": "OECD PISA Global Education",
+    "section": "8.3 Plot Makeover",
+    "text": "8.3 Plot Makeover"
+  },
+  {
+    "objectID": "Topics/HO4/HO4.html#two-sample-mean-test",
+    "href": "Topics/HO4/HO4.html#two-sample-mean-test",
+    "title": "Visual Statistical Analysis",
+    "section": "6.2 Two-sample mean test",
+    "text": "6.2 Two-sample mean test\nggbetweenstats() is used to build a visual for two-sample mean test of Maths scores by gender.\n\nggbetweenstats(\n  data = exam_data,\n  x = GENDER, \n  y = MATHS,\n  type = \"np\",\n  messages = FALSE\n)"
+  },
+  {
+    "objectID": "Topics/HO4/HO4.html#one-way-anova-test",
+    "href": "Topics/HO4/HO4.html#one-way-anova-test",
+    "title": "Visual Statistical Analysis",
+    "section": "6.2 One-way ANOVA Test",
+    "text": "6.2 One-way ANOVA Test\nggbetweenstats() is used to build a visual for One-way ANOVA test on English score by race.\n\nggbetweenstats(data = exam_data,\n               x = RACE, \n               y = ENGLISH,\n               type = \"p\",\n               mean.ci = TRUE, \n               pairwise.comparisons = TRUE, \n               pairwise.display = \"s\",\n               p.adjust.method = \"fdr\",\n               messages = FALSE)"
+  },
+  {
+    "objectID": "Topics/HO4/HO4.html#significant-test-of-correlation",
+    "href": "Topics/HO4/HO4.html#significant-test-of-correlation",
+    "title": "Visual Statistical Analysis",
+    "section": "6.3 Significant Test of Correlation",
+    "text": "6.3 Significant Test of Correlation\nggscatterstats() is used to build a visual for Significant Test of Correlation between Maths scores and English scores.\n\nggscatterstats(data = exam_data,\n               x = MATHS,\n               y = ENGLISH,\n               marginal = FALSE)"
+  },
+  {
+    "objectID": "Topics/HO4/HO4.html#significant-test-of-association",
+    "href": "Topics/HO4/HO4.html#significant-test-of-association",
+    "title": "Visual Statistical Analysis",
+    "section": "6.4 Significant Test of Association",
+    "text": "6.4 Significant Test of Association\nMaths scores is binned into a 4-class variable by using cut(). ggbarstats() is used to build a visual for Significant Test of Association\n\nexam1 &lt;- exam_data %&gt;% \n  mutate(MATHS_bins = cut(MATHS, breaks = c(0,60,75,85,100)))\n\nggbarstats(exam1, x = MATHS_bins, y = GENDER)"
+  },
+  {
+    "objectID": "Topics/HO5/HO5.html",
+    "href": "Topics/HO5/HO5.html",
+    "title": "Model Diagnostics",
+    "section": "",
+    "text": "1. Learning Objectives\n\nVisualise model diagnostic and model parameters by using parameters package.\n\n\n\n2. Load Packages\nThe following packages\n\npacman::p_load(readxl, performance, parameters, see)\n\n\n\n3. Import Data\nToyota Corolla case study will be used. The purpose of study is to build a model to discover factors affecting prices of used-cars by taking into consideration a set of explanatory variables."
   }
 ]

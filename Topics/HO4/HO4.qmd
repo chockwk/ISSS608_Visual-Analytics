@@ -11,9 +11,7 @@ execute:
 editor: source
 ---
 
-![](images/ggridge.png)
-
-Source: [Ohio.edu](https://people.ohio.edu/ruhil/RBookNew/visualizing-data.html)
+![](images/logo.png)
 
 # 1. Learning Objectives
 
@@ -31,10 +29,14 @@ Source: [Ohio.edu](https://people.ohio.edu/ruhil/RBookNew/visualizing-data.html)
 
 -   `ggridges` is an ggplot2 extension specially designed for plotting ridgeline plots
 
--   `ggdist` for visualising distribution and uncertainty
+-   `ggdist` is an ggplot2 extension for visualising distribution and uncertainty
+
+-   `ggthemes` and `colourspace`
+
+-   `ggstatsplot` is an ggplot2 extension for creating graphics with details from statistical tests
 
 ```{r}
-pacman::p_load(ggdist, ggridges, ggthemes, colorspace, tidyverse)
+pacman::p_load(tidyverse, ggridges, ggdist, ggthemes, colorspace, ggstatsplot)
 ```
 
 # 3. Import Data
@@ -61,7 +63,6 @@ Ridgeline plots works well with **clear patterns or ranking** in the data. Other
 2.  `geom_density_ridges()` estimates data densities and then draws those using ridgelines
 
 ::: panel-tabset
-
 ## Density Plot
 
 The `geom_density_ridges()` calculates density estimates from the data and then plots those, using the ridgeline visualization. The `height` aesthetic does not need to be specified in this case.
@@ -87,7 +88,7 @@ ggplot(exam_data,
 
 ## Histogram
 
-A ridgeline plot can also be created using a set of **histograms** using `stat` and `bins`  aesthetics.
+A ridgeline plot can also be created using a set of **histograms** using `stat` and `bins` aesthetics.
 
 ```{r}
 ggplot(exam_data, 
@@ -108,22 +109,15 @@ ggplot(exam_data,
 
 ## Density Plot with Gradient
 
-Instead of a single solid color, the area under a ridgeline can be filled with colors that vary in some form along the x axis using `geom_ridgeline_gradient()` or `geom_density_ridges_gradient()`. Both geoms work just like geom_ridgeline() and geom_density_ridges(), except that they allow for varying fill colors. 
+Instead of a single solid color, the area under a ridgeline can be filled with colors that vary in some form along the x axis using `geom_ridgeline_gradient()` or `geom_density_ridges_gradient()`. Both geoms work just like geom_ridgeline() and geom_density_ridges(), except that they allow for varying fill colors.
 
-However, they do not allow for `alpha` transparency for technical reasons. 
+However, they do not allow for `alpha` transparency for technical reasons.
 
 `direction` sets the order of colors in the scale. If 1, the default, colors are ordered from darkest to lightest. If -1, the order of colors is reversed.
 
 `option` is a character string indicating the color map option to use. Eight options are available:
 
-"magma" (or "A")
-"inferno" (or "B")
-"plasma" (or "C")
-"viridis" (or "D")
-"cividis" (or "E")
-"rocket" (or "F")
-"mako" (or "G")
-"turbo" (or "H")
+"magma" (or "A") "inferno" (or "B") "plasma" (or "C") "viridis" (or "D") "cividis" (or "E") "rocket" (or "F") "mako" (or "G") "turbo" (or "H")
 
 ```{r}
 ggplot(exam_data, 
@@ -162,7 +156,7 @@ ggplot(exam_data,
 
 ## Density Plot with Quantiles
 
-The ridgeline plot can be coloured by **quantile** using the calculated `stat(quantile)` aesthetic, where **calc_ecdf = TRUE**, **quantiles = #** and **quantile_lines = TRUE**.
+The ridgeline plot can be coloured by **quantile** using the calculated `stat(quantile)` aesthetic, where **calc_ecdf = TRUE**, **quantiles = \#** and **quantile_lines = TRUE**.
 
 ```{r}
 ggplot(exam_data,
@@ -198,21 +192,15 @@ ggplot(exam_data,
                     labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]"))+
   theme_ridges()
 ```
-
 :::
 
 # 5. Raincloud Plot
 
-The Raincloud Plot is a visualization that produces a **half-density** to a distribution plot. The density plot is in the shape of a raincloud and enhances the the box-plot by highlighting multiple modalities (an indicator that groups may exist). 
+The Raincloud Plot is a visualization that produces a **half-density** to a distribution plot. The density plot is in the shape of a raincloud and enhances the the box-plot by highlighting multiple modalities (an indicator that groups may exist).
 
-The boxplot does not show where densities are clustered, but the raincloud plot does. 
-Step 1: Plot a Half-Eye graph by using `stat_halfeye()` of ggdist package
-Step 2: Add the second geometry layer using `geom_boxplot()` of ggplot2
-Step 3: Add the third geometry layer using `stat_dots()` of ggdist package
-Step 4: Flip the raincloud chart horizontally using `coord_flip()` of ggplot2 package
+The boxplot does not show where densities are clustered, but the raincloud plot does. Step 1: Plot a Half-Eye graph by using `stat_halfeye()` of ggdist package Step 2: Add the second geometry layer using `geom_boxplot()` of ggplot2 Step 3: Add the third geometry layer using `stat_dots()` of ggdist package Step 4: Flip the raincloud chart horizontally using `coord_flip()` of ggplot2 package
 
 ::: panel-tabset
-
 ## Half Eye
 
 `stat_halfeye()` of ggdist package produces a Half Eye visualization, which is contains a half-density and a slab-interval.
@@ -274,7 +262,7 @@ ggplot(exam_data,
 
 ## Flip
 
-`coord_flip()` of ggplot2 package flips the raincloud chart horizontally to give it the raincloud appearance. 
+`coord_flip()` of ggplot2 package flips the raincloud chart horizontally to give it the raincloud appearance.
 
 Optional: `theme_economist()` of ggthemes package is used to give the raincloud chart a professional publishing standard look.
 
@@ -297,14 +285,100 @@ ggplot(exam_data,
   coord_flip()+
   theme_minimal()
 ```
-
 :::
 
+# 6. Statistical Tests
 
-References
+`ggstatsplot` is an extension of ggplot2 package for creating graphics with details from **statistical tests** to be included in the information-rich plots themselves.
 
-https://www.data-to-viz.com/graph/ridgeline.html
+-   Provide **alternative statistical inference** methods by default.
 
-https://rpubs.com/rana2hin/raincloud
+-   Follow **best practices** for statistical reporting. The default template abides by the APA gold standard for statistical reporting.
+
+## 6.1 One-sample Test
+
+`gghistostats` can be used for data exploration to **inspect distribution of a continuous variable** and to test if the **mean** of a sample variable is different from a specified value (population parameter).
+
+::: {.callout-tip}
+### Bayes factor
+**Bayes factor** is **the ratio of the likelihood** of one particular hypothesis to the likelihood of another. It can be interpreted as a measure of the strength of evidence in favor of one theory among two competing theories. A Bayes Factor can be any **positive number**.
+
+It gives us a way to evaluate the data in favor of a null hypothesis, and to use external information to do so. It tells us what the weight of the evidence is in favor of a given hypothesis.
+
+When comparing two hypotheses, H1 (the alternate hypothesis) and H0 (the null hypothesis), the Bayes Factor is often written as **B10**.
+:::
+
+`gghistostats` computed **Bayes Factors** to quantify the likelihood of the English Score (BF10) and the null hypothesis (BF01). In our example, the Bayes Factor value indicates these English scores are similar to the population mean generated from **set.seed(1234)**. The log(Bayes factor) of 31.45 means the odds are low that this sample is different.
+
+```{r}
+set.seed(1234)
+
+gghistostats(data = exam_data,
+             x = ENGLISH,
+             type = "bayes",
+             test.value = 60,
+             xlab = "English Scores")
+```
+
+## 6.2 Two-sample mean test
+
+ggbetweenstats() is used to build a visual for two-sample mean test of Maths scores by gender.
+
+```{r}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = MATHS,
+  type = "np",
+  messages = FALSE
+)
+```
+
+## 6.2 One-way ANOVA Test
+
+ggbetweenstats() is used to build a visual for One-way ANOVA test on English score by race.
+
+```{r}
+ggbetweenstats(data = exam_data,
+               x = RACE, 
+               y = ENGLISH,
+               type = "p",
+               mean.ci = TRUE, 
+               pairwise.comparisons = TRUE, 
+               pairwise.display = "s",
+               p.adjust.method = "fdr",
+               messages = FALSE)
+```
 
 
+## 6.3 Significant Test of Correlation
+
+ggscatterstats() is used to build a visual for Significant Test of Correlation between Maths scores and English scores.
+
+```{r}
+ggscatterstats(data = exam_data,
+               x = MATHS,
+               y = ENGLISH,
+               marginal = FALSE)
+```
+
+## 6.4 Significant Test of Association
+
+Maths scores is binned into a 4-class variable by using cut().
+ggbarstats() is used to build a visual for Significant Test of Association
+
+```{r}
+exam1 <- exam_data %>% 
+  mutate(MATHS_bins = cut(MATHS, breaks = c(0,60,75,85,100)))
+
+ggbarstats(exam1, x = MATHS_bins, y = GENDER)
+```
+
+
+# 10. References
+
+Ridgeline: https://www.data-to-viz.com/graph/ridgeline.html
+
+Raincloud: https://rpubs.com/rana2hin/raincloud
+
+ggstatsplot: https://indrajeetpatil.github.io/ggstatsplot/articles/ggstatsplot.html
