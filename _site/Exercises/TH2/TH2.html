@@ -256,9 +256,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-visualization-critique" class="level1">
 <h1>2. Data Visualization Critique</h1>
-<p>Original visualization</p>
+<p>In the original visualization, multiple box plots are used to investigate on the corrrelation between the parent’s occupation and education, home possessions and the child’s performance.</p>
 <p><img src="images/makeover.png" class="img-fluid"></p>
-<p>Multiple box plots are used to investigate on the relationship between the parent’s occupation and education, home possessions and the child’s performance.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Clarity</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Aesthetics</a></li></ul>
 <div class="tab-content">
@@ -282,25 +281,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="design-makeover" class="level1">
 <h1>3. Design Makeover</h1>
 <ol type="1">
-<li><p>Identify the Objective</p>
-<p>Shift from comparing distributions within socioeconomic categories to exploring linear relationships between students’ scores and socioeconomic factors. The objective is to understand the correlation between maths, reading and science scores and socioeconomic status.</p></li>
-<li><p>Data Transformation</p>
-<p>Aggregate individual student scores into <strong>average scores</strong> for socioeconomic categories. The average scores and socioeconomic status are <strong>continuous data</strong> used for <strong>scatter plots</strong>.</p></li>
-<li><p>Plot Type Selection</p>
-<p>Change from box plots to <strong>scatter plots</strong> to visualize data points and <strong>correlation</strong>.</p></li>
-<li><p>Visual Encoding</p>
-<p>Represent socioeconomic status (ESCS, HISEI, HOMEPOS) and scores (MATH, READING, SCIENCE) on the x and y axes, respectively.</p>
-<p>Use points to mark individual student data and lines to indicate the <strong>linear regression</strong>.</p></li>
-<li><p>Statistical Representation</p>
-<p><strong>Correlation coefficients</strong> (R) and <strong>p-values</strong> quantify the strength and significance of the relationships.</p></li>
-<li><p>Aesthetic Enhancements</p>
-<p>Apply a consistent color scheme across all plots to visually tie them together. Ensure that text and statistical annotations are legible and use appropriate sizes for the scatter plot.</p></li>
-<li><p>Layout Adjustments</p>
-<p>Arrange the scatter plots in a grid layout using <code>facet_wrap()</code> or similar functions to allow for easy comparison across different socioeconomic status and subject scores.</p></li>
-<li><p>Refinement and Simplification</p>
-<p>Remove any unnecessary elements that do not contribute to understanding the correlations. Focus on clarity by removing distracting elements like gridlines or excessive tick marks.</p></li>
-<li><p>Title and Labeling</p>
-<p>Add an overarching title that summarizes the theme of the visualizations. Ensure that axis labels are clear and represent the variables accurately.</p></li>
+<li><p><strong>Identify the Objective</strong>: Shift from comparing distributions within socioeconomic categories to <strong>exploring linear relationships</strong> between students’ scores and socioeconomic factors. The objective is to understand the <strong>correlation</strong> between maths, reading and science scores and socioeconomic status.</p></li>
+<li><p><strong>Data Transformation</strong>: Aggregate the student scores into <strong>average scores</strong> for each subjects. The average scores and socioeconomic status are <strong>continuous data</strong> used for <strong>scatter plots</strong>.</p></li>
+<li><p><strong>Plot Type Selection:</strong> Change from box plots to <strong>scatter plots</strong> to visualize data points and <strong>correlation</strong>.</p></li>
+<li><p><strong>Visual Encoding:</strong> Represent socioeconomic status (ESCS, HISEI, HOMEPOS) and scores (MATH, READING, SCIENCE) on the x and y axes, respectively. Use <strong>points</strong> to mark each student data and <strong>lines</strong> to indicate the <strong>linear regression</strong>.</p></li>
+<li><p><strong>Statistical Representation</strong>: <strong>Correlation coefficients</strong> (R) and <strong>p-values</strong> quantify the strength and significance of the relationships.</p></li>
+<li><p><strong>Aesthetic Enhancements</strong>: Apply a <strong>consistent color scheme</strong> across all plots to visually synchronize them together. Ensure that text and statistical annotations are legible and use appropriate sizes for the scatter plot.</p></li>
+<li><p><strong>Layout Adjustments:</strong> Arrange the scatter plots in a <strong>grid layout</strong> using <code>facet_wrap()</code> for easy comparison across different socioeconomic status and subject scores.</p></li>
+<li><p><strong>Refinement and Simplification:</strong> Remove any unnecessary elements that do not contribute to understanding the correlations with focus on <strong>clarity</strong> to ensure that axis labels are clear and represent the variables accurately</p></li>
+<li><p><strong>Title:</strong> Add an overall title that summarizes the objective of the visualizations.</p></li>
 </ol>
 </section>
 <section id="load-packages" class="level1">
@@ -354,6 +343,7 @@ Load Point
 </section>
 <section id="prepare-data" class="level1">
 <h1>6. Prepare Data</h1>
+<p>The objective is to determine the correlation between the <strong>students’ scores in Mathematics, Reading, and Science</strong>, and various socioeconomic status (SES) indicators, namely <strong>Economic, Social and Cultural Status (ESCS)</strong>, <strong>Highest Parental Occupational Status (HISEI)</strong>, <strong>Home Possessions (HOMEPOS)</strong>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Grouping and Summarization</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Type Conversion</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Reshaping Data</a></li></ul>
 <div class="tab-content">
@@ -446,8 +436,8 @@ $ category     &lt;fct&gt; MATH.ESCS, MATH.HOMEPOS, MATH.HISEI, READING.ESCS, RE
 <p><img src="TH2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The output showing the correlation between students’ scores in Mathematics, Reading, and Science, and various socioeconomic status (SES) indicators, namely Economic, Social and Cultural Status (ESCS), Highest Parental Occupational Status (HISEI), Home Possessions (HOMEPOS).</p>
-<p>Each plot displays a cloud of points indicating the distribution of scores against SES indicators for each subject. The blue line represents a linear model (least squares fit) showing the trend in the data. The strength and direction of the correlation between scores and SES factors are indicated by the correlation coefficient (R) and the significance level (p-value) displayed on each plot.</p>
+<p>The output showing the correlation between students’ scores in Mathematics, Reading, and Science, and SES indicators, namely ESCS, HISEI, HOMEPOS.</p>
+<p>Each plot displays a cloud of points indicating the <strong>distribution of subject scores</strong> against <strong>SES indicators</strong>. The blue line represents a <strong>linear model</strong> (least squares fit) showing the trend in the data. The strength and direction of the correlation between scores and SES factors are indicated by the <strong>correlation coefficient (R)</strong> and the <strong>significance level (p-value)</strong> displayed on each plot.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -459,10 +449,10 @@ Key observations
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>There is a positive correlation between the students’ scores in all three subjects and each of the SES indicators. This suggests that higher SES is associated with higher academic performance across the subjects.</p></li>
-<li><p>The correlation coefficients (R) are fairly similar across the subjects for each SES indicator, hovering around 0.39 to 0.42, indicating a moderate positive relationship.</p></li>
-<li><p>The p-values are all below 0.001, which suggests that the correlations are statistically significant. The consistency of these findings across different SES indicators and subjects might imply that SES is a robust predictor of academic performance in the Singapore context.</p></li>
-<li><p>However, it’s important to note that correlation does not imply causation, and these results would require further investigation to determine causal relationships.</p></li>
+<li><p>There is a <strong>positive correlation</strong> between the students’ scores in all three subjects and each of the SES indicators. This suggests that <strong>higher SES</strong> is associated with <strong>higher academic performance</strong> across the subjects.</p></li>
+<li><p>The correlation coefficients (R) are fairly similar across the subjects for each SES indicator, hovering around 0.39 to 0.42, indicating a <strong>moderate positive relationship</strong>.</p></li>
+<li><p>The p-values are all <strong>below 0.001</strong>, which suggests that the correlations are <strong>statistically significant</strong>. The consistency of these findings across different SES indicators and subjects might imply that SES is a robust predictor of academic performance in the Singapore context.</p></li>
+<li><p>However, it’s important to note that <strong>correlation does not imply causation</strong>, and these results would require further investigation to determine causal relationships.</p></li>
 </ol>
 </div>
 </div>

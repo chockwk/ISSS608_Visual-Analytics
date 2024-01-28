@@ -11,17 +11,100 @@ execute:
 editor: source
 ---
 
+![](images/modeldiag.png)
+
 # 1. Learning Objectives
 
-1.  Visualise **model diagnostic** and **model parameters** by using `parameters` package.
+1.  Visualise **model diagnostic** using `performance` package
+
+2.  Visualise **model parameters** using `parameters` package
 
 # 2. Load Packages
 
-The following packages 
+The following packages
+
 ```{r}
-pacman::p_load(readxl, performance, parameters, see)
+pacman::p_load(tidyverse, readxl, performance, parameters, see, ggstatsplot)
 ```
 
 # 3. Import Data
 
 Toyota Corolla case study will be used. The purpose of study is to build a model to discover factors affecting prices of used-cars by taking into consideration a set of explanatory variables.
+
+```{r}
+car_resale <- read_xls("data/ToyotaCorolla.xls", "data")
+glimpse(car_resale)
+```
+
+The output shows 1,436 observations and 38 attributes.
+
+# 4. Model Diagnostic for Multiple Regression Model
+
+`lm()` of Base Stats of R calibrates a multiple linear regression model.
+
+```{r}
+model <- lm(Price ~ Age_08_04 + Mfg_Year + KM + Weight + Guarantee_Period, 
+            data = car_resale)
+model
+```
+
+::: panel-tabset
+## Multicolinearity
+
+The first model diagnostic is to check multicolinearity using `check_collinearity()` of performance package.
+
+```{r}
+check_collinearity(model)
+```
+
+```{r}
+check_c <- check_collinearity(model)
+plot(check_c)
+```
+
+## Normality Assumption
+
+The second model diagnostic is to check normality assumption using `check_normality()` of performance package.
+
+```{r}
+model1 <- lm(Price ~ Age_08_04 + KM + Weight + Guarantee_Period, 
+             data = car_resale)
+model1
+```
+
+```{r}
+check_n <- check_normality(model1)
+plot(check_n)
+```
+
+## Homogeneity of Variances
+
+The third model disgnostic is to check model for homogeneity of variances using `check_heteroscedasticity()` of performance package.
+
+```{r}
+check_h <- check_heteroscedasticity(model1)
+plot(check_h)
+```
+
+## Complete
+
+The forth model disgnostic is to perform the complete by using `check_model()`.
+
+```{r}
+check_model(model1)
+```
+:::
+
+# 5. Model Parameters
+
+plot() of see package and parameters() of parameters package is used to visualise the parameters of a regression model.
+
+```{r}
+plot(parameters(model1))
+```
+
+ggcoefstats() of ggstatsplot package to visualise the parameters of a regression model.
+
+```{r}
+ggcoefstats(model1, output = "plot")
+```
