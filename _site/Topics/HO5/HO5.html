@@ -198,6 +198,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">3. Import Data</a></li>
   <li><a href="#model-diagnostic-for-multiple-regression-model" id="toc-model-diagnostic-for-multiple-regression-model" class="nav-link" data-scroll-target="#model-diagnostic-for-multiple-regression-model">4. Model Diagnostic for Multiple Regression Model</a></li>
   <li><a href="#model-parameters" id="toc-model-parameters" class="nav-link" data-scroll-target="#model-parameters">5. Model Parameters</a></li>
+  <li><a href="#estimated-coefficients-and-confidence-intervals" id="toc-estimated-coefficients-and-confidence-intervals" class="nav-link" data-scroll-target="#estimated-coefficients-and-confidence-intervals">5.1 Estimated Coefficients and Confidence Intervals</a></li>
+  <li><a href="#estimated-coefficients-t-values-and-p-values" id="toc-estimated-coefficients-t-values-and-p-values" class="nav-link" data-scroll-target="#estimated-coefficients-t-values-and-p-values">5.2 Estimated Coefficients, t-values and p-values</a></li>
   </ul>
 </nav>
     </div>
@@ -230,7 +232,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">January 28, 2024</p>
+      <p class="date-modified">February 1, 2024</p>
     </div>
   </div>
     
@@ -250,13 +252,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-packages" class="level1">
 <h1>2. Load Packages</h1>
 <p>The following packages</p>
+<ul>
+<li><code>performance</code> compute indices of model quality and goodness of fit.</li>
+</ul>
+<p>It measures r-squared (R2), root mean squared error (RMSE) or intraclass correlation coefficient (ICC) , but also functions to check (mixed) models for overdispersion, zero-inflation, convergence or singularity.</p>
+<ul>
+<li><code>parameters</code> processes the parameters of various statistical models.</li>
+</ul>
+<p>It computes p-values, CIs, Bayesian indices and implements features, like bootstrapping of parameters and models, feature reduction (feature extraction and variable selection), or tools for data reduction like functions to perform cluster, factor or principal component analysis.</p>
+<ul>
+<li><p><code>see</code> complements numeric summaries to produce visualizations for model parameters, predictions, and performance diagnostics.</p></li>
+<li><p><code>ggstatsplot</code> creates graphics with statistical tests in the information-rich plots.</p></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, readxl, performance, parameters, see, ggstatsplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-data" class="level1">
 <h1>3. Import Data</h1>
-<p>Toyota Corolla case study will be used. The purpose of study is to build a model to discover factors affecting prices of used-cars by taking into consideration a set of explanatory variables.</p>
+<p><code>Toyota Corolla</code> is a car dataset with a set of explanatory variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>car_resale <span class="ot">&lt;-</span> <span class="fu">read_xls</span>(<span class="st">"data/ToyotaCorolla.xls"</span>, <span class="st">"data"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(car_resale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -307,7 +321,7 @@ $ Tow_Bar          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 </section>
 <section id="model-diagnostic-for-multiple-regression-model" class="level1">
 <h1>4. Model Diagnostic for Multiple Regression Model</h1>
-<p><code>lm()</code> of Base Stats of R calibrates a multiple linear regression model.</p>
+<p><code>lm()</code> of <code>Base Stats</code> of R calibrates a multiple linear regression model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Price <span class="sc">~</span> Age_08_04 <span class="sc">+</span> Mfg_Year <span class="sc">+</span> KM <span class="sc">+</span> Weight <span class="sc">+</span> Guarantee_Period, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> car_resale)</span>
@@ -326,10 +340,10 @@ Coefficients:
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Multicolinearity</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Normality Assumption</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Homogeneity of Variances</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Complete</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Multicolinearity</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Normality Assumption</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Homogeneity of Variances</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Model Checking</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p>The first model diagnostic is to check multicolinearity using <code>check_collinearity()</code> of performance package.</p>
+<p>The first model diagnostic is to check multicolinearity using <code>check_collinearity()</code> of <code>performance</code> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_collinearity</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -349,6 +363,8 @@ High Correlation
   Mfg_Year 31.16 [28.16, 34.48]         5.58      0.03     [0.03, 0.04]</code></pre>
 </div>
 </div>
+<p><strong>Variance inflation factor (VIF)</strong> quantifies how much the variance of an estimated regression coefficient increases because of collinearity.</p>
+<p>The collinearity plot is divided into <strong>coloured zones</strong>, typically green for low VIF values indicating low collinearity, and red for high VIF values indicating high collinearity. The threshold values for these zones are often set at <strong>5 for low collinearity</strong> and <strong>10 for high collinearity</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>check_c <span class="ot">&lt;-</span> <span class="fu">check_collinearity</span>(model)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(check_c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -356,9 +372,23 @@ High Correlation
 <p><img src="HO5_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Low Collinearity</strong>: Variables such as <code>Guarantee_Period</code>, <code>KM</code>, and <code>Weight</code> are represented by green points and fall in the green zone, suggesting they have low multicollinearity.</p>
+<p><strong>High Collinearity</strong>: The variable <code>Age_08_04</code> and <code>Mfg_Year</code> is represented by a red point and falls in the red zone, indicating a high VIF and potential issues with multicollinearity.</p>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>The second model diagnostic is to check normality assumption using <code>check_normality()</code> of performance package.</p>
+<p>The second model diagnostic is to check normality assumption using <code>check_normality()</code> of <code>performance</code> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Price <span class="sc">~</span> Age_08_04 <span class="sc">+</span> KM <span class="sc">+</span> Weight <span class="sc">+</span> Guarantee_Period, </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> car_resale)</span>
@@ -376,6 +406,10 @@ Guarantee_Period
        2.682e+01  </code></pre>
 </div>
 </div>
+<p>The <strong>Quantile-Quantile (Q-Q) plot</strong> assess whether the residuals from a regression model are normally distributed.</p>
+<p>The x-axis represents <strong>the quantiles of a standard normal distribution</strong>, which is what the residuals would follow if they were perfectly normally distributed.</p>
+<p>The y-axis represents <strong>the sample quantiles of the residuals</strong> from the model. These are the actual observed deviations from the model’s predictions.</p>
+<p>Typically, a Q-Q plot will have a <strong>reference line</strong> (green) that represents the expected line of points if the residuals were normally distributed. The <strong>dots</strong> are the ordered residual values from the model. If the residuals were perfectly normal, the dots would lie exactly on the reference line.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>check_n <span class="ot">&lt;-</span> <span class="fu">check_normality</span>(model1)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(check_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -383,9 +417,26 @@ Guarantee_Period
 <p><img src="HO5_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The middle range of residuals seems to be normally distributed, the presence of outliers and the heavy tails suggest that the model might not be the best fit for all data points, particularly for extreme values.</p>
+</div>
+</div>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<p>The third model disgnostic is to check model for homogeneity of variances using <code>check_heteroscedasticity()</code> of performance package.</p>
+<p>The third model disgnostic is to check model for <strong>homogeneity of variances</strong> using <code>check_heteroscedasticity()</code> of <code>performance</code> package.</p>
+<p>The homogeneity of variances plot is <strong>a residual versus fitted plot</strong> used to check the assumption of homoscedasticity (equal variances) in the residuals of a regression model.</p>
+<p>The x-axis displays the <strong>fitted values</strong>, which are the predicted values generated by the model. In linear regression, you would expect to see a random scatter of points around the horizontal line if the assumption of homoscedasticity holds.</p>
+<p>The y-axis shows the <strong>standardized residuals</strong>, which are the model residuals divided by their estimated standard deviation. Ideally, these should be randomly distributed without any pattern.</p>
+<p>The <strong>Locally Weighted Scatterplot Smoothing (LOWESS) line</strong> (green) is a non-parametric smoother that helps to visualize the overall trend in the data. In a perfectly homoscedastic scenario, this line would be <strong>flat</strong> and <strong>horizontal</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>check_h <span class="ot">&lt;-</span> <span class="fu">check_heteroscedasticity</span>(model1)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(check_h)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -393,13 +444,50 @@ Guarantee_Period
 <p><img src="HO5_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The LOWESS line curves upwards as the fitted values increase, suggesting that the variance of the residuals is increasing with the fitted values. This pattern indicates <strong>heteroscedasticity</strong>, meaning that the variance of the residuals is <strong>not constant</strong> across the range of fitted values.</p>
+</div>
+</div>
 </div>
 <div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
-<p>The forth model disgnostic is to perform the complete by using <code>check_model()</code>.</p>
+<p>The forth model disgnostic is to perform a complete check by using <code>check_model()</code> of <code>performance</code> package to conduct a visual check of various <strong>model assumptions</strong>:</p>
+<p><strong>Posterior Predictive Check</strong> compares the distribution of the observed data with the distribution of the data predicted by the model. The observed data line should closely follow the model-predicted data line if the model is a good fit.</p>
+<p><strong>Linearity</strong> checks if the relationship between predictors and the response is linear. The reference line should be flat and horizontal if the relationship is linear.</p>
+<p><strong>Homogeneity of Variance (homoscedasticity)</strong> examines whether the residuals have constant variance across all levels of the fitted values. The reference line should be flat and horizontal in the presence of homoscedasticity.</p>
+<p><strong>Influential Observations</strong> plot identifies points that have an undue influence on the model. Ideally, points should be within the contour lines; points outside may unduly influence the model’s parameters.</p>
+<p><strong>Collinearity</strong> plot assesses if there is multicollinearity among predictors using the Variance Inflation Factor (VIF). High VIF (generally, VIF &gt; 10) indicates high collinearity which can inflate the variance of the coefficient estimates and make them unstable.</p>
+<p><strong>Normality of Residuals</strong> assesses if the residuals are normally distributed. Points should follow the line in the Q-Q plot if the residuals are normally distributed.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="HO5_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Posterior Predictive Check</strong> appears that the predicted values follow the trend of the observed data, indicating that the model is capturing the underlying pattern.</p>
+<p><strong>Linearity</strong> seems to be met, as the residuals are randomly scattered around the horizontal dashed line with no clear pattern.</p>
+<p><strong>Homogeneity of Variance (homoscedasticity)</strong> indicates increasing variability in the residuals as the fitted values increase, which may suggest heteroscedasticity.</p>
+<p><strong>Influential Observations</strong> shows a few points outside the contour lines, suggesting the presence of influential observations that could be affecting the model’s estimates.</p>
+<p><strong>Collinearity</strong> is absent as all predictors appear to have low VIF values, indicating that multicollinearity is not a concern.</p>
+<p><strong>Normality of Residuals</strong> shows some deviation from normality, particularly in the tails, indicating potential issues with normality.</p>
 </div>
 </div>
 </div>
@@ -408,18 +496,59 @@ Guarantee_Period
 </section>
 <section id="model-parameters" class="level1">
 <h1>5. Model Parameters</h1>
-<p>plot() of see package and parameters() of parameters package is used to visualise the parameters of a regression model.</p>
+</section>
+<section id="estimated-coefficients-and-confidence-intervals" class="level1">
+<h1>5.1 Estimated Coefficients and Confidence Intervals</h1>
+<p><code>plot()</code> of <code>see</code> package and <code>parameters()</code> of <code>parameters</code> package is used to visualise the output of a regression model, displaying the <strong>estimated coefficients</strong> and their <strong>confidence intervals</strong> for each predictor variable in the model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">parameters</span>(model1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">parameters</span>(model1), </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">show_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">size_text =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="HO5_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>ggcoefstats() of ggstatsplot package to visualise the parameters of a regression model.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>Age 08 04</code>: The coefficient for this variable is approximately -119.49, with a confidence interval ranging from -124.91 to -114.08. This suggests that as the age (presumably of a car, given the context) increases by one unit, the price decreases by about 119.49 units on average. The <strong>negative relationship</strong> is statistically significant.</p>
+<p><code>KM</code>: The coefficient is very close to zero, around -0.02, with a confidence interval from -0.03 to -0.02. This indicates a <strong>very slight negative relationship</strong> between the number of kilometers driven (KM) and the price. Despite the <strong>small magnitude</strong>, this relationship is statistically significant.</p>
+<p><code>Weight</code>: The coefficient for weight is <strong>positive</strong>, at approximately 19.72, with a confidence interval from 18.08 to 21.36. This positive coefficient means that as the weight increases by one unit, the price is expected to increase by about 19.72 units. The positive relationship is statistically significant.</p>
+<p><code>Guarantee Period</code>: The coefficient is also <strong>positive</strong>, around 26.82, with a confidence interval from 2.08 to 51.56. This implies that as the guarantee period extends by one unit, the price increases by approximately 26.82 units. Given that the confidence interval is quite wide but does not include zero, the relationship is significant, but with more uncertainty compared to other variables.</p>
+</div>
+</div>
+</section>
+<section id="estimated-coefficients-t-values-and-p-values" class="level1">
+<h1>5.2 Estimated Coefficients, t-values and p-values</h1>
+<p><code>ggcoefstats()</code> of <code>ggstatsplot</code> package to visualise the parameters of a regression model through a plot of a regression analysis output that includes <strong>estimated coefficients</strong> (effect sizes), <strong>t-values</strong>, and <strong>p-values</strong> for each predictor variable, along with the model intercept.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcoefstats</span>(model1, <span class="at">output =</span> <span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="HO5_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>Intercept</code>: The model’s intercept is significantly different from zero, indicating that when all predictors are at zero, the expected outcome is <strong>negatively offset</strong> by 2185.52 units.</p>
+<p><code>Age 08 04</code>: This predictor has a large negative effect on the outcome, with every unit increase in age resulting in a decrease of 119.49 units in the outcome variable. The effect is highly significant, as indicated by the extremely small p-value.</p>
+<p><code>KM</code>: Kilometers driven have a small but highly significant negative effect on the outcome, with every additional kilometer driven decreasing the outcome by 0.02 units.</p>
+<p><code>Weight</code>: The vehicle’s weight has a positive effect on the outcome, with every unit increase in weight leading to an increase of 19.72 units in the outcome variable. This effect is also highly significant.</p>
+<p><code>Guarantee_Period</code>: The guarantee period has a positive effect on the outcome. For every unit increase in the guarantee period, the outcome increases by 26.82 units. This effect is significant, albeit less so than the other predictors, as indicated by a p-value of 0.03.</p>
 </div>
 </div>
 
