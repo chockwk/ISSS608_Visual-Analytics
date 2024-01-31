@@ -10,6 +10,7 @@ listing:
   - "HO4.qmd"
   - "TH2.qmd"
   - "HO5.qmd"
+  - "HO6.qmd"
 type: grid
 sort: "date"
 ---

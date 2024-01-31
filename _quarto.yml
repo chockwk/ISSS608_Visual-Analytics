@@ -24,6 +24,8 @@ website:
             href: Topics/HO4/HO4.html
           - text: Model Diagnostics
             href: Topics/HO5/HO5.html
+          - text: Funnel Plots
+            href: Topics/HO6/HO6.html
             
       - text: "❄ Real-world Exercises"
         menu: 

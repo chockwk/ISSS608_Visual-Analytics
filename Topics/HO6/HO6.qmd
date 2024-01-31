@@ -11,7 +11,7 @@ execute:
 editor: source
 ---
 
-![](images/logo.png){width="300"}
+![](images/logo.png){width="400"}
 
 # 1. Learning Objectives
 
