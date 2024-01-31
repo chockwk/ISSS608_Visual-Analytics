@@ -11,7 +11,7 @@ execute:
 editor: source
 ---
 
-![](images/logo.png)
+![](images/logo.png){width="300"}
 
 # 1. Learning Objectives
 
@@ -301,8 +301,9 @@ ggplot(exam_data,
 
 `gghistostats` can be used for data exploration to **inspect distribution of a continuous variable** and to test if the **mean** of a sample variable is different from a specified value (population parameter).
 
-::: {.callout-tip}
+::: callout-tip
 ### Bayes factor
+
 **Bayes factor** is **the ratio of the likelihood** of one particular hypothesis to the likelihood of another. It can be interpreted as a measure of the strength of evidence in favor of one theory among two competing theories. A Bayes Factor can be any **positive number**.
 
 It gives us a way to evaluate the data in favor of a null hypothesis, and to use external information to do so. It tells us what the weight of the evidence is in favor of a given hypothesis.
@@ -352,7 +353,6 @@ ggbetweenstats(data = exam_data,
                messages = FALSE)
 ```
 
-
 ## 6.3 Significant Test of Correlation
 
 ggscatterstats() is used to build a visual for Significant Test of Correlation between Maths scores and English scores.
@@ -366,8 +366,7 @@ ggscatterstats(data = exam_data,
 
 ## 6.4 Significant Test of Association
 
-Maths scores is binned into a 4-class variable by using cut().
-ggbarstats() is used to build a visual for Significant Test of Association
+Maths scores is binned into a 4-class variable by using cut(). ggbarstats() is used to build a visual for Significant Test of Association
 
 ```{r}
 exam1 <- exam_data %>% 
@@ -383,7 +382,6 @@ ggbarstats(exam1, x = MATHS_bins, y = GENDER)
 A **point estimate** is a single number, such as a mean. **Uncertainty**, on the other hand, is expressed as **standard error**, **confidence interval**, or credible interval.
 
 ::: panel-tabset
-
 ### Data Transformation
 
 `group_by()` of dplyr package groups the observation by RACE, `summarise()` compute the count of observations, mean, standard deviation. `mutate()` derive standard error of Maths by RACE, and the output is save as a tibble data table called `my_sum`.
@@ -397,10 +395,10 @@ my_sum <- exam_data %>%
   mutate(se=sd/sqrt(n-1))
 glimpse(my_sum)
 ```
+
 ### Table
 
-We can view `my_sum` tibble data frame in an html table format.
-Need DT
+We can view `my_sum` tibble data frame in an html table format. Need DT
 
 ```{r}
 knitr::kable(head(my_sum), format = 'html')
@@ -428,10 +426,9 @@ ggplot(my_sum) +
   theme_minimal()
 ```
 
-
 ### Confidence Interval
 
-We can also plot the confidence intervals of mean Maths Score by RACE. The confidence intervals are computed by using the formula **mean+/-1.96*se**. The error bars are sorted by using the average maths scores.
+We can also plot the confidence intervals of mean Maths Score by RACE. The confidence intervals are computed by using the formula \*\*mean+/-1.96\*se\*\*. The error bars are sorted by using the average maths scores.
 
 ```{r}
 ggplot(my_sum) +
@@ -504,13 +501,11 @@ bscols(widths = c(4,8),
          formatRound(columns=c('mean', 'sd', 'se'),
                      digits=2))
 ```
-
 :::
 
 ## 7.2 ggdist
 
 ::: panel-tabset
-
 ### 1
 
 ```{r}
@@ -535,7 +530,6 @@ exam_data %>%
     title = "Visualising confidence intervals of median math score",
     subtitle = "Median Point + Multiple-interval plot")
 ```
-
 
 ### 3
 
@@ -564,7 +558,6 @@ exam_data %>%
     title = "Visualising confidence intervals of mean math score",
     subtitle = "Gradient + interval plot")
 ```
-
 :::
 
 ## 7.2 Hypothetical Outcome Plots
@@ -592,5 +585,3 @@ Raincloud: https://rpubs.com/rana2hin/raincloud
 ggstatsplot: https://indrajeetpatil.github.io/ggstatsplot/articles/ggstatsplot.html
 
 ungeviz: https://github.com/wilkelab/ungeviz
-
-
