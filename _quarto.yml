@@ -24,8 +24,10 @@ website:
             href: Topics/HO4/HO4.html
           - text: Model Diagnostics
             href: Topics/HO5/HO5.html
-          - text: Funnel Plots
+          - text: Bias and Outlier Detection
             href: Topics/HO6/HO6.html
+          - text: Multivariate Data Analysis
+            href: Topics/HO7/HO7.html
             
       - text: "❄ Real-world Exercises"
         menu: 

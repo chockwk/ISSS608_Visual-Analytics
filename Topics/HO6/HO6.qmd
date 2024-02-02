@@ -1,5 +1,5 @@
 ---
-title: "Funnel Plots for Fair Comparisons"
+title: "Bias and Abnormality Detection"
 author: "Wan Kee"
 date: "28 January 2024"
 date-modified: "last-modified"
@@ -15,19 +15,39 @@ editor: source
 
 # 1. Learning Objectives
 
--   plotting funnel plots by using `funnelPlotR`package
+-   Create **funnel plots** using `funnelPlotR` package
 
--   plotting static funnel plot by using `ggplot2` package
+-   Create **static funnel plot** using `ggplot2` package
 
--   plotting interactive funnel plot by using `plotly` and `ggplot2` packages
+-   Create **interactive funnel plot** using `plotly` and `ggplot2` packages
 
-# 2. Load Packages
+# 2. Funnel Plot
+
+A **funnel plot** is a scatterplot that is primarily used for **detecting bias or anomalies** in meta-analysis or systematic reviews, particularly publication bias. The measure of **study size (y-axis)** is plotted against the **effect size (x-axis)**, creating a funnel-shaped distribution in the absence of bias and heterogeneity.
+
+-   **Bias Detection** in meta-analyses: If there is no bias, smaller studies will scatter widely at the bottom of the plot, with the spread narrowing among larger studies at the top. This creates a **symmetrical inverted funnel shape**. Asymmetry can indicate potential publication bias, where smaller studies showing no effect or negative results are less likely to be published.
+
+-   **Heterogeneity Exploration**: Significant heterogeneity may be indicated by a **wide scatter** of points or an **asymmetric funnel**, suggesting that some studies may have different effect sizes due to differences in study design, population, or other factors.
+
+-   **Errors and Outliers**: Funnel plots can identify **outliers** or **errors** due to data entry, methodological differences, or true variations in effect sizes.
+
+-   **Small-study effects** occur when smaller studies show systematically different results than larger studies, possibly due to lower methodological quality or intervention intensity.
+
+# 3. Load Packages
+
+The following packages will be used:
+
+-   `FunnelPlotR` creates funnel plots
+-   `plotly` plots interactive statistical graphs
+-   `knitr` builds static html table
 
 ```{r}
 pacman::p_load(tidyverse, FunnelPlotR, plotly, knitr)
 ```
 
-# 3. Import Data
+# 4. Import Data
+
+`covid19` contains the cumulative covid-19 cases, positive, recovered and death, by sub-district, as at 31 July 2021.
 
 ```{r}
 covid19 <- read_csv("data/COVID-19_DKI_Jakarta.csv") %>%
@@ -35,48 +55,89 @@ covid19 <- read_csv("data/COVID-19_DKI_Jakarta.csv") %>%
 covid19
 ```
 
-# 4. FunnelPlotR
+# 5. Create Funnel Plot using FunnelPlotR
 
-FunnelPlotR package uses ggplot to generate funnel plots. It requires a numerator (events of interest), denominator (population to be considered) and group. The key arguments selected for customisation are:
+We build a funnel plot object with **standard Poisson limits**, and outliers labelled to display the cumulative COVID-19 fatality rate by the cumulative total number of COVID-19 positive cases across different sub-districts. `FunnelPlotR` package uses `ggplot` to generate funnel plots. 
 
-limit: plot limits (95 or 99). label_outliers: to label outliers (true or false). Poisson_limits: to add Poisson limits to the plot. OD_adjust: to add overdispersed limits to the plot. xrange and yrange: to specify the range to display for axes, acts like a zoom function. Other aesthetic components such as graph title, axis labels etc.
+The key arguments for customization:
+
+-   `numerator`: events of interest
+
+-   `denominator`: population to be considered
+
+-   `group`: defines the level of the points to be plotted i.e. Sub-district, District or City
+
+-   `data_type`: the default is “SR” and can be changed to “PR” to show proportions
+
+-   `xrange` and `yrange` set the range of x-axis and y-axis
+
+-   `limit`: plot limits, acceptable values are 95 or 99 corresponding to 95% or 99.8% quantiles of the distribution
+
+-   `label`: label outliers (true or false)
+
+-   `Poisson_limits`: add Poisson limits to the plot
+
+-   `OD_adjust:` add overdispersed limits to the plot
+
+-   `xrange` and `yrange`: specify the range to display for axes
+
+-   Other aesthetic components such as graph title, axis labels etc.
+
 
 ```{r}
-funnel_plot(
-  numerator = covid19$Death,
-  denominator = covid19$Positive,
-  group = covid19$`Sub-district`,
-  data_type = "PR",     #<<
-  xrange = c(0, 6500),  #<<
-  yrange = c(0, 0.05)   #<<
-)
+funnel_plot(numerator = covid19$Death,
+            denominator = covid19$Positive,
+            group = covid19$"Sub-district",
+            data_type = "PR",
+            label = "outlier",
+            xrange = c(0, 6500),  
+            yrange = c(0, 0.05),
+            draw_adjusted = TRUE,
+            title = "Cumulative COVID-19 Fatality Rate by Cumulative Total Number of \nCOVID-19 Positive Cases", 
+            x_label = "Cumulative COVID-19 Positive Cases",
+            y_label = "Cumulative Fatality Rate")
 ```
+Each **point** represents a sub-district, plotted with its cumulative positive cases on the x-axis and its cumulative fatality rate on the y-axis. The **dashed horizontal line** indicate an average or expected fatality rate, and the **curved lines** could represent confidence intervals or control limits. Sub-districts that fall outside these lines may be considered **outliers** and could warrant further investigation to understand why their fatality rates are higher or lower than expected based on the number of cases.
 
-```{r}
-funnel_plot(
-  numerator = covid19$Death,
-  denominator = covid19$Positive,
-  group = covid19$`Sub-district`,
-  data_type = "PR",   
-  xrange = c(0, 6500),  
-  yrange = c(0, 0.05),
-  label = NA,
-  title = "Cumulative COVID-19 Fatality Rate by Cumulative Total Number of COVID-19 Positive Cases", #<<           
-  x_label = "Cumulative COVID-19 Positive Cases", #<<
-  y_label = "Cumulative Fatality Rate"  #<<
-)
-```
+::: {.callout-note icon=false}
+
+## Observation
+
+Sub-districts labeled "KAPUK," "CILANGKAP," and "SETU" and others are marked as outliers, suggesting their fatality rates are notably different. Public health officials may identify areas that need additional resources or investigation due to their deviating fatality rates. 
+:::
+
+# 6. Create Funnel Plot using ggplot2
+
+We build and customize the funnel plots step-by-step using `ggplot2` package.
+
+::: panel-tabset
+## Compute Cumulative Death Rate
+
+The **cumulative death rate** is calculated by **rate = Death / Positive**
+
+The **standard error of the cumulative death rate** is computed the standard error of a proportion where **rate.se = sqrt(rate * (1 - rate) / Positive)**.
 
 ```{r}
 df <- covid19 %>%
   mutate(rate = Death / Positive) %>%
   mutate(rate.se = sqrt((rate*(1-rate)) / (Positive))) %>%
   filter(rate > 0)
+glimpse(df)
 ```
+## Compute Weighted Mean
+
+A **weighted mean of the death rate** is computed using `weighted.mean()`, using the inverse of the standard error squared as weights. This gives more weight to rates with lower standard errors.
 
 ```{r}
 fit.mean <- weighted.mean(df$rate, 1/df$rate.se^2)
+fit.mean
 ```
+
+## Calculate Upper and Lower Limit
+
+A sequence of numbers are generated using `seq()` from 1 to the maximum number of positive cases with a step of 1 to be used in calculating control limits.
+
+**Lower and upper control limits for 95% CIs** are calculated using the weighted mean death rate and its standard error. The z-values for 95% CI (1.96) and for 99.9% CI (3.29) are used. These control limits will form the funnel shape on the plot.
 
 ```{r}
 number.seq <- seq(1, max(df$Positive), 1)
@@ -86,7 +147,11 @@ number.ll999 <- fit.mean - 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq))
 number.ul999 <- fit.mean + 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) 
 dfCI <- data.frame(number.ll95, number.ul95, number.ll999, 
                    number.ul999, number.seq, fit.mean)
+glimpse(dfCI)
 ```
+:::
+
+## Static Funnel Plot
 
 ```{r}
 p <- ggplot(df, aes(x = Positive, y = rate)) +
@@ -134,10 +199,11 @@ p <- ggplot(df, aes(x = Positive, y = rate)) +
 p
 ```
 
+## Interactive Funnel Plot
+
+The funnel plot created using ggplot2 functions can be made interactive with `ggplotly()` of `plotly` r package.
+
 ```{r}
-fp_ggplotly <- ggplotly(p,
-  tooltip = c("label", 
-              "x", 
-              "y"))
+fp_ggplotly <- ggplotly(p, tooltip = c("label", "x", "y"))
 fp_ggplotly
 ```

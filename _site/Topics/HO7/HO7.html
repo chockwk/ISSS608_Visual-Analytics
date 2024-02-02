@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wan Kee">
+<meta name="dcterms.date" content="2024-02-02">
 
-<title>Visual Analytics</title>
+<title>Visual Analytics - Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,40 +61,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -104,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Visual Analytics</span>
     </a>
   </div>
@@ -115,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../index.html" rel="" target="">
  <span class="menu-text">☼ Home</span></a>
   </li>  
 </ul>
@@ -126,32 +95,36 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-learning-topics">    
         <li>
-    <a class="dropdown-item" href="./Topics/HO1/HO1.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/HO1/HO1.html" rel="" target="">
  <span class="dropdown-text">Fundamentals of ggplot2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO2/HO2.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/HO2/HO2.html" rel="" target="">
  <span class="dropdown-text">Extensions of ggplot2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/IC1/IC1.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/IC1/IC1.html" rel="" target="">
  <span class="dropdown-text">Statistical Data Formats</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO3/HO3.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/HO3/HO3.html" rel="" target="">
  <span class="dropdown-text">Interactive and Animated Visualization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO4/HO4.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/HO4/HO4.html" rel="" target="">
  <span class="dropdown-text">Visual Statistical Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO5/HO5.html" rel="" target="">
+    <a class="dropdown-item" href="../../Topics/HO5/HO5.html" rel="" target="">
  <span class="dropdown-text">Model Diagnostics</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Topics/HO6/HO6.html" rel="" target="">
- <span class="dropdown-text">Funnel Plots</span></a>
+    <a class="dropdown-item" href="../../Topics/HO6/HO6.html" rel="" target="">
+ <span class="dropdown-text">Bias and Outlier Detection</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Topics/HO7/HO7.html" rel="" target="">
+ <span class="dropdown-text">Multivariate Data Analysis</span></a>
   </li>  
     </ul>
   </li>
@@ -161,11 +134,11 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-real-world-exercises">    
         <li>
-    <a class="dropdown-item" href="./Exercises/TH1/TH1.html" rel="" target="">
+    <a class="dropdown-item" href="../../Exercises/TH1/TH1.html" rel="" target="">
  <span class="dropdown-text">OECD PISA Global Education</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Exercises/TH2/TH2.html" rel="" target="">
+    <a class="dropdown-item" href="../../Exercises/TH2/TH2.html" rel="" target="">
  <span class="dropdown-text">Data Visualization Critique</span></a>
   </li>  
     </ul>
@@ -194,8 +167,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#visual-analytics" id="toc-visual-analytics" class="nav-link active" data-scroll-target="#visual-analytics">Visual Analytics?</a></li>
-  <li><a href="#topic-overview" id="toc-topic-overview" class="nav-link" data-scroll-target="#topic-overview">Topic Overview</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">1. Learning Objectives</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">6. Reference</a></li>
   </ul>
 </nav>
     </div>
@@ -204,327 +177,55 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Visual Analytics</h1>
+<h1 class="title">Multivariate Data Analysis</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Wan Kee </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 2, 2024</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">February 3, 2024</p>
+    </div>
+  </div>
     
   </div>
   
 
 </header>
 
-<p>Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!</p>
-<p>This page documents my learning journey of geospatial analytics taught by <strong>Prof Kam Tin Seong</strong>.</p>
-<p><img src="_site/images/datasaurus.gif" class="img-fluid"></p>
-<p>Source: <a href="https://www.research.autodesk.com/publications/same-stats-different-graphs/">Autodesk</a></p>
-<p>This is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.</p>
-<p><img src="_site/images/datasaurus_all.png" class="img-fluid" width="600"></p>
-<section id="visual-analytics" class="level1">
-<h1>Visual Analytics?</h1>
-<p>Visual Analytics is the craft of <strong>analytical reasoning</strong> supported by: - Data Science and Analytics - Data Visualization - Human-Computing-Interaction (HCI) - Interface Design - Visual Storytelling</p>
-<p>The learning objective is to understand the <strong>basic concepts, theories and methodologies</strong> of visual analytics, analyse data using appropriate <strong>visual thinking and visual analytics techniques</strong>, and implement cutting-edge <strong>visual analytics system</strong> for <strong>decision making</strong>.</p>
-<p><img src="_site/images/VA.png" class="img-fluid" width="600"></p>
+<section id="learning-objectives" class="level1">
+<h1>1. Learning Objectives</h1>
+<ul>
+<li>Build a static ternary plot using <code>ggtern</code> package and an interactive ternary plot using <code>plotly</code> package</li>
+</ul>
+<p>ggtern is a package that extends the functionality of ggplot2, giving the capability to plot ternary diagrams for (subset of) the ggplot2 proto geometries. Ternary diagrams are used frequently in a number of disciplines to graph compositional features for mixtures of three different elements or compounds. It is possible to represent a coordinate system having three (3) degrees of freedom, in 2D space, since the third dimention is linear and depends only on the other two.</p>
 </section>
-<section id="topic-overview" class="level1">
-<h1>Topic Overview</h1>
-
+<section id="reference" class="level1">
+<h1>6. Reference</h1>
+<p>ggtern http://www.ggtern.com/d/2.2.0/</p>
+<p>ggtern github https://github.com/cran/ggtern</p>
 
 
 </section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1706371200000" data-listing-file-modified-sort="1706894773039" data-listing-date-modified-sort="1706894773000" data-listing-reading-time-sort="8">
-<div class="thumbnail">
-<p><a href="./Topics/HO6/HO6.html"> <p class="card-img-top"><img src="Topics/HO6/images/logo.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO6/HO6.html">
-<h3 class="no-anchor listing-title">
-Bias and Abnormality Detection
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-Create <strong>funnel plots</strong> using <code>funnelPlotR</code> package
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO6/HO6.html">
-<div class="listing-date">
-Jan 28, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1704729600000" data-listing-file-modified-sort="1705604545538" data-listing-date-modified-sort="1705604545000" data-listing-reading-time-sort="10">
-<div class="thumbnail">
-<p><a href="./Topics/HO2/HO2.html"> <p class="card-img-top"><img src="Topics/HO2/images/image2.jpg"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO2/HO2.html">
-<h3 class="no-anchor listing-title">
-Extensions of ggplot2
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-Beside tidyverse, the following R packages will be used:
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO2/HO2.html">
-<div class="listing-date">
-Jan 9, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1704643200000" data-listing-file-modified-sort="1705154754801" data-listing-date-modified-sort="1705154754000" data-listing-reading-time-sort="20">
-<div class="thumbnail">
-<p><a href="./Topics/HO1/HO1.html"> <p class="card-img-top"><img src="Topics/HO1/images/image5.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO1/HO1.html">
-<h3 class="no-anchor listing-title">
-Fundamentals of ggplot2
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<code>ggplot2</code> is a R package dedicated to <strong>data visualization</strong> by builds charts through <strong>layers</strong> using <code>geom_</code> functions. It can greatly improve the quality and aesthetics of graphics.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO1/HO1.html">
-<div class="listing-date">
-Jan 8, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1705075200000" data-listing-file-modified-sort="1705250913910" data-listing-date-modified-sort="1705250913000" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="./Topics/IC1/IC1.html"> <p class="card-img-top"><img src="Topics/IC1/images/haven.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/IC1/IC1.html">
-<h3 class="no-anchor listing-title">
-Import of Statistical Data Formats
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-R is capable of reading data from most formats, such as csv, xlsx, or txt and include files created in other statistical packages, such as SAS, Stata, SPSS.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/IC1/IC1.html">
-<div class="listing-date">
-Jan 13, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1705075200000" data-listing-file-modified-sort="1706212431241" data-listing-date-modified-sort="1706212431000" data-listing-reading-time-sort="31">
-<div class="thumbnail">
-<p><a href="./Topics/HO3/HO3.html"> <p class="card-img-top"><img src="Topics/HO3/plot9_anim.gif"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO3/HO3.html">
-<h3 class="no-anchor listing-title">
-Interactive and Animated Data Visualization
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-Create interactive data visualization using <code>ggiraph</code>, <code>plotlyr</code>, <code>crosstalk</code>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO3/HO3.html">
-<div class="listing-date">
-Jan 13, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1706284800000" data-listing-file-modified-sort="1706732301449" data-listing-date-modified-sort="1706732301000" data-listing-reading-time-sort="8">
-<div class="thumbnail">
-<p><a href="./Topics/HO5/HO5.html"> <p class="card-img-top"><img src="Topics/HO5/images/modeldiag.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO5/HO5.html">
-<h3 class="no-anchor listing-title">
-Model Diagnostics
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-Visualise <strong>model diagnostic</strong> using <code>performance</code> package
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO5/HO5.html">
-<div class="listing-date">
-Jan 27, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-listing-date-sort="1706803200000" data-listing-file-modified-sort="1706895969924" data-listing-date-modified-sort="1706895969000" data-listing-reading-time-sort="1">
-<div class="thumbnail">
-<p><a href="./Topics/HO7/HO7.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO7/HO7.html">
-<h3 class="no-anchor listing-title">
-Multivariate Data Analysis
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-ggtern is a package that extends the functionality of ggplot2, giving the capability to plot ternary diagrams for (subset of) the ggplot2 proto geometries. Ternary diagrams…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO7/HO7.html">
-<div class="listing-date">
-Feb 2, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-listing-date-sort="1705075200000" data-listing-file-modified-sort="1706361853960" data-listing-date-modified-sort="1706361853000" data-listing-reading-time-sort="48">
-<div class="thumbnail">
-<p><a href="./Exercises/TH1/TH1.html"> <p class="card-img-top"><img src="_site/images/future classroom.jpg"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Exercises/TH1/TH1.html">
-<h3 class="no-anchor listing-title">
-OECD PISA Global Education
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-The <strong>Organisation for Economic Co-operation and Development (OECD) Programme for International Student Assessment (PISA)</strong> is a <strong>global education survey</strong> conducted to examines what students know in mathematics, reading and science, how well students can solve complex problems, think critically and communicate effectively.…<strong></strong><strong></strong>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Exercises/TH1/TH1.html">
-<div class="listing-date">
-Jan 13, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-listing-date-sort="1705939200000" data-listing-file-modified-sort="1706422154187" data-listing-date-modified-sort="1706422154000" data-listing-reading-time-sort="9">
-<div class="thumbnail">
-<p><a href="./Exercises/TH2/TH2.html"> <p class="card-img-top"><img src="Exercises/TH2/images/alternativedesign.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Exercises/TH2/TH2.html">
-<h3 class="no-anchor listing-title">
-Peer Critique and Visualization Makeover
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-The purpose of the makeover is to improve on the original visualization.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Exercises/TH2/TH2.html">
-<div class="listing-date">
-Jan 23, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="9" data-listing-date-sort="1705680000000" data-listing-file-modified-sort="1706732767379" data-listing-date-modified-sort="1706732767000" data-listing-reading-time-sort="26">
-<div class="thumbnail">
-<p><a href="./Topics/HO4/HO4.html"> <p class="card-img-top"><img src="Topics/HO4/images/logo.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="./Topics/HO4/HO4.html">
-<h3 class="no-anchor listing-title">
-Visual Statistical Analysis
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-New statistical graphic methods for visualising <strong>distribution</strong>, namely <strong>ridgeline plot</strong> and <strong>raincloud plot</strong> by using <code>ggplot2</code> and its extensions.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./Topics/HO4/HO4.html">
-<div class="listing-date">
-Jan 20, 2024
-</div>
-<div class="listing-author">
-Wan Kee
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -773,7 +474,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="./wkchock.2022@mitb.smu.edu.sg">
+    <a class="nav-link" href="../../wkchock.2022@mitb.smu.edu.sg">
       <i class="bi bi-envelope-fill" role="img" aria-label="Email">
 </i> 
     </a>
