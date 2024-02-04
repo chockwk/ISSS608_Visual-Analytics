@@ -1,7 +1,7 @@
 ---
-title: "Model Diagnostics"
+title: "Univariate Graphical Methods for Uncertainty"
 author: "Wan Kee"
-date: "27 January 2024"
+date: "22 January 2024"
 date-modified: "last-modified"
 execute: 
   eval: true
@@ -11,222 +11,256 @@ execute:
 editor: source
 ---
 
-![](images/modeldiag.png)
-
 # 1. Learning Objectives
 
-1.  Visualise **model diagnostic** using `performance` package
-
-2.  Visualise **model parameters** using `parameters` package
+1.  Visualise **uncertainty** using `ungeviz` package
 
 # 2. Load Packages
 
-The following packages
+-   `tidyverse` is a family of R packages designed to support data science, analysis and communication task including creating static statistical graphs
 
--   `performance` compute indices of model quality and goodness of fit. 
+-   `ungeviz` provide functionality for `ggplot2` to visualize uncertainty. The package name comes from the German word “Ungewissheit”, which means uncertainty.
 
-It measures r-squared (R2), root mean squared error (RMSE) or intraclass correlation coefficient (ICC) , but also functions to check (mixed) models for overdispersion, zero-inflation, convergence or singularity.
+-   `crosstalk` puts HTML elements side by side
 
--   `parameters` processes the parameters of various statistical models.
-
-It computes p-values, CIs, Bayesian indices and implements features, like bootstrapping of parameters and models, feature reduction (feature extraction and variable selection), or tools for data reduction like functions to perform cluster, factor or principal component analysis.
-
--   `see` complements numeric summaries to produce visualizations for model parameters, predictions, and performance diagnostics. 
-
--   `ggstatsplot` creates graphics with statistical tests in the information-rich plots.
+-   `plotly` creates customized interactive plots
 
 ```{r}
-pacman::p_load(tidyverse, readxl, performance, parameters, see, ggstatsplot)
+pacman::p_load(tidyverse, ungeviz, DT, crosstalk, plotly)
 ```
 
 # 3. Import Data
 
-`Toyota Corolla` is a car dataset with a set of explanatory variables.
+**exam_data** is a year end examination grades of a cohort of Primary 3 students from a local school.
 
 ```{r}
-car_resale <- read_xls("data/ToyotaCorolla.xls", "data")
-glimpse(car_resale)
+exam_data <- read.csv("data/Exam_data.csv")
+glimpse(exam_data)
 ```
 
-The output shows 1,436 observations and 38 attributes.
+# 4. Uncertainty of Point Estimates
 
-# 4. Model Diagnostic for Multiple Regression Model
+A **point estimate** is a statistic, such as a mean, used to estimate the value of an unknown parameter of a population.
 
-`lm()` of `Base Stats` of R calibrates a multiple linear regression model.
+**Uncertainty in a point estimate** refers to the recognition that the calculated value, which is an estimate derived from a **sample**, may not precisely reflect the true **population** parameter.
 
-```{r}
-model <- lm(Price ~ Age_08_04 + Mfg_Year + KM + Weight + Guarantee_Period, 
-            data = car_resale)
-model
-```
+**Quantification of uncertainty:**
+
+1.  **Confidence intervals** are often used to provide a range of values, constructed from the data, that is likely to contain the true population parameter.
+
+2.  **Standard error** measures the dispersion of the sampling distribution of the point estimate. A smaller standard error indicates less variability and hence less uncertainty in the point estimate.
+
+Other aspects that contribute to uncertainty in a point estimate:
+
+1.  Sample size
+2.  Model assumptions on linearity, normality and homoscedasticity
 
 ::: panel-tabset
-## Multicolinearity
+### Data Transformation
 
-The first model diagnostic is to check multicolinearity using `check_collinearity()` of `performance` package.
-
-```{r}
-check_collinearity(model)
-```
-**Variance inflation factor (VIF)** quantifies how much the variance of an estimated regression coefficient increases because of collinearity. 
-
-The collinearity plot is divided into **coloured zones**, typically green for low VIF values indicating low collinearity, and red for high VIF values indicating high collinearity. The threshold values for these zones are often set at **5 for low collinearity** and **10 for high collinearity**.
+`group_by()` of dplyr package groups the observation by RACE, `summarise()` compute the count of observations, mean, standard deviation. `mutate()` derive standard error of Maths by RACE, and the output is save as a tibble data table called `my_sum`.
 
 ```{r}
-check_c <- check_collinearity(model)
-plot(check_c)
+my_sum <- exam_data %>%
+  group_by(RACE) %>%
+  summarise(n=n(),
+            mean=mean(MATHS),
+            sd=sd(MATHS)) %>%
+  mutate(se=sd/sqrt(n-1))
+glimpse(my_sum)
 ```
 
-::: {.callout-note icon=false}
+### Table
 
-## Observation
+We can view `my_sum` tibble data frame in an html table format using `kable()` from `DT` package.
 
-**Low Collinearity**: Variables such as `Guarantee_Period`, `KM`, and `Weight` are represented by green points and fall in the green zone, suggesting they have low multicollinearity.
-
-**High Collinearity**: The variable `Age_08_04` and `Mfg_Year` is represented by a red point and falls in the red zone, indicating a high VIF and potential issues with multicollinearity.
+```{r}
+knitr::kable(head(my_sum), format = 'html')
+```
 :::
 
-## Normality Assumption
+## 4.1 Standard Error
 
-The second model diagnostic is to check normality assumption using `check_normality()` of `performance` package.
-
-```{r}
-model1 <- lm(Price ~ Age_08_04 + KM + Weight + Guarantee_Period, 
-             data = car_resale)
-model1
-```
-The **Quantile-Quantile (Q-Q) plot** assess whether the residuals from a regression model are normally distributed. 
-
-The x-axis represents **the quantiles of a standard normal distribution**, which is what the residuals would follow if they were perfectly normally distributed.
-
-The y-axis represents **the sample quantiles of the residuals** from the model. These are the actual observed deviations from the model's predictions.
-
-Typically, a Q-Q plot will have a **reference line** (green) that represents the expected line of points if the residuals were normally distributed. The **dots** are the ordered residual values from the model. If the residuals were perfectly normal, the dots would lie exactly on the reference line.
+We will plot the standard error bars of mean Maths Score by `RACE`. The error bars are computed by using the arguments `ymin` and `ymax` with formula **mean+/-se**. For geom_point(), it is important to indicate `stat = “identity”`.
 
 ```{r}
-check_n <- check_normality(model1)
-plot(check_n)
+ggplot(my_sum) +
+  geom_errorbar(aes(x=RACE, ymin=mean-se, ymax=mean+se), 
+                width=0.2, 
+                colour="black", 
+                alpha=0.9, 
+                size=0.5) +
+  geom_point(aes(x=RACE, y=mean), 
+             stat="identity", 
+             color="hotpink2",
+             size = 3,
+             alpha=1) +
+  ggtitle("Standard Error of mean Maths Score by Race")+
+  theme_minimal()
 ```
 
-::: {.callout-note icon=false}
+## 4.2 Confidence Interval
 
-## Observation
+We can also plot the confidence intervals of mean Maths Score by RACE. The confidence intervals are computed by using the formula **mean+/-1.96*se**. The error bars are sorted by using the average maths scores.
 
-The middle range of residuals seems to be normally distributed, the presence of outliers and the heavy tails suggest that the model might not be the best fit for all data points, particularly for extreme values.
-:::
+::: callout-tip
+In probability and statistics, the **97.5th percentile point** of the standard normal distribution is an approximate value of **1.96**, where 95% of the area under a normal curve lies within approximately 1.96 standard deviations of the mean. 
 
-## Homogeneity of Variances
+If X has a standard normal distribution, i.e. X ~ N(0,1),
 
-The third model disgnostic is to check model for **homogeneity of variances** using `check_heteroscedasticity()` of `performance` package.
+P(X > 1.96) ≈ 0.025
+P(X < 1.96) ≈ 0.975
 
-The homogeneity of variances plot is **a residual versus fitted plot** used to check the assumption of homoscedasticity (equal variances) in the residuals of a regression model.
+and as the normal distribution is symmetric,
 
-The x-axis displays the **fitted values**, which are the predicted values generated by the model. In linear regression, you would expect to see a random scatter of points around the horizontal line if the assumption of homoscedasticity holds.
-
-The y-axis shows the **standardized residuals**, which are the model residuals divided by their estimated standard deviation. Ideally, these should be randomly distributed without any pattern.
-
-The **Locally Weighted Scatterplot Smoothing (LOWESS) line** (green) is a non-parametric smoother that helps to visualize the overall trend in the data. In a perfectly homoscedastic scenario, this line would be **flat** and **horizontal**.
-
-
-```{r}
-check_h <- check_heteroscedasticity(model1)
-plot(check_h)
-```
-
-::: {.callout-note icon=false}
-
-## Observation
-
-The LOWESS line curves upwards as the fitted values increase, suggesting that the variance of the residuals is increasing with the fitted values. This pattern indicates **heteroscedasticity**, meaning that the variance of the residuals is **not constant** across the range of fitted values.
+P(−1.96 < X < 1.96) ≈ 0.95.
 
 :::
 
-## Model Checking
-
-The forth model disgnostic is to perform a complete check by using `check_model()` of `performance` package to conduct a visual check of various **model assumptions**:
-
-**Posterior Predictive Check** compares the distribution of the observed data with the distribution of the data predicted by the model. The observed data line should closely follow the model-predicted data line if the model is a good fit.
-
-**Linearity** checks if the relationship between predictors and the response is linear.
-The reference line should be flat and horizontal if the relationship is linear.
-
-**Homogeneity of Variance (homoscedasticity)** examines whether the residuals have constant variance across all levels of the fitted values. The reference line should be flat and horizontal in the presence of homoscedasticity.
-
-**Influential Observations** plot identifies points that have an undue influence on the model. Ideally, points should be within the contour lines; points outside may unduly influence the model's parameters.
-
-**Collinearity** plot assesses if there is multicollinearity among predictors using the Variance Inflation Factor (VIF). High VIF (generally, VIF > 10) indicates high collinearity which can inflate the variance of the coefficient estimates and make them unstable.
-
-**Normality of Residuals** assesses if the residuals are normally distributed. Points should follow the line in the Q-Q plot if the residuals are normally distributed.
-
-
 ```{r}
-check_model(model1)
+ggplot(my_sum) +
+  geom_errorbar(aes(x = reorder(RACE, -mean), ymin = mean-1.96*se, ymax = mean+1.96*se), 
+                width = 0.2, 
+                colour = "black", 
+                alpha = 0.9, 
+                size = 0.5)+
+  geom_point(aes(x = RACE, y = mean), 
+             stat = "identity", 
+             color = "thistle3",
+             size = 3,
+             alpha = 1) +
+  labs(x = "Maths Score",
+       title = "95% confidence interval of mean Maths Score by Race")+
+  theme_minimal()
 ```
 
-::: {.callout-note icon=false}
+### Interactive Error Bars
 
-## Observation
+We will plot interactive error bars for the 99% confidence interval of mean Maths Score by Race.
 
-**Posterior Predictive Check** appears that the predicted values follow the trend of the observed data, indicating that the model is capturing the underlying pattern.
-
-**Linearity** seems to be met, as the residuals are randomly scattered around the horizontal dashed line with no clear pattern.
-
-**Homogeneity of Variance (homoscedasticity)** indicates increasing variability in the residuals as the fitted values increase, which may suggest heteroscedasticity.
-
-**Influential Observations** shows a few points outside the contour lines, suggesting the presence of influential observations that could be affecting the model's estimates.
-
-**Collinearity** is absent as all predictors appear to have low VIF values, indicating that multicollinearity is not a concern.
-
-**Normality of Residuals** shows some deviation from normality, particularly in the tails, indicating potential issues with normality.
-
-:::
-
-:::
-
-# 5. Model Parameters
-
-# 5.1 Estimated Coefficients and Confidence Intervals
-
-`plot()` of `see` package and `parameters()` of `parameters` package is used to visualise the output of a regression model, displaying the **estimated coefficients** and their **confidence intervals** for each predictor variable in the model. 
+Need plotly and `bscols` neeed crosstalk bscols: Arrange HTML elements or widgets in Bootstrap columns
 
 ```{r}
-plot(parameters(model1), 
-     show_labels = TRUE,
-     size_text = 3)
+# shared_df = SharedData$new(my_sum)
+
+bscols(widths = c(4,8),
+       ggplotly((ggplot(my_sum) +
+                   geom_errorbar(aes(
+                     x=reorder(RACE, -mean),
+                     ymin=mean-2.58*se, 
+                     ymax=mean+2.58*se), 
+                     width=0.2, 
+                     colour="black", 
+                     alpha=0.9, 
+                     size=0.5) +
+                   geom_point(aes(
+                     x=RACE, 
+                     y=mean, 
+                     text = paste("Race:", `RACE`, 
+                                  "<br>N:", `n`,
+                                  "<br>Avg. Scores:", round(mean, digits = 2),
+                                  "<br>95% CI:[", 
+                                  round((mean-2.58*se), digits = 2), ",",
+                                  round((mean+2.58*se), digits = 2),"]")),
+                     stat="identity", 
+                     color="red", 
+                     size = 1.5, 
+                     alpha=1) + 
+                   xlab("Race") + 
+                   ylab("Average Scores") + 
+                   theme_minimal() + 
+                   theme(axis.text.x = element_text(
+                     angle = 45, vjust = 0.5, hjust=1)) +
+                   ggtitle("99% Confidence interval of average /<br>maths scores by race")), 
+                tooltip = "text"), 
+       DT::datatable(my_sum, 
+                     rownames = FALSE, 
+                     class="compact", 
+                     width="100%", 
+                     options = list(pageLength = 10,
+                                    scrollX=T), 
+                     colnames = c("No. of pupils", 
+                                  "Avg Scores",
+                                  "Std Dev",
+                                  "Std Error")) %>%
+         formatRound(columns=c('mean', 'sd', 'se'),
+                     digits=2))
 ```
-
-::: {.callout-note icon=false}
-
-## Observation
-
-`Age 08 04`: The coefficient for this variable is approximately -119.49, with a confidence interval ranging from -124.91 to -114.08. This suggests that as the age (presumably of a car, given the context) increases by one unit, the price decreases by about 119.49 units on average. The **negative relationship** is statistically significant.
-
-`KM`: The coefficient is very close to zero, around -0.02, with a confidence interval from -0.03 to -0.02. This indicates a **very slight negative relationship** between the number of kilometers driven (KM) and the price. Despite the **small magnitude**, this relationship is statistically significant.
-
-`Weight`: The coefficient for weight is **positive**, at approximately 19.72, with a confidence interval from 18.08 to 21.36. This positive coefficient means that as the weight increases by one unit, the price is expected to increase by about 19.72 units. The positive relationship is statistically significant.
-
-`Guarantee Period`: The coefficient is also **positive**, around 26.82, with a confidence interval from 2.08 to 51.56. This implies that as the guarantee period extends by one unit, the price increases by approximately 26.82 units. Given that the confidence interval is quite wide but does not include zero, the relationship is significant, but with more uncertainty compared to other variables.
-
 :::
 
-# 5.2 Estimated Coefficients, t-values and p-values
+## 7.2 ggdist
 
-`ggcoefstats()` of `ggstatsplot` package to visualise the parameters of a regression model through a plot of a regression analysis output that includes **estimated coefficients** (effect sizes), **t-values**, and **p-values** for each predictor variable, along with the model intercept. 
+::: panel-tabset
+### 1
 
 ```{r}
-ggcoefstats(model1, output = "plot")
+exam_data %>%
+  ggplot(aes(x = RACE, 
+             y = MATHS)) +
+  stat_pointinterval() +
+  labs(
+    title = "Visualising confidence intervals of mean math score",
+    subtitle = "Mean Point + Multiple-interval plot")
 ```
-::: {.callout-note icon=false}
 
-## Observation
+### 2
 
-`Intercept`: The model's intercept is significantly different from zero, indicating that when all predictors are at zero, the expected outcome is **negatively offset** by 2185.52 units.
+```{r}
+exam_data %>%
+  ggplot(aes(x = RACE, y = MATHS)) +
+  stat_pointinterval(.width = 0.95,
+  .point = median,
+  .interval = qi) +
+  labs(
+    title = "Visualising confidence intervals of median math score",
+    subtitle = "Median Point + Multiple-interval plot")
+```
 
-`Age 08 04`: This predictor has a large negative effect on the outcome, with every unit increase in age resulting in a decrease of 119.49 units in the outcome variable. The effect is highly significant, as indicated by the extremely small p-value.
+### 3
 
-`KM`: Kilometers driven have a small but highly significant negative effect on the outcome, with every additional kilometer driven decreasing the outcome by 0.02 units.
+```{r}
+exam_data %>%
+  ggplot(aes(x = RACE, 
+             y = MATHS)) +
+  stat_pointinterval(
+    show.legend = FALSE) +   
+  labs(
+    title = "Visualising confidence intervals of mean math score",
+    subtitle = "Mean Point + Multiple-interval plot")
+```
 
-`Weight`: The vehicle's weight has a positive effect on the outcome, with every unit increase in weight leading to an increase of 19.72 units in the outcome variable. This effect is also highly significant.
+### 4
 
-`Guarantee_Period`: The guarantee period has a positive effect on the outcome. For every unit increase in the guarantee period, the outcome increases by 26.82 units. This effect is significant, albeit less so than the other predictors, as indicated by a p-value of 0.03.
+```{r}
+exam_data %>%
+  ggplot(aes(x = RACE, 
+             y = MATHS)) +
+  stat_gradientinterval(   
+    fill = "skyblue",      
+    show.legend = TRUE     
+  ) +                        
+  labs(
+    title = "Visualising confidence intervals of mean math score",
+    subtitle = "Gradient + interval plot")
+```
 :::
+
+## 7.2 Hypothetical Outcome Plots
+
+transition_states() from gganimate
+
+```{r}
+ggplot(data = exam_data, 
+       (aes(x = factor(RACE), y = MATHS))) +
+  geom_point(position = position_jitter(
+    height = 0.3, width = 0.05), 
+    size = 0.4, color = "#0072B2", alpha = 1/2) +
+  geom_hpline(data = sampler(25, group = RACE), height = 0.6, color = "#D55E00") +
+  theme_bw() + 
+  # `.draw` is a generated column indicating the sample draw
+  transition_states(.draw, 1, 3)
+```
+
+# 10. Reference
+
+ungeviz: https://github.com/wilkelab/ungeviz

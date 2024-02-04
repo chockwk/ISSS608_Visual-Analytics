@@ -24,10 +24,14 @@ website:
             href: Topics/HO4/HO4.html
           - text: Model Diagnostics
             href: Topics/HO5/HO5.html
-          - text: Bias and Outlier Detection
+          - text: Univariate Data
             href: Topics/HO6/HO6.html
           - text: Multivariate Data Analysis
-            href: Topics/HO7/HO7.html
+            href: Topics/HO8/HO8.html
+          - text: Time Series Analysis
+          - text: Geospatial Analysis
+          - text: Network Data Analysis
+            
             
       - text: "❄ Real-world Exercises"
         menu: 
@@ -35,10 +39,12 @@ website:
             href: Exercises/TH1/TH1.html
           - text: Data Visualization Critique
             href: Exercises/TH2/TH2.html
+          - text: Climate Change in Singapore
+            href: Exercises/TH3/TH3.html
             
       - text: "✱ Projects"
         menu:
-          - text: xx
+          - text: Future Climate Projections
     
   page-navigation: true
 

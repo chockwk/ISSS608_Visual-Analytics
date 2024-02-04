@@ -1,0 +1,25 @@
+---
+title: "Multivariate Data Analysis"
+author: "Wan Kee"
+date: "2 February 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+# 1. Learning Objectives
+
+-   Build a static ternary plot using `ggtern` package and an interactive ternary plot using `plotly` package
+
+ggtern is a package that extends the functionality of ggplot2, giving the capability to plot ternary diagrams for (subset of) the ggplot2 proto geometries. Ternary diagrams are used frequently in a number of disciplines to graph compositional features for mixtures of three different elements or compounds. It is possible to represent a coordinate system having three (3) degrees of freedom, in 2D space, since the third dimention is linear and depends only on the other two.
+
+
+# 6. Reference
+
+ggtern http://www.ggtern.com/d/2.2.0/
+
+ggtern github https://github.com/cran/ggtern

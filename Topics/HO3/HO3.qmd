@@ -56,7 +56,7 @@ exam_data <- read.csv("data/Exam_data.csv")
 glimpse(exam_data)
 ```
 
-`globalPop`
+`globalPop` contains the population size of countries over the years.
 
 ```{r}
 col <- c("Country", "Continent")
@@ -73,7 +73,7 @@ glimpse(globalPop)
 
 `ggiraph` is is a tool that allows you to create **dynamic** ggplot graphs. It allows the addition of **tooltips**, **hover effects** and **JavaScript actions** to the graphics. The package also allows the selection of graphical elements when used in shiny applications.
 
-`ggiraph` is **an htmlwidget** and **a ggplot2 extension**. The graphs are exported as SVG documents and special attributes are used on various elements.
+`ggiraph` is an **htmlwidget** and a **ggplot2 extension**. The graphs are exported as SVG documents and special attributes are used on various elements.
 
 ::: callout-note
 The **htmlwidgets package** provides a framework for creating R bindings to JavaScript libraries. HTML Widgets can be: (1) used at the R console for data analysis just like conventional R plots, (2) embedded within R Markdown documents, (3) ncorporated into Shiny web applications.
@@ -108,7 +108,26 @@ To plot an interactive statistical graph with one attributes `ID` by using `ggir
 
 2.  Indiate `aes()` to include an attribute `tooltip = ID`
 
-3.  Create an interactive svg object using `girafe()` to be displayed on an html page
+3.  Create an interactive scalable vector graphic (svg) object using `girafe()` to be displayed on an html page
+
+::: callout-note
+**Scalable Vector Graphics (svg)** is a unique type of **image format** for vector-based graphics written in Extensible Markup Language (XML).
+
+Advantages:
+
+-   They do not lose their quality when zoomed or resized.
+
+-   They can be created and edited with an IDE or text editor.
+
+-   They are accessible and animatable.
+
+-   They have a small file size and are highly scalable.
+
+-   They can be searched, indexed, scripted, and compressed.
+
+To add svg images to a webpage, add the <img> element to your HTML document and reference it in the src attribute:
+<img src = "image.svg" alt="image svg"/>
+:::
 
 ```{r}
 #| code-fold: true
@@ -127,11 +146,9 @@ plot1 <- ggplot(data = exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-girafe(
-  ggobj = plot1,
-  width_svg = 6,
-  height_svg = 6*0.618
-)
+girafe(ggobj = plot1,
+       width_svg = 6,
+       height_svg = 6*0.618)
 ```
 
 ### Multiple Attributes
@@ -252,14 +269,17 @@ The top student is Student036 from Class 3A!
 
 `stat_summary()` operates on unique x or y to create visualizations that display summary metrics.
 
+Note: Bar plot is not routinely used to show statistics. In this example, a bar plot with standard error can indicate the variance in the average Math score of each race.
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 
 tooltip <- function(y, ymax, accuracy = 0.01) {
   mean <- scales::number(y, accuracy = accuracy)
-  sem <- scales::number(ymax - y, accuracy = accuracy)
-  paste("Mean maths scores:", mean, "+/-", sem)
+  sem <- scales::number(ymax - y, accuracy = accuracy) # standard deviation of mean
+  paste("Mean Maths Scores:", mean, "+/-", sem) # calculate, hover, paste
 }
 
 plot5 <- ggplot(data = exam_data, 
@@ -313,6 +333,37 @@ girafe(
   height_svg = 6*0.618                      
 )                                        
 ```
+### Customization 
+
+The following customization combines `data_id()` and `tooltip()` where the hover effect highlights students from the same class and shows the class and student details.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+exam_data$tooltip <- c(paste0("Name = ", exam_data$ID, 
+                              "\n Class = ", exam_data$CLASS))
+
+plot6 <- ggplot(data=exam_data, 
+                aes(x = MATHS))+
+  geom_dotplot_interactive(aes(data_id = CLASS,
+                               tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(                                  
+  ggobj = plot6,                             
+  width_svg = 6,                         
+  height_svg = 6*0.618                      
+)                                        
+```
 
 ### Customization
 
@@ -346,7 +397,7 @@ girafe(
   width_svg = 6,                         
   height_svg = 6*0.618,
   options = list(                        
-    opts_hover(css = "fill: #ABEBC6;"),  
+    opts_hover(css = "fill: #c27ba0;"),  
     opts_hover_inv(css = "opacity:0.2;") 
   )                                        
 )                                        
@@ -384,7 +435,7 @@ girafe(
   height_svg = 6*0.618,
   options = list(
     opts_tooltip(css = tooltip_css),
-    opts_hover(css = "fill: #ABEBC6;"),  
+    opts_hover(css = "fill: #c27ba0;"),  
     opts_hover_inv(css = "opacity:0.2;") 
   )                                        
 )                                        
@@ -437,7 +488,56 @@ The following programming strategy will be used:
 -   Appropriate interactive functions of `ggiraph` will be used to create the multiple views.
 -   `patchwork` will be used inside girafe function to create the interactive coordinated multiple views.
 
+::: panel-tabset
+### Two Plots
+
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| 
+plot10 <- ggplot(data = exam_data, 
+                aes(x = ENGLISH))+
+  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+  
+  coord_cartesian(xlim = c(0,100))+
+  labs(title = "ENGLISH", x = NULL)+
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+plot11 <- ggplot(data = exam_data, 
+                aes(x = MATHS))+
+  geom_dotplot_interactive(aes(data_id = ID, tooltip = exam_data$tooltip),
+                           stackgroups = TRUE,
+                           binwidth = 1,
+                           method = "histodot")+  
+  coord_cartesian(xlim = c(0,100))+
+  labs(title = "MATHS", x = NULL)+
+  scale_y_continuous(NULL, breaks = NULL)+
+  theme_minimal()+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "grey"))
+
+girafe(code = print(plot10 + plot11), 
+       width_svg = 6,
+       height_svg = 3,
+       options = list(
+         opts_hover(css = "fill: #c27ba0;"),
+         opts_hover_inv(css = "opacity:0.2;")
+         )
+       )
+```
+
+### Three Plots
+```{r}
+##| fig-height: 12
 #| code-fold: true
 #| code-summary: "Show the code"
 
@@ -488,14 +588,15 @@ plot12 <- ggplot(data = exam_data,
 
 girafe(code = print(plot10 / plot11 / plot12), 
        width_svg = 6,
-       height_svg = 3,
+       height_svg = 4,
        options = list(
          opts_tooltip(css = tooltip_css),
-         opts_hover(css = "fill: #ABEBC6;"),
+         opts_hover(css = "fill: #c27ba0;"),
          opts_hover_inv(css = "opacity:0.2;")
          )
        ) 
 ```
+:::
 
 # 5. Interactive Data Visualization using R Package: plotly
 
@@ -517,6 +618,10 @@ plot_ly(data = exam_data,
 
 `color` argument is mapped to a qualitative visual variable, in this example, RACE. This representation adds on a broad category to the visualization.
 
+On legend interactivity, plot_ly provides a filter using RACE. In tableau, a click on the legend highlights the selection and dims the other data points. 
+
+On plot interactivity, no code is required to produce hover effect compared to ggplot. `Box select` is an interactive filtering and selection box, a brushing technique, and double-clicking exits the zoom. Using `lasso selection` and `compare data on hover`, it can show data point details in the freeform segments.
+
 ```{r}
 plot_ly(data = exam_data, 
         x = ~MATHS, y = ~ENGLISH,
@@ -532,8 +637,8 @@ Requires ggplot() and then using ggplotly()
 ### Two Variables
 
 ```{r}
-p <- ggplot(data=exam_data, 
-            aes(x = MATHS, y = ENGLISH))+
+plot13 <- ggplot(data=exam_data, 
+                 aes(x = MATHS, y = ENGLISH))+
   geom_point(size=1)+
   coord_cartesian(xlim=c(0,100),
                   ylim=c(0,100))+
@@ -543,14 +648,14 @@ p <- ggplot(data=exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-ggplotly(p)
+ggplotly(plot13)
 ```
 
 ### Three Variables
 
 ```{r}
-p <- ggplot(data=exam_data, 
-            aes(x = MATHS, y = ENGLISH, colour = RACE))+
+plot14 <- ggplot(data=exam_data, 
+                 aes(x = MATHS, y = ENGLISH, colour = RACE))+
   geom_point(size=1)+
   coord_cartesian(xlim=c(0,100),
                   ylim=c(0,100))+
@@ -560,7 +665,7 @@ p <- ggplot(data=exam_data,
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "grey"))
 
-ggplotly(p)
+ggplotly(plot14)
 ```
 
 ### Multiple ggplotly
@@ -571,29 +676,27 @@ The creation of a coordinated linked plot by using plotly involves three steps:
 
 2.  Two scatterplots will be created by using ggplot2 functions.
 
-3.  `subplot()` of `plotly` package is used to place them next to each other side-by-side.
+3.  `subplot()` of `plotly` package is used to place them next to each other side-by-side and link plots together.
 
 ```{r}
 d <- highlight_key(exam_data)
 
-p1 <- ggplot(data=d, 
-            aes(x = MATHS, y = ENGLISH,
-                text = paste("<b>Maths Score:</b>", MATHS,"<br><b>English Score:", ENGLISH))) +
-  geom_point(size=1, shape = 12) +
-  coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))+ 
+plot15 <- ggplot(data = d, 
+                 aes(x = MATHS, y = ENGLISH, 
+                     text = paste("<b>Maths Score:</b>", MATHS,"<br><b>English Score:", ENGLISH)))+
+  geom_point(size=1, shape = 12)+
+  coord_cartesian(xlim=c(0,100), ylim=c(0,100))+ 
   theme_minimal()
 
-p2 <- ggplot(data=d, 
-            aes(x = MATHS, y = SCIENCE,
-                text = paste("<b>Maths Score:</b>", MATHS,"<br><b>Science Score:", SCIENCE))) +
-  geom_point(size=1, shape = 5) +
-  coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))+
+plot16 <- ggplot(data = d,
+                 aes(x = MATHS, y = SCIENCE,
+                     text = paste("<b>Maths Score:</b>", MATHS,"<br><b>Science Score:", SCIENCE)))+
+  geom_point(size=1, shape = 5)+
+  coord_cartesian(xlim=c(0,100), ylim=c(0,100))+
   theme_minimal()
 
-subplot(ggplotly(p1, tooltip = "text"),
-        ggplotly(p2, tooltip = "text"))
+subplot(ggplotly(plot15, tooltip = "text"),
+        ggplotly(plot16, tooltip = "text"))
 ```
 :::
 
@@ -609,14 +712,14 @@ Limitations of Crosstalk:
 
 3.  Not appropriate for large data sets
 
-## 6.1 Data Table
+## 7.1 Data Table
 
 ```{r}
 DT::datatable(exam_data[c("ID","CLASS","GENDER","RACE","ENGLISH","MATHS","SCIENCE")],
               class= "compact")
 ```
 
-## 6.2 Linked Brushing
+## 7.2 Linked Brushing
 
 ```{r}
 d <- highlight_key(exam_data) 
@@ -643,15 +746,15 @@ When creating animations, the plot does not actually move. Instead, many individ
 
 `gganimate` extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.
 
--   **transition\_*() defines how the data should be spread out and how it relates to itself across time.***
+-   `transition()` defines how the data should be spread out and how it relates to itself across time.***
 
--   *view\_*() defines how the positional scales should change along the animation.
+-   `view()` defines how the positional scales should change along the animation.
 
--   \*\*shadow\_*() **defines how data from other points in time should be presented in the given point in time.***
+-   `shadow()`*defines how data from other points in time should be presented in the given point in time.
 
--   *enter\_*()/exit\_\*() **defines how new data should appear and how old data should disappear during the course of the animation.**
+-   `enter()` and `exit()` defines how new data should appear and how old data should disappear during the course of the animation.
 
--   ease_aes()\*\* defines how different aesthetics should be eased during transitions.
+-   `ease_aes()` defines how different aesthetics should be eased during transitions.
 
 [![](images/gganimate_cheatsheet.png){width="500"}](https://rstudio.github.io/cheatsheets/gganimate.pdf)
 

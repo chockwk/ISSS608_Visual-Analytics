@@ -1,0 +1,14 @@
+---
+title: "Climate Change in Singapore"
+author: "Wan Kee"
+date: "2 February 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+[![Source: Ministry of Sustainability and the Environment](Exercises/TH3/images/Climatechange.png)](https://www.nccs.gov.sg/singapores-climate-action/impact-of-climate-change-in-singapore/)
