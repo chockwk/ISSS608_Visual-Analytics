@@ -13,13 +13,559 @@ editor: source
 
 # 1. Learning Objectives
 
--   Build a static ternary plot using `ggtern` package and an interactive ternary plot using `plotly` package
+To understand complex and multivariate data, each visualization offers a unique way to represent and understand patterns, relationships, and distributions within data that contain more than two variables. They translate numerical data into visual formats, making it easier to detect trends, clusters, outliers, and correlations that might be difficult to discern from raw data alone.
+
+1.  Correlation Matrix
+
+    -   Correlogram: Strength and direction of pairwise relationships
+
+        -   Create correlation matrix using `pairs()` of R Graphics
+
+        -   Plot corrgram using `corrplot` package of R
+
+        -   Create an interactive correlation matrix using `Plotly` R
+
+2.  Multivariate Data Visualization
+
+    -   Ternary plot: Three-dimensional analysis
+
+        -   Build static ternary plots using `ggtern()` function of `ggtern` package and interactive ternary plots using `plot-ly()` function of `Plotly` package.
+
+    -   Glyphs or Star Plot
+
+    -   Heatmap: Structure within complex datasets
+
+        -   Plot static and interactive heatmaps using `heatmaply` package
+
+    -   Parallel coordinate plot
+
+        -   Plot statistic parallel coordinates plots by using `ggparcoord()` of `GGally` package and interactive parallel coordinates plots by using `parcoords` package and `parallelPlot` package.
+
+    -   Parallel plot
+
+3.  Space-constrained visualization of hierarchies
+
+    -   Treemaps: Hierarchical structures
+
+        -   Manipulate data into a treemap structure using `dplyr` package
+
+        -   Plot static treemap using `treemap` package and design interactive treemap using `d3treeR` package
+
+    -   Sunburst diagram
 
 ggtern is a package that extends the functionality of ggplot2, giving the capability to plot ternary diagrams for (subset of) the ggplot2 proto geometries. Ternary diagrams are used frequently in a number of disciplines to graph compositional features for mixtures of three different elements or compounds. It is possible to represent a coordinate system having three (3) degrees of freedom, in 2D space, since the third dimention is linear and depends only on the other two.
 
+# 2. Correlation Matrix
 
+A **correlogram** is a visual representation of the **correlation matrix**, which displays the **correlation coefficients** between a set of variables to assess the **strength** and **direction** of the **pairwise linear relationships** between two variables.
+
+Correlation coefficient measures the type and strength of the relationship between two variables and ranges between -1.0 and 1.0.
+
+-   Perfect linear relationship between the two variables = 1
+
+-   Perfect inverse relationship between the two variables = -1
+
+-   No linear relationship between the two variables = 0
+
+There are three broad reasons for computing a correlation matrix.
+
+-   Reveal the pairwise relationship between high-dimensional variables
+
+-   Input into other analyses to exclude missing values by pairwise relationship
+
+-   Function as model diagnostic to assess multicolinearity
+
+## 2.1 Load Packages
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `corrplot` enables multivariate data visualisation and analysis
+
+-   `ggstatsplot` is an ggplot2 extension for creating graphics with details from statistical tests
+
+```{r}
+pacman::p_load(corrplot, ggstatsplot, tidyverse, ggplot2)
+```
+
+## 2.2 Import Data
+
+`wine` is a wine quality dataset with attributes tested in wine chemistry and are used to determine the quality of wine through sensory and chemical analysis.
+
+```{r}
+wine <- read_csv("data/wine_quality.csv")
+glimpse(wine)
+```
+
+::: {.callout-tip collapse="true"}
+
+### Contextual Knowledge on Wine
+
+Attributes of Wine Quality:
+
+Fixed Acidity: This refers to the concentration of tartaric, malic, and other acids that do not evaporate readily. Higher levels can make a wine taste tart or sour.
+
+Volatile Acidity: This measures the acidic compounds in wine that can vaporize easily. At low levels, they can add to the complexity of the wine, but high levels can lead to an unpleasant, vinegar-like aroma.
+
+Citric Acid: As one of the acids found naturally in grapes, it's less common in wines but can be added for flavor and freshness.
+
+Residual Sugar: The amount of sugar remaining after fermentation stops. It affects the sweetness of the wine; dry wines have low residual sugar, while sweet wines have high levels.
+
+Chlorides: The amount of salt in the wine, which can influence flavor.
+
+Free Sulfur Dioxide (SO2): This acts as a preservative by preventing microbial growth and oxidation. It can also affect the smell and taste of the wine.
+
+Total Sulfur Dioxide: The sum of bound and free sulfur dioxide. High levels can lead to off-putting aromas and can affect those sensitive to sulfites.
+
+Density: This can give an indication of the alcohol content and sweetness of the wine. Denser wines might have higher sugar content and potentially higher alcohol levels.
+
+pH: The level of acidity in the wine. Wines with lower pH (more acidic) tend to have a longer shelf life and more tartness.
+
+Sulphates: These are added to wine to preserve it and can influence its fermentation and flavor.
+
+Alcohol: The alcohol level can affect the body, flavor, and texture of the wine.
+
+Quality: This is often a score given by experts based on the balance of the wine's characteristics.
+
+Type: Refers to the classification of the wine (e.g., red, white, rosé) and can be used to correlate specific attributes with the preferred profiles of each type.
+
+:::
+
+## 2.3 Plot Correlation matrix
+
+Correlation matrix can be created using the following packages:
+
+::: panel-tabset
+
+### R Graphics
+
+#### R Graphics
+
+`pair()` from R Graphics produce a matrix of scatterplots given `x` as the numeric columns of a matrix. 
+
+Among the 13 attributes in `wine`, the `type` attribute is a categorical variable to be excluded from the matrix.
+
+
+#### Correlation Coefficient
+
+`panel.cor` function can show the correlation coefficient of each pair of variables.
+
+```{r}
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+  usr <- par("usr")
+  on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y, use = "complete.obs"))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste(prefix, txt, sep="")
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+  }
+
+pairs(wine[,1:12], 
+      upper.panel = panel.cor)
+```
+
+::: {.callout-note icon=false}
+
+##### Observations
+
+Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards). 
+
+However, given the static nature of the matrix, precise quantitative analysis and correlation coefficients are not discernible.
+:::
+
+#### Double Panel
+
+```{r}
+pairs(wine[,1:12])
+```
+::: {.callout-note icon=false}
+
+##### Observations
+
+Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards). 
+
+However, given the static nature of the matrix, precise quantitative analysis and correlation coefficients are not discernible.
+:::
+
+#### Panel Selection
+
+A correlation matrix is symmetric. `lower.panel` and `upper.panel`	are panel functions used below and above the diagonal respectively.
+
+```{r}
+pairs(wine[,1:12], upper.panel = NULL)
+```
+
+
+### ggstatplot
+
+#### Ggstatplot Package
+
+`ggcormat()` of ggstatplot package creates a corrgram where `cor.var` produce a correlation coefficient matrix and the associated p-value matrix
+
+```{r}
+ggcorrmat(
+  data = wine, 
+  cor.vars = 1:12,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+```
+
+#### Customization
+
+```{r}
+ggcorrmat(
+  data = wine, ## data from which variable is to be taken
+  cor.vars = 1:12,
+  type = "np", ## which correlation coefficient is to be computed
+  lab.col = "red", ## label color
+  ggtheme = theme_light(), ## selected ggplot2 theme
+  ## turn off default ggestatsplot theme overlay
+  matrix.type = "lower", ## correlation matrix structure
+  colors = NULL, ## turning off manual specification of colors
+  palette = "category10_d3", ## choosing a color palette
+  package = "ggsci", ## package to which color palette belongs
+  title = "Gapminder correlation matrix", ## custom title
+  subtitle = "Source: Gapminder Foundation" ## custom subtitle
+)
+```
+
+#### Multiple Plots
+
+ggstatsplot provides a special helper function to do separate analysis using `grouped_ggcorrmat()`. It applies `ggcorrmat()` across all levels of a specified grouping variable and then combines list of individual plots into a single plot.
+
+```{r}
+grouped_ggcorrmat(
+  data = wine,
+  cor.vars = 1:11,
+  grouping.var = type,
+  type = "robust",
+  p.adjust.method = "holm",
+  plotgrid.args = list(ncol = 2),
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  annotation.args = list(
+    tag_levels = "a",
+    title = "Correlogram for wine dataset",
+    subtitle = "The measures are: alcohol, sulphates, fixed acidity, citric acid, chlorides, residual sugar, density, free sulfur dioxide and volatile acidity",
+    caption = "Dataset: UCI Machine Learning Repository"
+  )
+)
+```
+
+### corrplot
+
+#### Corrplot Package
+
+`cor()` of R Stats is used to compute the correlation matrix of wine data frame.
+
+```{r}
+wine.cor <- cor(wine[, 1:12])
+```
+
+
+```{r}
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+### ellipse 
+
+#### Ellipse Package
+
+The ellipse package allows us to build a correlogram using `plotcorr()` function.
+
+First of all, you have to compute the correlation matrix of your dataset using the `cor()` function of R. Each correliation will be represented as an ellipse by the `plotcorr()` function. Color, shape and orientation depend on the correlation value.
+
+```{r}
+# Libraries
+library(ellipse)
+library(RColorBrewer)
+ 
+# Use of the mtcars data proposed by R
+wine.cor <- cor(wine[, 1:12]) 
+
+# Build a Pannel of 100 colors with Rcolor Brewer
+my_colors <- brewer.pal(5, "Spectral")
+my_colors <- colorRampPalette(my_colors)(100)
+ 
+# Order the correlation matrix
+ord <- order(wine.cor[1, ])
+wine_ord <- wine.cor[ord, ord]
+plotcorr(wine_ord , col=my_colors[wine_ord*50+50] , mar=c(1,1,1,1)  )
+```
+
+
+### corrgram
+
+#### Corrgram Package
+
+Using `corrgram()`, there are two ways to graphically display the correlation matrix using the `panel.shade()` and `panel.pie()` functions.
+
+```{r}
+library(corrgram)
+
+corrgram(wine[, 1:12], order=TRUE,
+         main="Wine",
+         lower.panel = panel.shade, upper.panel = panel.pie,
+         diag.panel = panel.minmax, text.panel = panel.txt)
+```
+:::
+
+# 3. Ternary Plot
+
+A **ternary plot**, also known as a ternary graph, triangle plot, simplex plot, or de Finetti diagram, is a barycentric plot on **three variables** which **sum to a constant**. It graphically depicts the ratios of the three variables as points in an equilateral triangle. It is used when the sum of the three variables is fixed, typically at 100 percent, making it useful for representing compositional data where the components of a whole must add up to a constant value.
+
+## 3.1 Load Packages
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `plotly`
+
+-   `ggtern` plots static ternary plots.
+
+-   `Ternary` creates of ternary plots in the R graphics
+
+
+
+```{r}
+pacman::p_load(tidyverse, plotly, ggtern, Ternary)
+```
+
+## 3.2 Import and Prepare Data
+
+`pop` is a population dataset of Singapore residents with attributes on planning area subzone, age group, sex and type of dwelling collected between June 2000-2018.
+
+```{r}
+pop <- read_csv("data/respopagsex2000to2018_tidy.csv")
+glimpse(pop)
+```
+
+We derive **three new measures**, namely **young**, **active**, and **old**, using `mutate()` of dplyr package.
+
+```{r}
+pop3 <- pop %>%
+  mutate(`Year` = as.character(Year))%>%
+  spread(AG, Population) %>%
+  mutate(YOUNG = rowSums(.[4:8]))%>%
+  mutate(ACTIVE = rowSums(.[9:16]))  %>%
+  mutate(OLD = rowSums(.[17:21])) %>%
+  mutate(TOTAL = rowSums(.[22:24])) %>%
+  filter(Year == 2018)%>%
+  filter(TOTAL > 0)
+glimpse(pop)
+```
+
+## 3.3 Plot ternary plot
+
+::: panel-tabset
+
+### ggtern
+
+`ggtern()` function of ggtern package to create a simple ternary plot.
+
+```{r}
+# Building the static ternary plot
+ggtern(data = pop3, aes(x = YOUNG,y = ACTIVE, z = OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+
+`plot_ly()` function of Plotly R creates an interactive ternary plot.
+
+```{r}
+# reusable function for creating annotation object
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+# reusable function for axis formatting
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+# Initiating a plotly visualization 
+plot_ly(
+  pop3, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+
+### Ternary
+
+```{r}
+# Configure plotting area
+par(mar = rep(0.3, 4))
+
+# Example data object
+dat <- data.frame(sio2 = c(2, 4, 10, 20),
+                  fe2o3 = c(5, 6, 7, 8),
+                  al2o3 = c(12, 11, 10, 9),
+                  grain_size = c(20, 16, 12, 8),
+                  reflectance = c(80, 63, 51, 20))
+
+# Define a colour spectrum
+spectrumBins <- 255 # Number of bins to use
+mySpectrum <- viridisLite::viridis(spectrumBins)
+
+# Cut our reflectance data into categories
+binnedReflectance <- cut(dat$reflectance, spectrumBins)
+
+# Assign each data point a colour from the spectrum
+pointCol <- mySpectrum[binnedReflectance]
+
+
+# Define a size range
+maxSize <- 2.4 # Size of largest point, in plotting units
+sizes <- dat$grain_size
+pointSize <- sizes * maxSize / max(sizes)
+
+# Initialize the plot
+TernaryPlot(atip = expression(SiO[2]),
+            btip = expression(paste(Fe[2], O[3], " (wt%)")),
+            ctip = expression(paste(Al[2], O[3]))
+)
+
+# Plot the points
+TernaryPoints(dat[, c("sio2", "fe2o3", "al2o3")],
+              cex = pointSize, # Point size
+              col = pointCol,  # Point colour
+              pch = 16         # Plotting symbol (16 = filled circle)
+              )
+
+# Legend for colour scale
+PlotTools::SpectrumLegend(
+  "topleft",
+  cex = 0.8, # Font size
+  palette = mySpectrum,
+  legend = paste(
+    seq(from = max(dat$reflectance), to = min(dat$reflectance),
+        length.out = 5),
+    "%"
+  ),
+  bty = "n", # No framing box
+  xpd = NA, # Don't clip at margins
+  # title.font = 2, # Bold. Supported from R 3.6 onwards
+  title = "Reflectance"
+)
+
+# Legend for point size
+PlotTools::SizeLegend(
+  "topright",
+  width = c(0, maxSize),
+  lend = "round", # Round end of scale bar
+  legend = paste(
+    signif(seq(max(sizes), 0, length.out = 5), digits = 3),
+    "\u03bcm" # µm
+  ),
+  title = "Grain size",
+  # title.font = 2, # Bold. Supported from R 3.6 onwards
+  bty = "n", # Do not frame with box
+  cex = 0.8
+)
+```
+
+:::
+
+# 4. Heatmap
+
+A heatmap is a data visualization technique that shows magnitude of a phenomenon as color in two dimensions. The variation in color may be by hue or intensity, giving visual cues to the reader about how the phenomenon is clustered or varies over space.
+
+## 4.1 Load Packages
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `seriation`
+
+-   `dendextend` 
+
+-   `heatmaply` 
+
+
+
+```{r}
+pacman::p_load(seriation, dendextend, heatmaply, tidyverse)
+```
+
+## 4.2 Import and Prepare Data
+
+`happiness` is a world happines report from 2018.
+
+```{r}
+happiness <- read_csv("data/WHData-2018.csv")
+glimpse(happiness)
+```
+
+change the rows by country name instead of row number
+
+```{r}
+row.names(happiness) <- happiness$Country
+```
+
+```{r}
+happiness1 <- dplyr::select(happiness, c(3, 7:12))
+happiness_matrix <- data.matrix(happiness)
+```
+
+## 4.3 Plot Heatmap
+
+::: panel-tabset
+
+### Base Stats
+
+```{r}
+happiness_heatmap <- heatmap(happiness_matrix, Rowv = NA, Colv = NA)
+```
+
+:::
 # 6. Reference
 
 ggtern http://www.ggtern.com/d/2.2.0/
 
 ggtern github https://github.com/cran/ggtern
+
+ellipse: https://r-graph-gallery.com/97-correlation-ellipses.html#:~:text=The%20ellipse%20package%20allows%20to,by%20the%20plotcorr()%20function.
+
+corrgram: https://cran.r-project.org/web/packages/corrgram/vignettes/corrgram_examples.html
+
+
