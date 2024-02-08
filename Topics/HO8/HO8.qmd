@@ -99,7 +99,6 @@ glimpse(wine)
 ```
 
 ::: {.callout-tip collapse="true"}
-
 ### Contextual Knowledge on Wine
 
 Attributes of Wine Quality:
@@ -129,7 +128,6 @@ Alcohol: The alcohol level can affect the body, flavor, and texture of the wine.
 Quality: This is often a score given by experts based on the balance of the wine's characteristics.
 
 Type: Refers to the classification of the wine (e.g., red, white, rosé) and can be used to correlate specific attributes with the preferred profiles of each type.
-
 :::
 
 ## 2.3 Plot Correlation matrix
@@ -137,15 +135,13 @@ Type: Refers to the classification of the wine (e.g., red, white, rosé) and can
 Correlation matrix can be created using the following packages:
 
 ::: panel-tabset
-
 ### R Graphics
 
 #### R Graphics
 
-`pair()` from R Graphics produce a matrix of scatterplots given `x` as the numeric columns of a matrix. 
+`pair()` from R Graphics produce a matrix of scatterplots given `x` as the numeric columns of a matrix.
 
 Among the 13 attributes in `wine`, the `type` attribute is a categorical variable to be excluded from the matrix.
-
 
 #### Correlation Coefficient
 
@@ -167,11 +163,10 @@ pairs(wine[,1:12],
       upper.panel = panel.cor)
 ```
 
-::: {.callout-note icon=false}
-
+::: {.callout-note icon="false"}
 ##### Observations
 
-Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards). 
+Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards).
 
 However, given the static nature of the matrix, precise quantitative analysis and correlation coefficients are not discernible.
 :::
@@ -181,23 +176,22 @@ However, given the static nature of the matrix, precise quantitative analysis an
 ```{r}
 pairs(wine[,1:12])
 ```
-::: {.callout-note icon=false}
 
+::: {.callout-note icon="false"}
 ##### Observations
 
-Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards). 
+Below and above the diagonal are scatter plots for each pair of variables, which show how the variables relate to one another. Tight clustering of points along a line indicates a strong correlation, either positive (sloping upwards) or negative (sloping downwards).
 
 However, given the static nature of the matrix, precise quantitative analysis and correlation coefficients are not discernible.
 :::
 
 #### Panel Selection
 
-A correlation matrix is symmetric. `lower.panel` and `upper.panel`	are panel functions used below and above the diagonal respectively.
+A correlation matrix is symmetric. `lower.panel` and `upper.panel` are panel functions used below and above the diagonal respectively.
 
 ```{r}
 pairs(wine[,1:12], upper.panel = NULL)
 ```
-
 
 ### ggstatplot
 
@@ -270,7 +264,6 @@ grouped_ggcorrmat(
 wine.cor <- cor(wine[, 1:12])
 ```
 
-
 ```{r}
 corrplot.mixed(wine.cor, 
                lower = "ellipse", 
@@ -280,7 +273,7 @@ corrplot.mixed(wine.cor,
                tl.col = "black")
 ```
 
-### ellipse 
+### ellipse
 
 #### Ellipse Package
 
@@ -305,7 +298,6 @@ ord <- order(wine.cor[1, ])
 wine_ord <- wine.cor[ord, ord]
 plotcorr(wine_ord , col=my_colors[wine_ord*50+50] , mar=c(1,1,1,1)  )
 ```
-
 
 ### corrgram
 
@@ -339,8 +331,6 @@ The following R packages will be used:
 
 -   `Ternary` creates of ternary plots in the R graphics
 
-
-
 ```{r}
 pacman::p_load(tidyverse, plotly, ggtern, Ternary)
 ```
@@ -372,7 +362,6 @@ glimpse(pop)
 ## 3.3 Plot ternary plot
 
 ::: panel-tabset
-
 ### ggtern
 
 `ggtern()` function of ggtern package to create a simple ternary plot.
@@ -502,7 +491,6 @@ PlotTools::SizeLegend(
   cex = 0.8
 )
 ```
-
 :::
 
 # 4. Heatmap
@@ -517,11 +505,9 @@ The following R packages will be used:
 
 -   `seriation`
 
--   `dendextend` 
+-   `dendextend`
 
--   `heatmaply` 
-
-
+-   `heatmaply`
 
 ```{r}
 pacman::p_load(seriation, dendextend, heatmaply, tidyverse)
@@ -550,22 +536,413 @@ happiness_matrix <- data.matrix(happiness)
 ## 4.3 Plot Heatmap
 
 ::: panel-tabset
-
 ### Base Stats
 
+`heatmap()` plots a cluster heatmap by reordering using clusterisation; it calculates the distance between each pair of rows and columns and try to order them by similarity. The corresponding **dendrogram** are provided beside the heatmap.
+
 ```{r}
-happiness_heatmap <- heatmap(happiness_matrix, Rowv = NA, Colv = NA)
+heatmap(happiness_matrix)
+```
+
+The `scale` argument normalize the matrix. The `margins` argument is used to ensure that the entire x-axis labels are displayed completely and, `cexRow` and `cexCol` arguments are used to define the font size used for y-axis and x-axis labels respectively.
+
+The arguments `Rowv = NA` and `Colv = NA` are used to switch off the option of plotting the row and column dendrograms.
+
+```{r}
+heatmap(happiness_matrix,
+        scale="column",
+        cexRow = 0.6, 
+        cexCol = 0.8,
+        margins = c(10, 4))
+
+# Switch off dendrogram
+# heatmap(happiness_matrix, Rowv = NA, Colv = NA)
+```
+
+### heatmaply
+
+heatmaply is an R package for building interactive cluster heatmap using `heatmaply()` and it can be shared online as a stand-alone HTML file.
+
+```{r}
+heatmaply(happiness_matrix[, -c(1, 2, 4, 5)])
+```
+:::
+
+## 4.4 Data Transformation within heatmaply()
+
+Three main data transformation methods are supported by heatmaply(), namely: scale, normalise and percentilse.
+
+::: panel-tabset
+### Scale
+
+Assume the variables have a normal distribution, scaling will bring the values close to the standard normal distribution where each value reflects the distance from the mean in units of standard deviation.
+
+Scaling subtract the mean from each values and divide by the standard deviation.
+
+The `scale` argument in `heatmaply()` supports column and row scaling.
+
+```{r}
+heatmaply(happiness_matrix[, -c(1, 2, 4, 5)],
+          scale = "column")
+```
+
+### Normalise
+
+When variables in the data comes from possibly different (and non-normal) distributions, the normalize function can be used to bring data to the 0 to 1 scale by subtracting the minimum and dividing by the maximum of all observations.
+
+This preserves the shape of each variable’s distribution while making them easily comparable on the same “scale”.
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]))
+```
+
+### Percentalise
+
+This is similar to ranking the variables, but instead of keeping the rank values, divide them by the maximal rank. This is done by using the ecdf of the variables on their own values, bringing each value to its empirical percentile. The benefit of the percentize function is that each value has a relatively clear interpretation, it is the percent of observations that got that value or below it.
+
+```{r}
+heatmaply(percentize(happiness_matrix[, -c(1, 2, 4, 5)]))
+```
+:::
+
+## 4.5 Clustering Algorithm
+
+Heatmaply supports a variety of hierarchical clustering algorithm. The main arguments provided are:
+
+-   distfun: function used to compute the distance (dissimilarity) between both rows and columns. Defaults to dist. The options “pearson”, “spearman” and “kendall” can be used to use correlation-based clustering, which uses as.dist(1 - cor(t(x))) as the distance metric (using the specified correlation method).
+
+-   hclustfun: function used to compute the hierarchical clustering when Rowv or Colv are not dendrograms. Defaults to hclust.
+
+-   `dist_method` default is NULL, which results in “euclidean” to be used. It can accept alternative character strings indicating the method to be passed to distfun. By default distfun is “dist”” hence this can be one of “euclidean”, “maximum”, “manhattan”, “canberra”, “binary” or “minkowski”.
+
+-   `hclust_method` default is NULL, which results in “complete” method to be used. It can accept alternative character strings indicating the method to be passed to hclustfun. By default hclustfun is hclust hence this can be one of “ward.D”, “ward.D2”, “single”, “complete”, “average” (= UPGMA), “mcquitty” (= WPGMA), “median” (= WPGMC) or “centroid” (= UPGMC).
+
+To determine the best clustering method and the number of cluster, the `dendextend` package will be used.
+
+`dend_expend()` will be used to determine the recommended clustering method to be used.
+
+```{r}
+wh_d <- dist(normalize(happiness_matrix[, -c(1, 2, 4, 5)]), 
+             method = "euclidean")
+dend_expend(wh_d)[[3]]
+```
+
+::: {.callout-note appearance="simple"}
+### Observation
+
+The “average” method should be used because it gave the high optimum value, while "single" has the lowest value.
+:::
+
+`find_k()` is used to determine the optimal number of cluster.
+
+```{r}
+wh_clust <- hclust(wh_d, method = "average")
+num_k <- find_k(wh_clust)
+plot(num_k)
+```
+
+::: {.callout-note appearance="simple"}
+### Observation
+
+The optimal number of cluster is 3.
+:::
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "average",
+          k_row = 3)
+```
+
+## 4.6 Seriation
+
+Seriation in the context of a heatmap refers to the process of rearranging the rows and columns of the data matrix such that similar values are placed near each other. This is typically done to reveal patterns, such as clusters or gradients, more clearly.
+
+::: panel-tabset
+### OLO
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "OLO")
+```
+
+### GW
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "GW")
+```
+
+### mean
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "mean")
+```
+
+### none
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none")
+```
+:::
+
+## 4.7 Customization
+
+The following arguments are used:
+
+-   `k_row` is used to produce 5 groups
+
+-   `margins` is used to change the top margin to 60 and row margin to 200
+
+-   `fontsizw_row` and `fontsize_col` are used to change the font size for row and column labels to 4
+
+-   `main` is used to write the main title of the plot
+
+-   `xlab` and `ylab` are used to write the x-axis and y-axis labels
+
+```{r}
+heatmaply(normalize(happiness_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Blues,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```
+
+# 5. Parallel Coordinates Plot
+
+A **parallel coordinates plot** is a type of visualization that allows one to see the patterns in multidimensional data. It is particularly useful for visualizing high-dimensional geometry and analyzing multivariate data.
+
+## 5.1 Load Packages
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `parallelPlot`
+
+-   `GGally`
+
+-   `parcoords` 
+
+```{r}
+pacman::p_load(tidyverse, parallelPlot, GGally, parcoods)
+```
+
+## 5.2 Import and Prepare Data
+
+`happiness` is a world happines report from 2018.
+
+```{r}
+happiness <- read_csv("data/WHData-2018.csv")
+glimpse(happiness)
+```
+
+## 5.3 Plot Parallel Coordinates Plot
+
+`ggparcoord()` plot a basic static parallel coordinates plot where `data` argument is used to map the data object, `columns` is used to select the columns for preparing the parallel coordinates plot.
+
+::: panel-tabset
+
+### Highlight
+
+ `splineFactor` is a logical or numeric operator indicating whether spline interpolation should be used. `missing` is a method used to handle missing values. 
+ 
+ To rotate x-axis text labels, we use `axis.text.x` as argument to `theme()` function. And we specify `element_text(angle = 30)` to rotate the x-axis text by an angle 30 degree.
+ 
+Data visualization aims to highlight a story in the data. If you are interested in a specific group, you can highlight it using `scale_color_manual()`.
+
+
+```{r}
+happiness$Highlight <- ifelse(happiness$Country == "Singapore", "Singapore", "Other")
+
+ggparcoord(data = happiness,
+           columns = c(7:12), 
+           groupColumn = "Highlight",
+           missing = "exclude",
+           splineFactor = TRUE) +
+  scale_color_manual(values = c("Singapore" = "hotpink", "Other" = "grey")) + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+
+### Boxplot
+
+Boxplots can be added to parallel coordinates plots to provide a summary of the distribution of data for each variable. The center Line of the boxplot represents the median of the data for that particular variable.
+
+`groupColumn` argument is used to group the observations by using a single variable and colour the parallel coordinates lines by region name.
+
+`scale` argument is used to scale the variables in the parallel coordinate plot by using uniminmax method. The method univariately scale each variable so the minimum of the variable is zero and the maximum is one.
+
+`alphaLines` argument is used to reduce the intensity of the line colour to 0.2. The permissible value range is between 0 to 1.
+
+`boxplot` argument is used to turn on the boxplot by using logical TRUE. The default is FALSE.
+title argument is used to provide the parallel coordinates plot a title.
+
+```{r}
+ggparcoord(data = happiness, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coordinates Plot of World Happines Variables")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+### Facet
+
+`facet_wrap()` of ggplot2 is used to plot 10 small multiple parallel coordinates plots. Each plot represent one geographical region such as East Asia. 
+
+```{r}
+ggparcoord(data = happiness, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+### Interactive
+
+`parallelPlot()` plot an interactive parallel coordinates plot. `rotateTitle` argument is used to avoid overlapping axis labels.
+
+```{r}
+wh <- happiness %>%
+  select("Happiness score", c(7:12))
+
+parallelPlot(wh,
+             width = 300,
+             height = 500,
+             rotateTitle = TRUE)
+```
+
+`histoVisibility` argument is used to plot histogram along the axis of each variables.
+
+```{r}
+histoVisibility <- rep(TRUE, ncol(wh))
+parallelPlot(wh,
+             rotateTitle = TRUE,
+             histoVisibility = histoVisibility)
 ```
 
 :::
-# 6. Reference
+
+# 6. Treemap
+
+A **treemap** is a data visualization technique used to display **hierarchical** (tree-structured) data using nested rectangles. Each branch of the tree is represented by a rectangle, which is then tiled with smaller rectangles representing sub-branches. A leaf node's rectangle has an area proportional to a specified dimension of the data. Often, the leaf nodes are colored to show a separate dimension of the data.
+
+## 6.1 Load Packages
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `treemapify`
+
+-   `treemap`
+
+```{r}
+pacman::p_load(tidyverse, treemapify, treemap, d3Tree)
+```
+
+## 6.2 Import and Prepare Data
+
+`realis` provides information of private property transaction records in 2018. 
+
+```{r}
+realis <- read_csv("data/realis2018.csv")
+glimpse(realis)
+```
+
+```{r}
+realis_summarised <- realis %>% 
+  group_by(`Project Name`,`Planning Region`, 
+           `Planning Area`, `Property Type`, 
+           `Type of Sale`) %>%
+  summarise(`Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE), 
+            `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+            `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+            `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+glimpse(realis_summarised)
+```
+
+```{r}
+realis_selected <- realis_summarised %>%
+  filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
+glimpse(realis_selected)
+```
+
+## 6.3 Plot Treemap
+
+::: panel-tabset
+
+### Treemap
+
+Treemap by using three core arguments of treemap(), namely: `index`, `vSize` and `vColor`.
+
+```{r}
+treemap(realis_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+### Treemapify
+
+```{r}
+ggplot(data=realis_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`),
+       layout = "scol",
+       start = "bottomleft") + 
+  geom_treemap() +
+  scale_fill_gradient(low = "light blue", high = "blue")
+```
+
+### d3tree
+
+```{r}
+tm <- treemap(realis_summarised,
+        index=c("Planning Region", "Planning Area"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        title="Private Residential Property Sold, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+
+```{r}
+d3tree(tm, rootname = "Singapore")
+```
+
+:::
+
+# 7. Reference
 
 ggtern http://www.ggtern.com/d/2.2.0/
 
 ggtern github https://github.com/cran/ggtern
 
-ellipse: https://r-graph-gallery.com/97-correlation-ellipses.html#:~:text=The%20ellipse%20package%20allows%20to,by%20the%20plotcorr()%20function.
+ellipse: https://r-graph-gallery.com/97-correlation-ellipses.html#:\~:text=The%20ellipse%20package%20allows%20to,by%20the%20plotcorr()%20function.
 
 corrgram: https://cran.r-project.org/web/packages/corrgram/vignettes/corrgram_examples.html
-
-
