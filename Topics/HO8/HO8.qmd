@@ -868,6 +868,11 @@ pacman::p_load(tidyverse, treemapify, treemap, d3Tree)
 realis <- read_csv("data/realis2018.csv")
 glimpse(realis)
 ```
+## Transform Data
+
+::: panel-tabset
+
+### Summary
 
 ```{r}
 realis_summarised <- realis %>% 
@@ -880,12 +885,14 @@ realis_summarised <- realis %>%
             `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
 glimpse(realis_summarised)
 ```
+### Selection
 
 ```{r}
 realis_selected <- realis_summarised %>%
   filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
 glimpse(realis_selected)
 ```
+:::
 
 ## 6.3 Plot Treemap
 
@@ -905,8 +912,10 @@ treemap(realis_selected,
         )
 ```
 
-### Treemapify
+### geom_treemap
 
+`geom_treemap()` from ggplot2 plackage to draw a tree map.
+`geom_treemap()` requires an `area` aesthetic and does not interpret x and y; axes are not meaningful in a treemap. 
 ```{r}
 ggplot(data=realis_selected, 
        aes(area = `Total Unit Sold`,
@@ -916,20 +925,39 @@ ggplot(data=realis_selected,
   geom_treemap() +
   scale_fill_gradient(low = "light blue", high = "blue")
 ```
+### geom_treemap with hierarchy
+
+An optional `subgroup` aesthetic will cause the tiles to be clustered in subgroups within the treemap. Using the `subgroup` and `subgroup2` arguments, we will visualize the treemap with planning area and planning region. `subgroup3` is available where visualization requires.
+
+To add text labels to tiles, use `geom_treemap_text()`.
+
+```{r}
+ggplot(data = realis_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap() +
+  geom_treemap_subgroup2_border(colour = "gray",
+                                size = 2) +
+  geom_treemap_subgroup_border(colour = "white")
+```
 
 ### d3tree
 
+**d3tree** package creates flexible interactive visualization for large trees using D3.js. The structure of a D3Tree is specified with the `index` and each node stored in a vector.
+
+
 ```{r}
 tm <- treemap(realis_summarised,
-        index=c("Planning Region", "Planning Area"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="value",
-        title="Private Residential Property Sold, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
+              index=c("Planning Region", "Planning Area"),
+              vSize="Total Unit Sold",
+              vColor="Median Unit Price ($ psm)",
+              type="value",
+              title="Private Residential Property Sold, 2017",
+              title.legend = "Median Unit Price (S$ per sq. m)")
 ```
-
+`d3tree()` is the primary function for creating interactive d3.js treemaps from various data types. The `data` argument is the data to be plotted, `id` is the default to allow nodes with non-unique names.
 
 ```{r}
 d3tree(tm, rootname = "Singapore")
