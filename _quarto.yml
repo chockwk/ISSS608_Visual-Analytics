@@ -45,6 +45,12 @@ website:
       - text: "✱ Projects"
         menu:
           - text: Future Climate Projections
+          
+      - text: "✱ Shiny App"
+        menu:
+          - text: Exam Prototype
+            href: https://chockwankee.shinyapps.io/Prototype1_SingleFile/
+            
     
   page-navigation: true
 

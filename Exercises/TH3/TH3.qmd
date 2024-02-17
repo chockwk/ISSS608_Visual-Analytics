@@ -11,4 +11,419 @@ execute:
 editor: source
 ---
 
-[![Source: Ministry of Sustainability and the Environment](Exercises/TH3/images/Climatechange.png)](https://www.nccs.gov.sg/singapores-climate-action/impact-of-climate-change-in-singapore/)
+[![Source: Ministry of Sustainability and the Environment](images/Climatechange.png)](https://www.nccs.gov.sg/singapores-climate-action/impact-of-climate-change-in-singapore/)
+
+# Be Weatherwise or Otherwise
+
+# 1. Learning Objectives
+
+::: panel-tabset
+## Background
+
+Singapore is not insulated from the impact of climate change. From 1980 to 2020, the annual mean temperature has increased from **26.9°C to 28.0°C**. The mean sea level in the Straits of Singapore has also increased at the rate of **1.2mm to 1.7mm per year** in the period 1975 to 2009.
+
+Rainfall has become more intense in recent years. Annual rainfall total for Singapore has increased at an average rate of 67 mm per decade from 1980 to 2019.
+
+In 2001, the first recorded cyclone near the equator, Typhoon Vamei, swept north of Singapore and caused major flooding in the region. It is uncertain whether such tropical cyclones near the equator will occur more frequently in the future.
+
+Singapore has undertaken three **National Climate Change Studies** to better understand the potential impact of climate change on the country.
+
+The Centre for Climate Research Singapore (CCRS) has started work on the third Climate Change Study for Singapore (V3) which will contextualise the findings from the Intergovernmental Panel on Climate Change’s (IPCC) Working Group I Sixth Assessment Report, study its impact on Singapore, and provide **localised and high-resolution climate projections** derived from the latest climate models used by the IPCC.
+
+The first study was completed in 2013.
+
+The second study, which updated the projections for Singapore based on the findings of the IPCC AR5, was a joint effort between the Meteorological Service Singapore (MSS) CCRS and the UK Met Office, Hadley Centre. Phase 1 of the study was completed in 2015 and its findings were consistent with those from the IPCC AR5 which predicted **global sea level rise**, as well as **higher temperatures** and **more extreme rainfall**. The long-term effects of climate change would lead to a temperature increase of 1.4°C to 4.6°C and a rise in sea level by up to about 1m by the end of the century.
+
+Source: [National Climate Change Secretariat](https://www.nccs.gov.sg/singapores-climate-action/impact-of-climate-change-in-singapore/)
+
+## Climate of Singapore
+
+Singapore’s climate is characterised by two monsoon seasons separated by inter-monsoonal periods (see table below). The Northeast Monsoon occurs from December to early March, and the Southwest Monsoon from June to September.
+
+![](images/SingaporeClimate.png)
+
+## Task
+
+The task encompasses the following requirements:
+
+1.  Select a weather station and download historical daily temperature or rainfall data from Meteorological Service Singapore website.
+
+2.  Select either daily temperature or rainfall records of a month of the year 1983, 1993, 2003, 2013 and 2023 and create an analytics-driven data visualization.
+
+3.  Apply appropriate interactive techniques to enhance the user experience in data discovery and/or visual story-telling.
+
+The specific submission instructions are as follows:
+
+1.  The analytical visualisation must be prepared by using R and appropriate R packages.
+
+2.  The report must provide detail discussion and explanation of: the data preparation process, the selection of data visualisation techniques used, and the data visualisation design and interactivity principles and best practices implemented.
+
+3.  The write-up must be in Quarto html document format and published on Netlify.
+:::
+
+# 2. Load Packages
+
+::: {.callout-tip collapse="true"}
+## R package functions
+
+The following R packages will be used:
+
+-   `tidyverse` supports data science, analysis and communication task
+
+-   `ggplot2` creates ggplot graphs.
+
+-   `plotly` creates interactive graphs.
+
+-   `lubridate` handles date and time.
+
+-   `ggiraph` creates dynamic ggplot graphs.
+
+-   `ggrepel` provides geoms to repel overlapping text labels
+
+-   `ggridges` creates ridgeline plots in ggplot2.
+
+-   `ggdist` made for visualizing distributions and uncertainty.
+
+-   `ggthemes` provides themes, geoms, and scales
+
+-   `hrbrthemes` provides typography-centric themes and theme components
+
+-   `likert` and `plyr` create stacked bar charts for survey items.
+
+-   `patchwork` prepares composite figures
+
+-   `haven` reads and writes various data formats used by other statistical packages
+
+-   `corrplot` enables multivariate data visualisation and analysis.
+
+-   `DT` enables R data objects to be displayed as tables on HTML pages.
+
+-   `kableExtra` builds common complex tables and manipulate table styles
+:::
+
+```{r}
+pacman::p_load(tidyverse, ggplot2, plotly, lubridate)
+```
+
+# 3. Import Data
+
+Among the weather stations, Changi station has been traditionally treated as a rural area station and has the longest series of temperatures and rainfall records since 1982. Newton station is located in a dense area with high rise residential and commercial buildings. Jurong is a residential area in the west of Singapore. Pulau Ubin and Sentosa are small islands close to the main island of Singapore.
+
+To understand how climate change can impact our daily lives, the selected weather station is **Jurong (West)**.
+
+![](images/weatherstn.jpg) Source: [Future air temperature projection in high-density tropical cities based on global climate change and urbanization – a study in Singapore](https://www.sciencedirect.com/science/article/abs/pii/S2212095522000335)
+
+```{r}
+jurong <- read.csv("data/Jurong (West).csv")
+```
+
+```{r}
+summary(jurong)
+```
+
+# 4. Prepare Data
+
+::: panel-tabset
+## Apply Filter
+
+Based on the task requirements, a subset of jurong weather station `j10` with the daily temperature and rainfall of 1983, 1993, 2003, 2013 and 2023 will be created. `%in%` operator to filter the `jurong` data frame, retaining only the rows where the `Year` column matches any of the values in the years of interest `yoi` vector.
+
+```{r}
+yoi <- c(1983, 1993, 2003, 2013, 2023)
+j10 <- jurong[jurong$Year %in% yoi,]
+glimpse(j10)
+```
+
+::: callout-note
+The output shows **1,825 records** and **13 attributes** on rainfall, temperature and wind speed. The presence of NA indicates missing values.
+:::
+
+## Check Missing Values
+
+`is.na()` summarizes the presence of missing values (NA values) to give a sum of missing values for each column.
+
+```{r}
+colSums(is.na(j10))
+```
+
+::: callout-note
+The output indicates that `j10` has a close to complete set of `Daily.Rainfall.Total`. However, there is a high number of missing values (1,473 out of 1,825) in the following columns related to rainfall measurements, `Daily.Rainfall.Total`, `Highest.30.Min.Rainfall`, `Highest.120.Min.Rainfall`. The temperature and wind measurements are also relatively incomplete (1,110 out of 1,825).
+:::
+
+## Create Date Column
+
+`ymd` function from the `lubridate` package to convert the string into a Date object, which `ggplot2` can understand and plot the date sequence.
+
+```{r}
+j10$Date <- with(j10, paste(Year, Month, Day, sep = "-"))
+j10$Date <- ymd(j10$Date)
+breaks <- ymd(paste(yoi, "-01-01", sep = ""))
+```
+
+## Aggregate Data
+
+derive Mean Monthly Rainfall, Max Monthly Temperature and Minimum Monthly Temperature.
+
+```{r}
+j10_maxmintemp <- function(data, year) {
+  j10 %>%
+    filter(Year == year) %>%
+    filter(Maximum.Temperature >= 20, Mean.Temperature >= 20, Minimum.Temperature >= 20) %>%
+    group_by(Date) %>%
+    summarise(
+      MaxDailyTemp = max(Maximum.Temperature, na.rm = TRUE),
+      MeanDailyTemp = mean(Mean.Temperature, na.rm = TRUE),
+      MinDailyTemp = min(Minimum.Temperature, na.rm = TRUE)
+    ) %>%
+    ungroup()
+}
+```
+
+```{r}
+daily_metrics_2013 <- j10_maxmintemp(j10, 2013)
+glimpse(daily_metrics_2013)
+```
+
+```{r}
+daily_metrics_2023 <- j10_maxmintemp(j10, 2023)
+glimpse(daily_metrics_2023)
+```
+
+## 
+:::
+
+# 5. Visualize Data
+
+## 5.1 Rainfall
+
+We construct a `geom_point` plot that shows the distribution of daily rainfall in Singapore from 1983 to 2023, with interactivity added to explore the data further.
+
+`ggplot()` function starts the plot with `j10` and define aesthetic using `x` and `y` for `Date` and `Daily.Rainfall.Total..mm.` respectively with the magnitude of rainfall with the size and color of the points. The `text` argument creates a tooltip text that will show up in the interactive plot when hovering over the points.
+
+`ggplotly()` function converts the ggplot object to a plotly interactive object, enabling the tooltips defined to be interactive.
+
+```{r}
+daily_rainfall_plot <- ggplot(j10, aes(x = Date, 
+                                       y = Daily.Rainfall.Total..mm.,
+                                       size = Daily.Rainfall.Total..mm.,
+                                       color = Daily.Rainfall.Total..mm., 
+                                       text = paste("Month: ", Month, 
+                                                    "<br>Day: ", Day, 
+                                                    "<br>Rainfall: ", Daily.Rainfall.Total..mm.))) +
+  geom_point(alpha = 0.5) +
+  scale_size(range = c(1, 10), guide = FALSE) +
+  scale_color_gradient(low = "lightblue", high = "royalblue4", name = "Daily Rainfall Total") +
+  scale_x_date(breaks = breaks, labels = yoi, date_labels = "%Y") + 
+  theme_minimal() +
+  labs(title = "Distribution of daily rainfall in Singapore: 1983 - 2023",
+       x = "Year",
+       y = "Daily Rainfall Total (mm)") +
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1))
+
+daily_rainfall_plotly <- ggplotly(daily_rainfall_plot, tooltip = "text")
+
+daily_rainfall_plotly
+```
+
+::: callout-note
+From the interactive map, it shows the specific date where the daily rainfall exceeds 100mm in Mar, Apr, Nov 1993, Oct 2003, Nov 2013 and Feb 2023.
+
+The months mentioned largely coincide with the traditional **inter-monsoon periods** and the **northeast monsoon season** in Singapore, which are known for higher rainfall due to the prevailing wind patterns and atmospheric conditions.
+:::
+
+## 5.2 Time Series Plot
+
+Rainfall is plentiful in Singapore and it rains an average of 171 days of the year. A day is considered to have “rained” if the total rainfall for that day is 0.2mm or more. Much of the rain is heavy and accompanied by thunder. The 1991-2020 long-term mean annual rainfall total is 2113.3mm.
+
+The time series plot using `geom_line` to show trends over time for the daily rainfall total.
+
+```{r}
+library(ggrepel)
+ggplot(jurong, aes(x = as.Date(paste(Year, Month, Day, sep = "-")),
+                   y = Daily.Rainfall.Total..mm.)) + 
+  geom_line(colour = "steelblue") + 
+  geom_label_repel(aes(label = ifelse(Daily.Rainfall.Total..mm. > 150, 
+                                      as.character(Date), "")),
+                   na.rm = TRUE,
+                   box.padding = 0.35, 
+                   point.padding = 0.5,
+                   size = 3,  # Text size for labels
+                   max.overlaps = 10,  # Maximum number of label overlaps
+                   min.segment.length = 0.1,  # The minimum length of the leader line
+                   color = 'black',  # Text color
+                   fill = 'white',  # Label background color
+                   fontface = 'bold',  # Font style
+                   hjust = 0.1, vjust = -0.1) +
+  labs(title = "Daily Rainfall Total: 1983 - 2023", x = "Date", y = "Rainfall (mm)") +
+  theme_minimal()
+```
+
+::: callout-note
+From the time series plot of rainfall, the high daily rainfall total above 150 mm is observed in Jul 1981, Mar 1984, Oct 2001, Mar 2004 and Jun 2016, coinciding with **inter-monsoon periods** and the **northeast monsoon season** in Singapore.
+
+There is also a noticeable period with no recorded rainfall around 2015.
+:::
+
+## 5.3 Heatmap for Daily Rainfall
+
+A heatmap could be useful for visualizing the intensity of rainfall across the days of the month. Each cell of the heatmap represent a period of 10 years, with the color intensity indicating the amount of rainfall.
+
+```{r}
+library(ggplot2)
+library(reshape2)  # For melting data frames
+
+# Assuming 'data' is your dataframe
+j10_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
+                   measure.vars = "Daily.Rainfall.Total..mm.")
+
+ggplot(j10_melted, aes(x = Year, y = Month, fill = value)) + 
+  geom_tile() + 
+  labs(title = "Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Month", fill = "Rainfall (mm)") +
+  theme_minimal()
+
+```
+
+::: callout-note
+The dates of records are binned into years (10) and months (2). It is observable that heavy rainfall are early and late in the year.
+:::
+
+## 5.4 Temperature
+
+```{r}
+max_temp_2013 <- daily_metrics_2013 %>% 
+  summarise(MaxDate = Date[which.max(MaxDailyTemp)],
+            MaxTemp = max(MaxDailyTemp, na.rm = TRUE),
+            MeanDate = Date[which.max(MeanDailyTemp)],
+            MeanTemp = max(MeanDailyTemp, na.rm = TRUE),
+            MinDate = Date[which.max(MinDailyTemp)],
+            MinTemp = max(MinDailyTemp, na.rm = TRUE))
+
+max_temp_2023 <- daily_metrics_2023 %>% 
+  summarise(MaxDate = Date[which.max(MaxDailyTemp)],
+            MaxTemp = max(MaxDailyTemp, na.rm = TRUE),
+            MeanDate = Date[which.max(MeanDailyTemp)],
+            MeanTemp = max(MeanDailyTemp, na.rm = TRUE),
+            MinDate = Date[which.max(MinDailyTemp)],
+            MinTemp = max(MinDailyTemp, na.rm = TRUE))
+
+breaks2013 <- as.Date(c("2013-01-01", "2013-04-01", "2013-07-01", "2013-10-01"))
+breaks2023 <- as.Date(c("2023-01-01", "2023-04-01", "2023-07-01", "2023-10-01"))
+
+max_temp_plot_2013 <- ggplot(daily_metrics_2013, aes(x = Date, y = MaxDailyTemp)) +
+  geom_abline(color = "red", size = 1) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(se = FALSE, color = "red", size = 1) +
+  labs(title = "Max Temperature (2013)") +
+  scale_x_date(breaks = breaks2013, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) + 
+  annotate("text", x = max_temp_2013$MaxDate, y = max_temp_2013$MaxTemp, 
+           label = paste("Highest Temp:", max_temp_2013$MaxTemp), vjust = -1)
+
+mean_temp_plot_2013 <- ggplot(daily_metrics_2013, aes(x = Date, y = MeanDailyTemp)) +
+  geom_abline(color = "orange", size = 1) +
+  geom_point(alpha=0.1) +
+  geom_smooth(se = FALSE, color = "orange", size = 1) +
+  labs(title = "Mean Temperature (2013)") +
+  scale_x_date(breaks = breaks2013, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) +
+  annotate("text", x = max_temp_2013$MeanDate, y = max_temp_2013$MeanTemp, 
+           label = paste("Highest Temp:", max_temp_2013$MeanTemp), vjust = -1)
+
+min_temp_plot_2013 <- ggplot(daily_metrics_2013, aes(x = Date, y = MinDailyTemp)) +
+  geom_abline(color = "yellow", size = 1) +
+  geom_point(alpha=0.1) +
+  geom_smooth(se = FALSE, color = "yellow", size = 1) +
+  labs(title = "Min Temperature (2013)") +
+  scale_x_date(breaks = breaks2013, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) +
+  annotate("text", x = max_temp_2013$MinDate, y = max_temp_2013$MinTemp, 
+           label = paste("Highest Temp:", max_temp_2013$MinTemp), vjust = -1)
+
+max_temp_plot_2023 <- ggplot(daily_metrics_2023, aes(x = Date, y = MaxDailyTemp)) +
+  geom_abline(color = "red", size = 1) +
+  geom_point(alpha=0.1) +
+  geom_smooth(se = FALSE, color = "red", size = 1) +
+  labs(title = "Max Temperature (2023)") +
+  scale_x_date(breaks = breaks2023, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) +
+  annotate("text", x = max_temp_2023$MaxDate, y = max_temp_2023$MaxTemp, 
+           label = paste("Highest Temp:", max_temp_2023$MaxTemp), vjust = -1)
+
+mean_temp_plot_2023 <- ggplot(daily_metrics_2023, aes(x = Date, y = MeanDailyTemp)) +
+  geom_abline(color = "orange", size = 1) +
+  geom_point(alpha=0.1) +
+  geom_smooth(se = FALSE, color = "orange", size = 1) +
+  labs(title = "Mean Temperature (2023)") +
+  scale_x_date(breaks = breaks2023, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) +
+  annotate("text", x = max_temp_2023$MeanDate, y = max_temp_2023$MeanTemp, 
+           label = paste("Highest Temp:", max_temp_2023$MeanTemp), vjust = -1)
+
+min_temp_plot_2023 <- ggplot(daily_metrics_2023, aes(x = Date, y = MinDailyTemp)) +
+  geom_abline(color = "yellow", size = 1) +
+  geom_point(alpha=0.1) +
+  geom_smooth(se = FALSE, color = "yellow", size = 1) +
+  labs(title = "Min Temperature (2023)") +
+  scale_x_date(breaks = breaks2023, labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(limits = c(20, 40), breaks = seq(20, 40, by = 5)) +
+  annotate("text", x = max_temp_2023$MinDate, y = max_temp_2023$MinTemp, 
+           label = paste("Highest Temp:", max_temp_2023$MinTemp), vjust = -1)
+
+combined_plots <- patchwork::wrap_plots(
+  max_temp_plot_2013, mean_temp_plot_2013, min_temp_plot_2013,
+  max_temp_plot_2023, mean_temp_plot_2023, min_temp_plot_2023,
+  ncol = 3, nrow = 2
+)
+
+combined_plots & theme_minimal()
+```
+
+::: callout-note
+The plot compares the maximum, mean, and minimum daily temperatures for the years 2013 and 2023.
+
+**Maximum Daily Temperature**: The overall trend of maximum temperatures within the year has a slight decrease 35.2 to 35°C and the highest temperatures of occurring around **Apr-Jul** in both 2013 and 2023.
+
+**Mean Daily Temperature**: The mean daily temperature has increased slightly over the ten years, from a high of 30.5°C in 2013 to 30.6°C in 2023. The smooth curve of the mean daily temperature indicates a **regular seasonal pattern** that persists over the decade.
+
+**Minimum Daily Temperature**: The minimum daily temperatures have shown a more noticeable increase. In 2013, the highest recorded minimum temperature was 28.3°C, whereas in 2023, it increased to 28.7°C. This indicates that **the nights are getting warmer** and is particularly concerning; it suggests a **reduced cooling-off period**, which could exacerbate heat stress.
+:::
+
+## 5.5 Rainfall and Temperature
+
+```{r}
+library(ggplot2)
+library(plotly)
+library(scales) # For date formatting
+
+# Assuming 'j10' is your dataset and it contains the variables 'Daily.Rainfall.Total..mm.',
+# 'Maximum.Temperature', 'Year', 'Month', 'Day', and 'Date' in the appropriate formats
+
+# Update the aesthetic mappings and color gradient scale
+rainfall_temp_plot <- ggplot(jurong, aes(x = Daily.Rainfall.Total..mm.,
+                                         y = Maximum.Temperature,
+                                         size = Daily.Rainfall.Total..mm.,
+                                         color = Year, 
+                                         text = paste("Year: ", Year,
+                                                      "<br>Month: ", Month,
+                                                      "<br>Day: ", Day,
+                                                      "<br>Rainfall: ", Daily.Rainfall.Total..mm.,
+                                                      "<br>Max Temp: ", Maximum.Temperature))) +
+  geom_point(alpha = 0.5) +
+  scale_size(range = c(1, 10), guide = FALSE) +
+  scale_color_gradient(low = "thistle", high = "purple4", name = "Year") + # Gradient by Year
+  scale_x_continuous(limits = c(0, 150), name = "Daily Rainfall Total (mm)") + # Assuming rainfall up to 300mm
+  theme_minimal() +
+  labs(title = "Heavy rains and hot weather in Singapore: 1983 - 2023 (Interactive)",
+       x = "Daily Rainfall Total (mm)",
+       y = "Max Temperature (°C)") +
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1))
+
+# Convert to a plotly object for interactivity
+rainfall_temp_plotly <- ggplotly(rainfall_temp_plot, tooltip = "text")
+
+# Display the plot
+rainfall_temp_plotly
+
+```
+
+# 6. References

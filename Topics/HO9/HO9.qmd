@@ -1,0 +1,313 @@
+---
+title: "Time Series Analysis"
+author: "Wan Kee"
+date: "17 February 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+# 1. Learning Objectives
+
+1.  Characteristics of time-series data
+
+2.  Time-series patterns
+
+3.  Time-series data visualization methods
+
+    -   Line graph
+    -   Control chart
+    -   Slopegraph
+    -   Cycle plot
+    -   Horizon graph
+    -   Sunburst diagram
+    -   Calendar Heatmap
+    -   Stream Graph
+
+4.  Interactive techniques for time-series data visualisation
+
+5.  Animation techniques for time-series visualisation
+
+# 2. Characteristics of Time-series Data
+
+**Time series analysis** is a statistical technique that deals with time series data, or data that is observed sequentially over time. It involves analyzing the data to extract meaningful statistics and characteristics, and to model the underlying processes generating the sequence. The goal is often to make forecasts about future points in the series based on the information contained in the historical data. The data often contains the following characteristics:
+
+**Temporal Dependency**: Time series data points are dependent on time, meaning that observations are correlated with adjacent observations. The value at a specific time point may be influenced by the values at previous time points.
+
+**Seasonality**: Many time series exhibit seasonal patterns, meaning there are cycles of behavior that repeat over known, fixed periods. For example, retail sales may increase during the holiday season every year.
+
+**Trend**: Time series data may show a long-term direction or trend, either upward or downward. Trends can indicate a gradual increase or decrease in the data over time.
+
+**Noise**: Time series data often contain noise or random fluctuations that do not have any pattern. Noise can obscure underlying patterns and make it challenging to model the time series accurately.
+
+**Stationarity**: A time series is stationary if its statistical properties such as mean, variance, and autocorrelation are constant over time. Many statistical models assume that the time series is stationary, or various transformations are applied to achieve stationarity.
+
+# 3. Time-series Patterns
+
+**Trend Patterns**: These represent a long-term increase or decrease in the data. Trends can be linear (straight-line trends) or nonlinear.
+
+**Seasonal Patterns**: These are patterns that repeat at regular intervals over time, such as daily, weekly, monthly, or quarterly. Seasonality reflects the influence of seasonal factors on the time series.
+
+**Cyclical Patterns**: These patterns occur when the data exhibit rises and falls that are not of fixed period. The duration of these cycles is usually longer than a season, and the cycles are influenced by economic or other factors.
+
+**Irregular (Random) Components**: These are unpredictable fluctuations that do not follow a pattern. They can result from random variation or unforeseen events.
+
+# 4. Load Packages
+
+```{r}
+pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, CGPfunctions)
+```
+
+# 5. Import Library
+
+`attacks` consists of 199,999 rows of **time-series cyber attack records** by country. There are three columns, namely `timestamp`, `source_country` and `tz`.
+
+-   `timestamp` field stores date-time values in POSIXct format.
+-   `source_country` field stores the source of the attack. It is in ISO 3166-1 alpha-2 country code.
+-   `tz` field stores time zone of the source IP address.
+
+```{r}
+attacks <- read_csv("data/eventlog.csv")
+glimpse(attacks)
+```
+
+`kable()` review the structure of the imported data frame, `attacks`.
+
+```{r}
+head(attacks)
+```
+
+`air` consists of 240 rows and 36 columns.
+
+```{r}
+air <- read_excel("data/arrivals_by_air.xlsx")
+glimpse(air)
+```
+
+```{r}
+rice <- read_csv("data/rice.csv")
+```
+
+# 6. Prepare Data
+
+::: panel-tabset
+## Derive weekday and hour
+
+To plot the calender heatmap, two new fields `wkday` and `hour` need to be derived. `ymd_hms()` and `hour()` are from **lubridate** package, and `weekdays()` is a **base R** function.
+
+```{r}
+make_hr_wkday <- function(ts, sc, tz) {
+  real_times <- ymd_hms(ts, 
+                        tz = tz[1], 
+                        quiet = TRUE)
+  dt <- data.table(source_country = sc,
+                   wkday = weekdays(real_times),
+                   hour = hour(real_times))
+  return(dt)
+  }
+```
+
+## Derive attacks
+
+To create `attacks` tibble data frame, `mutate()` of **dplyr** package is used to convert `wkday` and `hour` fields into factor so they’ll be ordered when plotting.
+
+```{r}
+wkday_levels <- c('Saturday', 'Friday', 
+                  'Thursday', 'Wednesday', 
+                  'Tuesday', 'Monday', 
+                  'Sunday')
+
+attacks <- attacks %>%
+  group_by(tz) %>%
+  do(make_hr_wkday(.$timestamp, 
+                   .$source_country, 
+                   .$tz)) %>% 
+  ungroup() %>% 
+  mutate(wkday = factor(
+    wkday, levels = wkday_levels),
+    hour  = factor(
+      hour, levels = 0:23))
+```
+
+```{r}
+head(attacks)
+```
+:::
+
+# 6. Time-series Data Visualization Methods
+
+## 6.1 Calendar Heatmap
+
+A tibble data table `grouped` is derived by aggregating the attack by `wkday` and `hour` fields. A new field `n` is derived by using `group_by()` and `count()` functions and `na.omit()` is used to exclude missing value.
+
+`geom_tile()` is used to plot tiles (grids) at each x and y position. The `color` and `size` arguments are used to specify the border color and line size of the tiles.
+
+`theme_tufte()` of **ggthemes** package is used to remove border, axis lines and grids. This theme works best in combination with `geom_rug()` or `geom_rangeframe()`.
+
+For plots, `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1. `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
+
+```{r}
+grouped <- attacks %>% 
+  count(wkday, hour) %>% 
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+geom_tile(color = "white", 
+          size = 0.1) + 
+theme_tufte(base_family = "Helvetica") + 
+coord_equal() +
+scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+labs(x = NULL, 
+     y = NULL, 
+     title = "Attacks by weekday and time of day") +
+theme(axis.ticks = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 6) )
+```
+
+## 6.2 Multiple Calendar Heatmaps
+
+Build multiple heatmaps for the top four countries with the highest number of attacks.
+
+::: panel-tabset
+### Derive attack by country object
+
+To identify the top 4 countries with the highest number of attacks, the following steps are required:
+
+1.  Count the number of attacks by country,
+
+2.  Calculate the percent of attackes by country, and
+
+3.  Save the results in a tibble data frame.
+
+```{r}
+attacks_by_country <- count(
+  attacks, source_country) %>%
+  mutate(percent = percent(n/sum(n))) %>%
+  arrange(desc(n))
+```
+
+### Prepare the tidy data frame
+
+Extract the attack records of the top 4 countries from attacks data frame and save the data in a new tibble data frame (i.e. top4_attacks).
+
+```{r}
+top4 <- attacks_by_country$source_country[1:4]
+top4_attacks <- attacks %>%
+  filter(source_country %in% top4) %>%
+  count(source_country, wkday, hour) %>%
+  ungroup() %>%
+  mutate(source_country = factor(
+    source_country, levels = top4)) %>%
+  na.omit()
+```
+:::
+
+```{r}
+ggplot(top4_attacks, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+  geom_tile(color = "white", 
+          size = 0.1) + 
+  theme_tufte(base_family = "Helvetica") + 
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+  facet_wrap(~source_country, ncol = 2) +
+  labs(x = NULL, y = NULL, 
+     title = "Attacks on top 4 countries by weekday and time of day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6) )
+```
+
+## 6.3 Cycle Plot
+
+::: panel-tabset
+### Derive month and year
+
+```{r}
+air$month <- factor(month(air$`Month-Year`), 
+                    levels=1:12, 
+                    labels=month.abb, 
+                    ordered=TRUE) 
+air$year <- year(ymd(air$`Month-Year`))
+```
+
+### Extract target country
+
+The target country is Vietnam and period is 2010.
+
+```{r}
+Vietnam <- air %>% 
+  select(`Vietnam`, 
+         month, 
+         year) %>%
+  filter(year >= 2010)
+```
+
+### Compute average arrivals
+
+`group_by()` and `summarise()` of **dplyr** to compute year average arrivals by month.
+
+```{r}
+hline.data <- Vietnam %>% 
+  group_by(month) %>%
+  summarise(avgvalue = mean(`Vietnam`))
+```
+:::
+
+```{r}
+ggplot() + 
+  geom_line(data=Vietnam,
+            aes(x=year, 
+                y=`Vietnam`, 
+                group=month), 
+            colour="black") +
+  geom_hline(aes(yintercept=avgvalue), 
+             data=hline.data, 
+             linetype=6, 
+             colour="red", 
+             size=0.5) + 
+  facet_grid(~month) +
+  labs(axis.text.x = element_blank(),
+       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
+  xlab("") +
+  ylab("No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+
+## 6.4 Slopegraph
+
+`newggslopegraph` is from CGPfunctions and automate the process of producing a Tufte style slopegraph using ggplot2.
+
+```{r}
+rice %>% 
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980)) %>%
+  newggslopegraph(Year, Yield, Country,
+                Title = "Rice Yield of Top 11 Asian Counties",
+                SubTitle = "1961-1980",
+                Caption = "Prepared by: Dr. Kam Tin Seong")
+```
+
+:::
+
+\# 7. Reference
+
+1.  [Newggslopegraph](https://cran.r-project.org/web/packages/CGPfunctions/vignettes/Using-newggslopegraph.html)

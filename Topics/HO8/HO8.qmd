@@ -18,27 +18,21 @@ To understand complex and multivariate data, each visualization offers a unique 
 1.  Correlation Matrix
 
     -   Correlogram: Strength and direction of pairwise relationships
-
         -   Create correlation matrix using `pairs()` of R Graphics
-
         -   Plot corrgram using `corrplot` package of R
-
         -   Create an interactive correlation matrix using `Plotly` R
 
 2.  Multivariate Data Visualization
 
     -   Ternary plot: Three-dimensional analysis
-
         -   Build static ternary plots using `ggtern()` function of `ggtern` package and interactive ternary plots using `plot-ly()` function of `Plotly` package.
 
     -   Glyphs or Star Plot
 
     -   Heatmap: Structure within complex datasets
-
         -   Plot static and interactive heatmaps using `heatmaply` package
 
     -   Parallel coordinate plot
-
         -   Plot statistic parallel coordinates plots by using `ggparcoord()` of `GGally` package and interactive parallel coordinates plots by using `parcoords` package and `parallelPlot` package.
 
     -   Parallel plot
@@ -46,9 +40,7 @@ To understand complex and multivariate data, each visualization offers a unique 
 3.  Space-constrained visualization of hierarchies
 
     -   Treemaps: Hierarchical structures
-
         -   Manipulate data into a treemap structure using `dplyr` package
-
         -   Plot static treemap using `treemap` package and design interactive treemap using `d3treeR` package
 
     -   Sunburst diagram
@@ -62,17 +54,13 @@ A **correlogram** is a visual representation of the **correlation matrix**, whic
 Correlation coefficient measures the type and strength of the relationship between two variables and ranges between -1.0 and 1.0.
 
 -   Perfect linear relationship between the two variables = 1
-
 -   Perfect inverse relationship between the two variables = -1
-
 -   No linear relationship between the two variables = 0
 
 There are three broad reasons for computing a correlation matrix.
 
 -   Reveal the pairwise relationship between high-dimensional variables
-
 -   Input into other analyses to exclude missing values by pairwise relationship
-
 -   Function as model diagnostic to assess multicolinearity
 
 ## 2.1 Load Packages
@@ -80,9 +68,7 @@ There are three broad reasons for computing a correlation matrix.
 The following R packages will be used:
 
 -   `tidyverse` supports data science, analysis and communication task
-
 -   `corrplot` enables multivariate data visualisation and analysis
-
 -   `ggstatsplot` is an ggplot2 extension for creating graphics with details from statistical tests
 
 ```{r}
@@ -731,7 +717,7 @@ The following R packages will be used:
 
 -   `GGally`
 
--   `parcoords` 
+-   `parcoords`
 
 ```{r}
 pacman::p_load(tidyverse, parallelPlot, GGally, parcoods)
@@ -751,15 +737,13 @@ glimpse(happiness)
 `ggparcoord()` plot a basic static parallel coordinates plot where `data` argument is used to map the data object, `columns` is used to select the columns for preparing the parallel coordinates plot.
 
 ::: panel-tabset
-
 ### Highlight
 
- `splineFactor` is a logical or numeric operator indicating whether spline interpolation should be used. `missing` is a method used to handle missing values. 
- 
- To rotate x-axis text labels, we use `axis.text.x` as argument to `theme()` function. And we specify `element_text(angle = 30)` to rotate the x-axis text by an angle 30 degree.
- 
-Data visualization aims to highlight a story in the data. If you are interested in a specific group, you can highlight it using `scale_color_manual()`.
+`splineFactor` is a logical or numeric operator indicating whether spline interpolation should be used. `missing` is a method used to handle missing values.
 
+To rotate x-axis text labels, we use `axis.text.x` as argument to `theme()` function. And we specify `element_text(angle = 30)` to rotate the x-axis text by an angle 30 degree.
+
+Data visualization aims to highlight a story in the data. If you are interested in a specific group, you can highlight it using `scale_color_manual()`.
 
 ```{r}
 happiness$Highlight <- ifelse(happiness$Country == "Singapore", "Singapore", "Other")
@@ -774,7 +758,6 @@ ggparcoord(data = happiness,
   theme(axis.text.x = element_text(angle = 30))
 ```
 
-
 ### Boxplot
 
 Boxplots can be added to parallel coordinates plots to provide a summary of the distribution of data for each variable. The center Line of the boxplot represents the median of the data for that particular variable.
@@ -785,8 +768,7 @@ Boxplots can be added to parallel coordinates plots to provide a summary of the 
 
 `alphaLines` argument is used to reduce the intensity of the line colour to 0.2. The permissible value range is between 0 to 1.
 
-`boxplot` argument is used to turn on the boxplot by using logical TRUE. The default is FALSE.
-title argument is used to provide the parallel coordinates plot a title.
+`boxplot` argument is used to turn on the boxplot by using logical TRUE. The default is FALSE. title argument is used to provide the parallel coordinates plot a title.
 
 ```{r}
 ggparcoord(data = happiness, 
@@ -802,7 +784,7 @@ ggparcoord(data = happiness,
 
 ### Facet
 
-`facet_wrap()` of ggplot2 is used to plot 10 small multiple parallel coordinates plots. Each plot represent one geographical region such as East Asia. 
+`facet_wrap()` of ggplot2 is used to plot 10 small multiple parallel coordinates plots. Each plot represent one geographical region such as East Asia.
 
 ```{r}
 ggparcoord(data = happiness, 
@@ -839,7 +821,6 @@ parallelPlot(wh,
              rotateTitle = TRUE,
              histoVisibility = histoVisibility)
 ```
-
 :::
 
 # 6. Treemap
@@ -862,16 +843,16 @@ pacman::p_load(tidyverse, treemapify, treemap, d3Tree)
 
 ## 6.2 Import and Prepare Data
 
-`realis` provides information of private property transaction records in 2018. 
+`realis` provides information of private property transaction records in 2018.
 
 ```{r}
 realis <- read_csv("data/realis2018.csv")
 glimpse(realis)
 ```
+
 ## Transform Data
 
 ::: panel-tabset
-
 ### Summary
 
 ```{r}
@@ -885,6 +866,7 @@ realis_summarised <- realis %>%
             `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
 glimpse(realis_summarised)
 ```
+
 ### Selection
 
 ```{r}
@@ -897,7 +879,6 @@ glimpse(realis_selected)
 ## 6.3 Plot Treemap
 
 ::: panel-tabset
-
 ### Treemap
 
 Treemap by using three core arguments of treemap(), namely: `index`, `vSize` and `vColor`.
@@ -914,8 +895,8 @@ treemap(realis_selected,
 
 ### geom_treemap
 
-`geom_treemap()` from ggplot2 plackage to draw a tree map.
-`geom_treemap()` requires an `area` aesthetic and does not interpret x and y; axes are not meaningful in a treemap. 
+`geom_treemap()` from ggplot2 plackage to draw a tree map. `geom_treemap()` requires an `area` aesthetic and does not interpret x and y; axes are not meaningful in a treemap.
+
 ```{r}
 ggplot(data=realis_selected, 
        aes(area = `Total Unit Sold`,
@@ -925,6 +906,7 @@ ggplot(data=realis_selected,
   geom_treemap() +
   scale_fill_gradient(low = "light blue", high = "blue")
 ```
+
 ### geom_treemap with hierarchy
 
 An optional `subgroup` aesthetic will cause the tiles to be clustered in subgroups within the treemap. Using the `subgroup` and `subgroup2` arguments, we will visualize the treemap with planning area and planning region. `subgroup3` is available where visualization requires.
@@ -947,7 +929,6 @@ ggplot(data = realis_selected,
 
 **d3tree** package creates flexible interactive visualization for large trees using D3.js. The structure of a D3Tree is specified with the `index` and each node stored in a vector.
 
-
 ```{r}
 tm <- treemap(realis_summarised,
               index=c("Planning Region", "Planning Area"),
@@ -957,12 +938,12 @@ tm <- treemap(realis_summarised,
               title="Private Residential Property Sold, 2017",
               title.legend = "Median Unit Price (S$ per sq. m)")
 ```
+
 `d3tree()` is the primary function for creating interactive d3.js treemaps from various data types. The `data` argument is the data to be plotted, `id` is the default to allow nodes with non-unique names.
 
 ```{r}
 d3tree(tm, rootname = "Singapore")
 ```
-
 :::
 
 # 7. Reference
