@@ -69,49 +69,34 @@ The specific submission instructions are as follows:
 The following R packages will be used:
 
 -   `tidyverse` supports data science, analysis and communication task
-
 -   `ggplot2` creates ggplot graphs.
-
 -   `plotly` creates interactive graphs.
-
--   `lubridate` handles date and time.
-
+-   `lubridate` handles date and time for time series plots.
 -   `ggiraph` creates dynamic ggplot graphs.
-
 -   `ggrepel` provides geoms to repel overlapping text labels
-
 -   `ggridges` creates ridgeline plots in ggplot2.
-
 -   `ggdist` made for visualizing distributions and uncertainty.
-
 -   `ggthemes` provides themes, geoms, and scales
-
 -   `hrbrthemes` provides typography-centric themes and theme components
-
 -   `likert` and `plyr` create stacked bar charts for survey items.
-
--   `patchwork` prepares composite figures
-
+-   `patchwork` prepares composite figures.
 -   `haven` reads and writes various data formats used by other statistical packages
-
 -   `corrplot` enables multivariate data visualisation and analysis.
-
 -   `DT` enables R data objects to be displayed as tables on HTML pages.
-
 -   `kableExtra` builds common complex tables and manipulate table styles
 :::
 
 ```{r}
-pacman::p_load(tidyverse, ggplot2, plotly, lubridate)
+pacman::p_load(tidyverse, ggplot2, plotly, lubridate, ggrepel, reshape2)
 ```
 
 # 3. Import Data
 
-Among the weather stations, Changi station has been traditionally treated as a rural area station and has the longest series of temperatures and rainfall records since 1982. Newton station is located in a dense area with high rise residential and commercial buildings. Jurong is a residential area in the west of Singapore. Pulau Ubin and Sentosa are small islands close to the main island of Singapore.
-
-To understand how climate change can impact our daily lives, the selected weather station is **Jurong (West)**.
+Among the weather stations, **Changi** station has been traditionally treated as a rural area station and has the longest series of temperatures and rainfall records since 1982. **Newton** station is located in a dense area with high rise residential and commercial buildings. **Jurong** station is located in the residential area in the west of Singapore. **Pulau Ubin** and **Sentosa** are small islands close to the main island of Singapore.
 
 ![](images/weatherstn.jpg) Source: [Future air temperature projection in high-density tropical cities based on global climate change and urbanization – a study in Singapore](https://www.sciencedirect.com/science/article/abs/pii/S2212095522000335)
+
+To understand how climate change can impact our daily lives, the selected weather station is **Jurong (West)**.
 
 ```{r}
 jurong <- read.csv("data/Jurong (West).csv")
@@ -120,6 +105,17 @@ jurong <- read.csv("data/Jurong (West).csv")
 ```{r}
 summary(jurong)
 ```
+::: callout-note
+The dataset includes daily total rainfall in millimeters (`Daily.Rainfall.Total.mm`), the highest 120-minute rainfall (`Highest.120.Min.Rainfall`), mean temperature (`Mean.Temperature`), maximum temperature (`Maximum.Temperature`), minimum temperature (`Minimum.Temperature`), and mean and maximum wind speed in kilometers per hour (`Mean.Wind.Speed.km.h` and `Max.Wind.Speed.km.h`).
+
+**Rainfall** has a mean of 7.205 mm, with a maximum recorded value of 226.00 mm.
+
+**Temperatures** range from a minimum of 20.00°C to a maximum of 35.9°C, indicating a tropical climate, which is consistent with Singapore's weather.
+
+**Wind speeds** show a maximum of up to 90.7 km/h, which is quite significant, possibly indicating storm events.
+
+There are a notable number of missing entries (NA) across various measurements, with the total daily rainfall and wind speeds having over 10,000 missing data points.
+:::
 
 # 4. Prepare Data
 
@@ -158,11 +154,12 @@ The output indicates that `j10` has a close to complete set of `Daily.Rainfall.T
 j10$Date <- with(j10, paste(Year, Month, Day, sep = "-"))
 j10$Date <- ymd(j10$Date)
 breaks <- ymd(paste(yoi, "-01-01", sep = ""))
+glimpse(j10)
 ```
 
 ## Aggregate Data
 
-derive Mean Monthly Rainfall, Max Monthly Temperature and Minimum Monthly Temperature.
+Derive Mean Monthly Temperature, Max Monthly Temperature and Minimum Monthly Temperature.
 
 ```{r}
 j10_maxmintemp <- function(data, year) {
@@ -188,8 +185,14 @@ glimpse(daily_metrics_2013)
 daily_metrics_2023 <- j10_maxmintemp(j10, 2023)
 glimpse(daily_metrics_2023)
 ```
+## Melt data
 
-## 
+```{r}
+j10_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
+                   measure.vars = "Daily.Rainfall.Total..mm.")
+glimpse(j10_melted)
+```
+
 :::
 
 # 5. Visualize Data
@@ -238,12 +241,12 @@ Rainfall is plentiful in Singapore and it rains an average of 171 days of the ye
 The time series plot using `geom_line` to show trends over time for the daily rainfall total.
 
 ```{r}
-library(ggrepel)
+jurong$Date <- as.Date(with(jurong, paste(Year, Month, Day, sep = "-")), "%Y-%m-%d")
+
 ggplot(jurong, aes(x = as.Date(paste(Year, Month, Day, sep = "-")),
                    y = Daily.Rainfall.Total..mm.)) + 
   geom_line(colour = "steelblue") + 
-  geom_label_repel(aes(label = ifelse(Daily.Rainfall.Total..mm. > 150, 
-                                      as.character(Date), "")),
+  geom_label_repel(aes(label = ifelse(Daily.Rainfall.Total..mm. > 150, as.character(Date), "")),
                    na.rm = TRUE,
                    box.padding = 0.35, 
                    point.padding = 0.5,
@@ -266,21 +269,13 @@ There is also a noticeable period with no recorded rainfall around 2015.
 
 ## 5.3 Heatmap for Daily Rainfall
 
-A heatmap could be useful for visualizing the intensity of rainfall across the days of the month. Each cell of the heatmap represent a period of 10 years, with the color intensity indicating the amount of rainfall.
+A heatmap is useful for visualizing the intensity of rainfall across the days of the month. Each cell of the heatmap represent a period of 10 years, with the color intensity indicating the amount of rainfall.
 
 ```{r}
-library(ggplot2)
-library(reshape2)  # For melting data frames
-
-# Assuming 'data' is your dataframe
-j10_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
-                   measure.vars = "Daily.Rainfall.Total..mm.")
-
 ggplot(j10_melted, aes(x = Year, y = Month, fill = value)) + 
   geom_tile() + 
-  labs(title = "Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Month", fill = "Rainfall (mm)") +
+  labs(title = "Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Day", fill = "Rainfall (mm)") +
   theme_minimal()
-
 ```
 
 ::: callout-note
@@ -290,6 +285,9 @@ The dates of records are binned into years (10) and months (2). It is observable
 ## 5.4 Temperature
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
 max_temp_2013 <- daily_metrics_2013 %>% 
   summarise(MaxDate = Date[which.max(MaxDailyTemp)],
             MaxTemp = max(MaxDailyTemp, na.rm = TRUE),
@@ -395,9 +393,6 @@ library(ggplot2)
 library(plotly)
 library(scales) # For date formatting
 
-# Assuming 'j10' is your dataset and it contains the variables 'Daily.Rainfall.Total..mm.',
-# 'Maximum.Temperature', 'Year', 'Month', 'Day', and 'Date' in the appropriate formats
-
 # Update the aesthetic mappings and color gradient scale
 rainfall_temp_plot <- ggplot(jurong, aes(x = Daily.Rainfall.Total..mm.,
                                          y = Maximum.Temperature,
@@ -423,7 +418,6 @@ rainfall_temp_plotly <- ggplotly(rainfall_temp_plot, tooltip = "text")
 
 # Display the plot
 rainfall_temp_plotly
-
 ```
 
 # 6. References

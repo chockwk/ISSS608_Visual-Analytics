@@ -62,7 +62,11 @@ editor: source
 pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, CGPfunctions)
 ```
 
-# 5. Import Library
+# 5. Import Data
+
+::: panel-tabset
+
+## attacks
 
 `attacks` consists of 199,999 rows of **time-series cyber attack records** by country. There are three columns, namely `timestamp`, `source_country` and `tz`.
 
@@ -81,6 +85,8 @@ glimpse(attacks)
 head(attacks)
 ```
 
+## air
+
 `air` consists of 240 rows and 36 columns.
 
 ```{r}
@@ -88,9 +94,13 @@ air <- read_excel("data/arrivals_by_air.xlsx")
 glimpse(air)
 ```
 
+## rice
+
 ```{r}
 rice <- read_csv("data/rice.csv")
+glimpse(rice)
 ```
+:::
 
 # 6. Prepare Data
 
