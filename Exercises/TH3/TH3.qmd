@@ -283,13 +283,15 @@ There is also a noticeable period with no recorded rainfall around 2015.
 A heatmap is useful for visualizing the intensity of rainfall across the days of the month. Each cell of the heatmap represent a period of 10 years, with the color intensity indicating the amount of rainfall.
 
 ```{r}
-p <- ggplot(j10_rain_melted, aes(x = Day, y = Year, fill = value)) + 
+j10_rain_melted$Month <- as.factor(j10_rain_melted$Month)
+
+p <- ggplot(j10_rain_melted, aes(x = Month, y = Year, fill = value)) + 
   geom_tile(color = "white") + 
   theme_tufte(base_family = "Helvetica") + 
   scale_fill_gradient(name = "°C ",
                       low = "lightblue",
                       high = "steelblue") +
-  labs(title = "Calendar Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Day", fill = "Rainfall (mm)") +
+  labs(title = "Calendar Heatmap of Daily Rainfall: 1983-2023", x = "Month", y = "Year", fill = "Rainfall (mm)") +
   theme_minimal() +
   theme(axis.ticks = element_blank(), 
        plot.title = element_text(hjust = 0.5),
@@ -304,13 +306,15 @@ The dates of records are binned into years (10) and months (2). It is observable
 :::
 
 ```{r}
-p <- ggplot(j10_temp_filtered, aes(x = Day, y = Year, fill = value)) + 
+j10_temp_melted$Month <- as.factor(j10_temp_melted$Month)
+
+p <- ggplot(j10_temp_filtered, aes(x = Month, y = Year, fill = value)) + 
   geom_tile(color = "white") + 
   theme_tufte(base_family = "Helvetica") + 
   scale_fill_gradient(name = "°C ",
                       low = "gold",
                       high = "goldenrod3") +
-  labs(title = "Calendar Heatmap of Mean Temperature: 2013-2023", x = "Year", y = "Day", fill = "Temperature") +
+  labs(title = "Calendar Heatmap of Mean Temperature: 2013-2023", x = "Month", y = "Year", fill = "Temperature") +
   theme_minimal() +
   theme(axis.ticks = element_blank(), 
        plot.title = element_text(hjust = 0.5),
