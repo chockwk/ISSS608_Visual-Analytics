@@ -87,7 +87,7 @@ The following R packages will be used:
 :::
 
 ```{r}
-pacman::p_load(tidyverse, ggplot2, plotly, lubridate, ggrepel, reshape2)
+pacman::p_load(tidyverse, ggplot2, plotly, lubridate, ggrepel, reshape2, scales)
 ```
 
 # 3. Import Data
@@ -105,6 +105,7 @@ jurong <- read.csv("data/Jurong (West).csv")
 ```{r}
 summary(jurong)
 ```
+
 ::: callout-note
 The dataset includes daily total rainfall in millimeters (`Daily.Rainfall.Total.mm`), the highest 120-minute rainfall (`Highest.120.Min.Rainfall`), mean temperature (`Mean.Temperature`), maximum temperature (`Maximum.Temperature`), minimum temperature (`Minimum.Temperature`), and mean and maximum wind speed in kilometers per hour (`Mean.Wind.Speed.km.h` and `Max.Wind.Speed.km.h`).
 
@@ -185,14 +186,24 @@ glimpse(daily_metrics_2013)
 daily_metrics_2023 <- j10_maxmintemp(j10, 2023)
 glimpse(daily_metrics_2023)
 ```
+
 ## Melt data
 
 ```{r}
-j10_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
+j10_rain_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
                    measure.vars = "Daily.Rainfall.Total..mm.")
-glimpse(j10_melted)
+glimpse(j10_rain_melted)
 ```
 
+```{r}
+j10_temp_melted <- melt(j10, id.vars = c("Year", "Month", "Day"), 
+                   measure.vars = "Mean.Temperature")
+
+j10_temp_filtered <- j10_temp_melted %>%
+  filter(Year %in% c(2013, 2023))
+
+glimpse(j10_temp_filtered)
+```
 :::
 
 # 5. Visualize Data
@@ -267,20 +278,47 @@ From the time series plot of rainfall, the high daily rainfall total above 150 m
 There is also a noticeable period with no recorded rainfall around 2015.
 :::
 
-## 5.3 Heatmap for Daily Rainfall
+## 5.3 Calendar Heatmap for Daily Rainfall
 
 A heatmap is useful for visualizing the intensity of rainfall across the days of the month. Each cell of the heatmap represent a period of 10 years, with the color intensity indicating the amount of rainfall.
 
 ```{r}
-ggplot(j10_melted, aes(x = Year, y = Month, fill = value)) + 
-  geom_tile() + 
-  labs(title = "Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Day", fill = "Rainfall (mm)") +
-  theme_minimal()
+p <- ggplot(j10_rain_melted, aes(x = Day, y = Year, fill = value)) + 
+  geom_tile(color = "white") + 
+  theme_tufte(base_family = "Helvetica") + 
+  scale_fill_gradient(name = "°C ",
+                      low = "lightblue",
+                      high = "steelblue") +
+  labs(title = "Calendar Heatmap of Daily Rainfall: 1983-2023", x = "Year", y = "Day", fill = "Rainfall (mm)") +
+  theme_minimal() +
+  theme(axis.ticks = element_blank(), 
+       plot.title = element_text(hjust = 0.5),
+       legend.title = element_text(size = 8),
+       legend.text = element_text(size = 6) )
+
+ggplotly(p)
 ```
 
 ::: callout-note
 The dates of records are binned into years (10) and months (2). It is observable that heavy rainfall are early and late in the year.
 :::
+
+```{r}
+p <- ggplot(j10_temp_filtered, aes(x = Day, y = Year, fill = value)) + 
+  geom_tile(color = "white") + 
+  theme_tufte(base_family = "Helvetica") + 
+  scale_fill_gradient(name = "°C ",
+                      low = "gold",
+                      high = "goldenrod3") +
+  labs(title = "Calendar Heatmap of Mean Temperature: 2013-2023", x = "Year", y = "Day", fill = "Temperature") +
+  theme_minimal() +
+  theme(axis.ticks = element_blank(), 
+       plot.title = element_text(hjust = 0.5),
+       legend.title = element_text(size = 8),
+       legend.text = element_text(size = 6) )
+
+ggplotly(p)
+```
 
 ## 5.4 Temperature
 
@@ -389,11 +427,6 @@ The plot compares the maximum, mean, and minimum daily temperatures for the year
 ## 5.5 Rainfall and Temperature
 
 ```{r}
-library(ggplot2)
-library(plotly)
-library(scales) # For date formatting
-
-# Update the aesthetic mappings and color gradient scale
 rainfall_temp_plot <- ggplot(jurong, aes(x = Daily.Rainfall.Total..mm.,
                                          y = Maximum.Temperature,
                                          size = Daily.Rainfall.Total..mm.,
@@ -420,4 +453,16 @@ rainfall_temp_plotly <- ggplotly(rainfall_temp_plot, tooltip = "text")
 rainfall_temp_plotly
 ```
 
+::: callout-note
+There doesn't appear to be a strong visible correlation between daily rainfall and maximum temperature, as higher temperatures can be observed across a wide range of rainfall amounts.
+
+The presence of data points with very high rainfall totals suggests the occurrence of heavy rainfall events, which could be associated with **monsoon seasons** or possibly extreme weather events like thunderstorms.
+
+Given that both high temperatures and significant rainfall are represented, the climate can be characterized as **tropical**, which is consistent with Singapore's geographical location near the equator
+:::
+
 # 6. References
+
+1.  [National Climate Change Secretariat](https://www.nccs.gov.sg/singapores-climate-action/impact-of-climate-change-in-singapore/)
+
+2.  [Meteorological Service Singapore](http://www.weather.gov.sg/climate-historical-daily/)
