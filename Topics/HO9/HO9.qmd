@@ -318,6 +318,6 @@ rice %>%
 
 :::
 
-\# 7. Reference
+# 7. Reference
 
 1.  [Newggslopegraph](https://cran.r-project.org/web/packages/CGPfunctions/vignettes/Using-newggslopegraph.html)

@@ -87,7 +87,7 @@ The following R packages will be used:
 :::
 
 ```{r}
-pacman::p_load(tidyverse, ggplot2, plotly, lubridate, ggrepel, reshape2, scales)
+pacman::p_load(tidyverse, ggplot2, plotly, lubridate, ggrepel, reshape2, scales, ggthemes)
 ```
 
 # 3. Import Data
