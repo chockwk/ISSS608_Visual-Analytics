@@ -13,6 +13,8 @@ editor: source
 
 # 1. Learning Objectives
 
+**Time series analysis** is a statistical technique that deals with time series data, or data that is **observed sequentially over time**. It involves analyzing the data to extract meaningful statistics and characteristics, and to model the underlying processes generating the sequence. The goal is often to make **forecasts** about future points in the series based on the information contained in the historical data.
+
 1.  Characteristics of time-series data
 
 2.  Time-series patterns
@@ -34,7 +36,7 @@ editor: source
 
 # 2. Characteristics of Time-series Data
 
-**Time series analysis** is a statistical technique that deals with time series data, or data that is observed sequentially over time. It involves analyzing the data to extract meaningful statistics and characteristics, and to model the underlying processes generating the sequence. The goal is often to make forecasts about future points in the series based on the information contained in the historical data. The data often contains the following characteristics:
+ The data often contains the following characteristics:
 
 **Temporal Dependency**: Time series data points are dependent on time, meaning that observations are correlated with adjacent observations. The value at a specific time point may be influenced by the values at previous time points.
 
@@ -59,7 +61,8 @@ editor: source
 # 4. Load Packages
 
 ```{r}
-pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, CGPfunctions, ggHoriPlot, ggTimeSeries) 
+pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, scales,
+               CGPfunctions, ggHoriPlot, ggTimeSeries) 
 ```
 
 # 5. Import Data
@@ -82,12 +85,12 @@ glimpse(attacks)
 `kable()` review the structure of the imported data frame, `attacks`.
 
 ```{r}
-head(attacks)
+kable(head(attacks))
 ```
 
 ## air
 
-`air` consists of 240 rows and 36 columns.
+`air` consists of 240 rows of visitor flights by arrival dates. There are 35 columns representing 35 countries, excluding the `Month_Year` column. The `Month_Year` colname has been revised for readability by R.
 
 ```{r}
 air <- read_excel("data/arrivals_by_air.xlsx")
@@ -96,18 +99,26 @@ glimpse(air)
 
 ## rice
 
+`rice` consists of 550 records of rice yield and production by year and country. The countries are China, India, Indonesia, Japan, Korea, Malaysia, Myanmar, Phillippines, Sri Lanka, Thailand and Vietnam.
+
 ```{r}
 rice <- read_csv("data/rice.csv")
 glimpse(rice)
 ```
 :::
 
-# 6. Prepare Data
+# 6. Time-series Data Visualization Methods
+
+## 6.1 Calendar Heatmap
+
+A calendar heatmap is a visualization used to show time series data against days of the week and weeks of the year, similar to how data would be seen on a calendar. It's especially good for visualizing **daily patterns** or **trends over time**.
+
+Each 'cell' or 'box' in the heatmap represents a **day**, and the color intensity indicates the **magnitude** of some metric on that day where darker or different colors typically represent higher values. 
 
 ::: panel-tabset
-## Derive weekday and hour
+### Derive weekday and hour
 
-To plot the calender heatmap, two new fields `wkday` and `hour` need to be derived. `ymd_hms()` and `hour()` are from **lubridate** package, and `weekdays()` is a **base R** function.
+To plot the calender heatmap for **attacks**, a function will be created to derive two new fields `wkday` and `hour`. `ymd_hms()` and `hour()` are from **lubridate** package, and `weekdays()` is a **base R** function.
 
 ```{r}
 make_hr_wkday <- function(ts, sc, tz) {
@@ -121,15 +132,12 @@ make_hr_wkday <- function(ts, sc, tz) {
   }
 ```
 
-## Derive attacks
+### Derive attacks
 
 To create `attacks` tibble data frame, `mutate()` of **dplyr** package is used to convert `wkday` and `hour` fields into factor so they’ll be ordered when plotting.
 
 ```{r}
-wkday_levels <- c('Saturday', 'Friday', 
-                  'Thursday', 'Wednesday', 
-                  'Tuesday', 'Monday', 
-                  'Sunday')
+wkday_levels <- c('Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday', 'Sunday')
 
 attacks <- attacks %>%
   group_by(tz) %>%
@@ -137,22 +145,28 @@ attacks <- attacks %>%
                    .$source_country, 
                    .$tz)) %>% 
   ungroup() %>% 
-  mutate(wkday = factor(
-    wkday, levels = wkday_levels),
-    hour  = factor(
-      hour, levels = 0:23))
+  mutate(wkday = factor(wkday, levels = wkday_levels),
+         hour  = factor(hour, levels = 0:23))
 ```
 
 ```{r}
 head(attacks)
 ```
-:::
 
-# 6. Time-series Data Visualization Methods
-
-## 6.1 Calendar Heatmap
+### Aggregate attacks
 
 A tibble data table `grouped` is derived by aggregating the attack by `wkday` and `hour` fields. A new field `n` is derived by using `group_by()` and `count()` functions and `na.omit()` is used to exclude missing value.
+
+```{r}
+grouped <- attacks %>% 
+  count(wkday, hour) %>% 
+  ungroup() %>%
+  na.omit()
+```
+
+:::
+
+### Plot Calendar Heatmap
 
 `geom_tile()` is used to plot tiles (grids) at each x and y position. The `color` and `size` arguments are used to specify the border color and line size of the tiles.
 
@@ -161,29 +175,20 @@ A tibble data table `grouped` is derived by aggregating the attack by `wkday` an
 For plots, `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1. `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
 
 ```{r}
-grouped <- attacks %>% 
-  count(wkday, hour) %>% 
-  ungroup() %>%
-  na.omit()
-
 ggplot(grouped, 
-       aes(hour, 
-           wkday, 
-           fill = n)) + 
-geom_tile(color = "white", 
-          size = 0.1) + 
-theme_tufte(base_family = "Helvetica") + 
-coord_equal() +
-scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue", 
-                    high = "dark blue") +
-labs(x = NULL, 
-     y = NULL, 
-     title = "Attacks by weekday and time of day") +
-theme(axis.ticks = element_blank(),
-      plot.title = element_text(hjust = 0.5),
-      legend.title = element_text(size = 8),
-      legend.text = element_text(size = 6) )
+       aes(hour, wkday, fill = n)) + 
+  geom_tile(color = "white", size = 0.1) + 
+  theme_tufte(base_family = "Helvetica") + 
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks", 
+                      low = "sky blue", 
+                      high = "dark blue") +
+  labs(x = NULL, y = NULL, 
+       title = "Time Series Analysis of Cycber Attacks") +
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))
 ```
 
 ## 6.2 Multiple Calendar Heatmaps
@@ -202,10 +207,10 @@ To identify the top 4 countries with the highest number of attacks, the followin
 3.  Save the results in a tibble data frame.
 
 ```{r}
-attacks_by_country <- count(
-  attacks, source_country) %>%
+attacks_by_country <- count(attacks, source_country) %>%
   mutate(percent = percent(n/sum(n))) %>%
   arrange(desc(n))
+glimpse(attacks_by_country)
 ```
 
 ### Prepare the tidy data frame
@@ -214,6 +219,10 @@ Extract the attack records of the top 4 countries from attacks data frame and sa
 
 ```{r}
 top4 <- attacks_by_country$source_country[1:4]
+glimpse(top4)
+```
+
+```{r}
 top4_attacks <- attacks %>%
   filter(source_country %in% top4) %>%
   count(source_country, wkday, hour) %>%
@@ -221,54 +230,57 @@ top4_attacks <- attacks %>%
   mutate(source_country = factor(
     source_country, levels = top4)) %>%
   na.omit()
+glimpse(top4_attacks)
 ```
 :::
 
+### Plot Multiple Calendar Heatmap
+
 ```{r}
 ggplot(top4_attacks, 
-       aes(hour, 
-           wkday, 
-           fill = n)) + 
-  geom_tile(color = "white", 
-          size = 0.1) + 
+       aes(hour, wkday, fill = n)) + 
+  geom_tile(color = "white", size = 0.1) + 
   theme_tufte(base_family = "Helvetica") + 
   coord_equal() +
   scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue", 
-                    high = "dark blue") +
+                      low = "sky blue", 
+                      high = "dark blue") +
   facet_wrap(~source_country, ncol = 2) +
   labs(x = NULL, y = NULL, 
-     title = "Attacks on top 4 countries by weekday and time of day") +
+       title = "Time Series Analysis of Cyber Attacks in Top 4 Countries") +
   theme(axis.ticks = element_blank(),
         axis.text.x = element_text(size = 7),
         plot.title = element_text(hjust = 0.5),
         legend.title = element_text(size = 8),
-        legend.text = element_text(size = 6) )
+        legend.text = element_text(size = 6))
 ```
 
 ## 6.3 Cycle Plot
 
+A cycle plot is a type of line graph that is used to visualize **seasonal or cyclical trends** in time series data. It's particularly effective for showing patterns within repeated time intervals, such as hours of the day, days of the week, or months of the year, while also showing the trend across these cycles.
+
 ::: panel-tabset
+
 ### Derive month and year
 
 ```{r}
-air$month <- factor(month(air$`Month-Year`), 
+air$month <- factor(month(air$Month_Year), 
                     levels=1:12, 
                     labels=month.abb, 
                     ordered=TRUE) 
-air$year <- year(ymd(air$`Month-Year`))
+air$year <- year(ymd(air$Month_Year))
+glimpse(air)
 ```
 
 ### Extract target country
 
-The target country is Vietnam and period is 2010.
+The target country is **Vietnam** and period is **2010**.
 
 ```{r}
 Vietnam <- air %>% 
-  select(`Vietnam`, 
-         month, 
-         year) %>%
+  select(Vietnam, month, year) %>%
   filter(year >= 2010)
+glimpse(Vietnam)
 ```
 
 ### Compute average arrivals
@@ -280,29 +292,35 @@ hline.data <- Vietnam %>%
   group_by(month) %>%
   summarise(avgvalue = mean(`Vietnam`))
 ```
+
 :::
 
 ```{r}
+Vietnam$year <- as.factor(Vietnam$year)
+breaks <- unique(Vietnam$year)[c(TRUE, rep(FALSE, 8))]
+
 ggplot() + 
-  geom_line(data=Vietnam,
-            aes(x=year, 
-                y=`Vietnam`, 
-                group=month), 
-            colour="black") +
-  geom_hline(aes(yintercept=avgvalue), 
-             data=hline.data, 
-             linetype=6, 
-             colour="red", 
-             size=0.5) + 
+  geom_line(data = Vietnam, 
+            aes(x = year, y =`Vietnam`, group = month), 
+            colour ="black") +
+  geom_hline(aes(yintercept = avgvalue), 
+             data = hline.data, 
+             linetype = 6, 
+             colour = "red", 
+             size = 0.5) + 
   facet_grid(~month) +
   labs(axis.text.x = element_blank(),
-       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
-  xlab("") +
+       title = "Visitor arrivals from Vietnam by air: 2010 - 2019") +
+  xlab("Year (2010-2019)") +
+  scale_x_discrete(name = "Year (2010-2019)", breaks = breaks) +
   ylab("No. of Visitors") +
-  theme_tufte(base_family = "Helvetica")
+  theme_tufte(base_family = "Helvetica") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
 ```
 
-## 6.4 Slopegraph
+## 6.4 Slope Graph
+
+A slope graph is a simple visualization that shows the **change** in a metric between two time points. It's basically a line graph that connects **two points**, typically for a number of categories being compared. This graph is particularly useful when you want to show the progress or regression of certain data points, making it easy to see which categories have increased or decreased.
 
 `newggslopegraph` is from CGPfunctions and automate the process of producing a Tufte style slopegraph using ggplot2.
 
@@ -318,7 +336,7 @@ rice %>%
 
 ## 6.5 Horizon Graph
 
-A horizon graph is an analytical graphical method specially designed for visualising large numbers of time-series. It aims to overcome the issue of visualising highly overlapping time-series.
+A horizon graph is an analytical graphical method specially designed for visualising **large numbers** of time-series. It aims to overcome the issue of visualising **highly overlapping time-series**.
 
 A horizon graph essentially an area chart that has been split into slices and the slices then layered on top of one another with the areas representing the highest (absolute) values on top. Each slice has a greater intensity of colour based on the absolute value it represents.
 
@@ -332,6 +350,7 @@ air_long$Date <- as.Date(air_long$Month_Year, format = "%Y-%m-%d")
 
 glimpse(air_long)
 ```
+
 Each horizontal band represents air travel data for a particular country over the period from 2000 to 2020.
 
 ```{r}
@@ -353,9 +372,10 @@ air_long %>%
     axis.ticks.y = element_blank(),
     panel.border = element_blank()
     ) +
-  ggtitle('Air Travel by Country: 2000 - 2020')
+  ggtitle('Air Travel by Country: 2000 - 2020') +
   labs(x = "Month_Year", y = "Value", title = "Horizon Plot of Data")
 ```
+
 ::: {.callout-note}
 **Kuwait, Saudi Arabia, Italy, Spain, and South Africa**: These countries show color bands throughout the entire horizontal length of their respective rows, which indicates that there are recorded air travel arrivals throughout the entire year. The varying colors and intensities suggest fluctuations in the volume of air travel but do not indicate any prolonged absence of flights.
 
