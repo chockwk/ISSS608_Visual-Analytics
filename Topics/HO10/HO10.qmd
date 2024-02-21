@@ -1,0 +1,47 @@
+---
+title: "HO10"
+author: "Wan Kee"
+date: "22 February 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  error: true
+editor: source
+---
+
+# 1. Learning Objective
+
+A choropleth map is a thematic map composed of **coloured polygons** and is used to represent statistical data using the color mapping symbology technique.
+
+Choropleth mapping involves the symbolisation of enumeration units, such as countries, provinces, states, counties or census units, using area patterns or graduated colors. For example, a social scientist may need to use a choropleth map to portray the spatial distribution of aged population of Singapore by Master Plan 2014 Subzone Boundary.
+
+-   Plot choropleth maps using tmap package
+
+# 2. Import Packages
+
+```{r}
+pacman::p_load(tidyverse, sf, tmap)
+```
+
+# 3. Load Data
+
+`mpsz` is the Master Plan 2014 Subzone Boundary in ESRI shapefile format. It can be downloaded at data.gov.sg This is a geospatial data. It consists of the geographical boundary of Singapore at the planning subzone level. The data is based on URA Master Plan 2014. `st_read()` function of sf package to import the MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame.
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+```{r}
+mpsz
+```
+
+`pop` is the Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 in csv format (i.e. respopagesextod2011to2020.csv). This is an aspatial data fie. It can be downloaded at Department of Statistics, Singapore Although it does not contain any coordinates values, but it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile.
+
+```{r}
+pop <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
+glimpse(pop)
+```
+
+
