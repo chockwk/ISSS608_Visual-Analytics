@@ -36,7 +36,7 @@ editor: source
 
 # 2. Characteristics of Time-series Data
 
- The data often contains the following characteristics:
+The data often contains the following characteristics:
 
 **Temporal Dependency**: Time series data points are dependent on time, meaning that observations are correlated with adjacent observations. The value at a specific time point may be influenced by the values at previous time points.
 
@@ -68,7 +68,6 @@ pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, scales
 # 5. Import Data
 
 ::: panel-tabset
-
 ## attacks
 
 `attacks` consists of 199,999 rows of **time-series cyber attack records** by country. There are three columns, namely `timestamp`, `source_country` and `tz`.
@@ -113,7 +112,7 @@ glimpse(rice)
 
 A calendar heatmap is a visualization used to show time series data against days of the week and weeks of the year, similar to how data would be seen on a calendar. It's especially good for visualizing **daily patterns** or **trends over time**.
 
-Each 'cell' or 'box' in the heatmap represents a **day**, and the color intensity indicates the **magnitude** of some metric on that day where darker or different colors typically represent higher values. 
+Each 'cell' or 'box' in the heatmap represents a **day**, and the color intensity indicates the **magnitude** of some metric on that day where darker or different colors typically represent higher values.
 
 ::: panel-tabset
 ### Derive weekday and hour
@@ -163,7 +162,6 @@ grouped <- attacks %>%
   ungroup() %>%
   na.omit()
 ```
-
 :::
 
 ### Plot Calendar Heatmap
@@ -260,7 +258,6 @@ ggplot(top4_attacks,
 A cycle plot is a type of line graph that is used to visualize **seasonal or cyclical trends** in time series data. It's particularly effective for showing patterns within repeated time intervals, such as hours of the day, days of the week, or months of the year, while also showing the trend across these cycles.
 
 ::: panel-tabset
-
 ### Derive month and year
 
 ```{r}
@@ -292,7 +289,6 @@ hline.data <- Vietnam %>%
   group_by(month) %>%
   summarise(avgvalue = mean(`Vietnam`))
 ```
-
 :::
 
 ```{r}
@@ -354,8 +350,8 @@ glimpse(air_long)
 Each horizontal band represents air travel data for a particular country over the period from 2000 to 2020.
 
 ```{r}
-air_long %>% 
-  ggplot() +
+#| eval: false
+ggplot(air_long) +
   geom_horizon(aes(x = Date, y = Value),
                origin = "midpoint",
                horizonscale = 6) +
@@ -370,20 +366,18 @@ air_long %>%
     axis.title.y = element_blank(),
     axis.title.x = element_blank(),
     axis.ticks.y = element_blank(),
-    panel.border = element_blank()
-    ) +
-  ggtitle('Air Travel by Country: 2000 - 2020') +
-  labs(x = "Month_Year", y = "Value", title = "Horizon Plot of Data")
+    panel.border = element_blank()) +
+  ggtitle('Visitor Travel by Country: 2000 - 2020')
 ```
 
-::: {.callout-note}
+![](images/horizongraph.png)
+
+::: callout-note
 **Kuwait, Saudi Arabia, Italy, Spain, and South Africa**: These countries show color bands throughout the entire horizontal length of their respective rows, which indicates that there are recorded air travel arrivals throughout the entire year. The varying colors and intensities suggest fluctuations in the volume of air travel but do not indicate any prolonged absence of flights.
 
 **Ireland**: Persistent low-intensity colors in some countries' rows could reflect lower levels of air travel which might be due to economic, geographical, or political factors limiting air traffic to and from these countries.
 
 Year 2020 Observation: Given that the graph extends to 2020, a global reduction in color intensity around that year across all countries would be indicative of the impact of the **COVID-19 pandemic**, as international travel restrictions were widely implemented during this time.
-:::
-
 :::
 
 # 7. Reference
