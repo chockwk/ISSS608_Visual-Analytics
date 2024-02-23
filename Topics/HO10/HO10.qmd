@@ -1,5 +1,5 @@
 ---
-title: "HO10"
+title: "Geospatial Analysis"
 author: "Wan Kee"
 date: "22 February 2024"
 date-modified: "last-modified"
@@ -22,10 +22,14 @@ Choropleth mapping involves the symbolisation of enumeration units, such as coun
 # 2. Import Packages
 
 ```{r}
-pacman::p_load(tidyverse, sf, tmap)
+pacman::p_load(tidyverse, sf, tmap, psych)
 ```
 
 # 3. Load Data
+
+:::panel-tabset
+
+## Master Plan Subzone
 
 `mpsz` is the Master Plan 2014 Subzone Boundary in ESRI shapefile format. It can be downloaded at data.gov.sg This is a geospatial data. It consists of the geographical boundary of Singapore at the planning subzone level. The data is based on URA Master Plan 2014. `st_read()` function of sf package to import the MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame.
 
@@ -37,11 +41,90 @@ mpsz <- st_read(dsn = "data/geospatial",
 mpsz
 ```
 
-`pop` is the Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 in csv format (i.e. respopagesextod2011to2020.csv). This is an aspatial data fie. It can be downloaded at Department of Statistics, Singapore Although it does not contain any coordinates values, but it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile.
+## Population
+
+`pop` is the Singapore Residents by Planning Area/Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 in csv format (i.e. respopagesextod2011to2020.csv). This is an aspatial data fie. It can be downloaded at Department of Statistics, Singapore Although it does not contain any coordinates values, but it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile.
 
 ```{r}
 pop <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
 glimpse(pop)
 ```
+:::
 
+# 4. Prepare Data
+
+:::panel-tabset
+## Recode
+
+The following attributes will be derived:
+
+YOUNG: Age group `0_to_4` and `20_to_24`
+ECONOMY ACTIVE: Age group `25_to_29` and `60_to_64`
+AGED: Age group `65_and_above`
+TOTAL: All age group
+DEPENDENCY: Ratio between YOUNG and AGED : ECONOMIC ACTIVE
+
+```{r}
+pop2020 <- pop %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(POP = sum(Pop)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = AG, values_from = POP) %>%
+  mutate(YOUNG = rowSums(.[3:6]) + rowSums(.[12])) %>%
+  mutate(ECONOMY_ACTIVE = rowSums(.[7:11]) + rowSums(.[13:15]))%>%
+  mutate(AGED = rowSums(.[16:21])) %>%
+  mutate(TOTAL = rowSums(.[3:21])) %>%
+  mutate(DEPENDENCY = (YOUNG + AGED)/ECONOMY_ACTIVE) %>%
+  select(PA, SZ, YOUNG, ECONOMY_ACTIVE, AGED, TOTAL, DEPENDENCY)
+glimpse(pop2020)
+```
+```{r}
+describe(pop2020)
+```
+
+## Uppercase
+
+`PA` and `SZ` of `pop2020` and `SUBZONE_N` and `PLN_AREA_N` of `mpsz`are standardized to uppercase.
+
+```{r}
+pop2020 <- pop2020 %>%
+  mutate_at(.vars = vars(PA, SZ), .funs = funs(toupper)) %>%
+  filter(ECONOMY_ACTIVE > 0)
+describe(pop2020)
+```
+## Left Join
+
+`pop2020` and `mpsz` are joined using `SZ` and `SUBZONE_N`.
+
+```{r}
+mpszpop2020 <- left_join(mpsz, pop2020,
+                         by = c("SUBZONE_N" = "SZ"))
+glimpse(mpszpop2020)
+```
+:::
+
+::: {.callout-note collapse="true"}
+# Save Point
+
+```{r}
+write_rds(mpszpop2020, "data/mpszpop2020.rds")
+```
+:::
+
+
+# Choropleth Map
+
+::: {.callout-note collapse="true"}
+# Load Point
+
+```{r}
+mpszpop2020 <- readRDS("data/mpszpop2020.rds")
+```
+:::
+
+```{r}
+tmap_mode("plot")
+qtm(mpszpop2020, fill = "DEPENDENCY")
+```
 

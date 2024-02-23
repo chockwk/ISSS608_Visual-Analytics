@@ -9,7 +9,7 @@
 <meta name="author" content="Wan Kee">
 <meta name="dcterms.date" content="2024-02-22">
 
-<title>Visual Analytics - HO10</title>
+<title>Visual Analytics - Geospatial Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -164,7 +164,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Topics/HO9/HO9.html" rel="" target="">
  <span class="dropdown-text">Time Series Analysis</span></a>
   </li>  
-        <li class="dropdown-header">Geospatial Analysis</li>
+        <li>
+    <a class="dropdown-item" href="../../Topics/HO10/HO10.html" rel="" target="">
+ <span class="dropdown-text">Geospatial Analysis</span></a>
+  </li>  
         <li class="dropdown-header">Network Data Analysis</li>
     </ul>
   </li>
@@ -225,6 +228,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#learning-objective" id="toc-learning-objective" class="nav-link active" data-scroll-target="#learning-objective">1. Learning Objective</a></li>
   <li><a href="#import-packages" id="toc-import-packages" class="nav-link" data-scroll-target="#import-packages">2. Import Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">3. Load Data</a></li>
+  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link" data-scroll-target="#prepare-data">4. Prepare Data</a></li>
+  <li><a href="#choropleth-map" id="toc-choropleth-map" class="nav-link" data-scroll-target="#choropleth-map">Choropleth Map</a></li>
   </ul>
 </nav>
     </div>
@@ -233,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">HO10</h1>
+<h1 class="title">Geospatial Analysis</h1>
 </div>
 
 
@@ -257,7 +262,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 22, 2024</p>
+      <p class="date-modified">February 24, 2024</p>
     </div>
   </div>
     
@@ -277,11 +282,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="import-packages" class="level1">
 <h1>2. Import Packages</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, tmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, tmap, psych)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="load-data" class="level1">
 <h1>3. Load Data</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Master Plan Subzone</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Population</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p><code>mpsz</code> is the Master Plan 2014 Subzone Boundary in ESRI shapefile format. It can be downloaded at data.gov.sg This is a geospatial data. It consists of the geographical boundary of Singapore at the planning subzone level. The data is based on URA Master Plan 2014. <code>st_read()</code> function of sf package to import the MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
@@ -341,7 +350,9 @@ First 10 features:
 10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...</code></pre>
 </div>
 </div>
-<p><code>pop</code> is the Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 in csv format (i.e.&nbsp;respopagesextod2011to2020.csv). This is an aspatial data fie. It can be downloaded at Department of Statistics, Singapore Although it does not contain any coordinates values, but it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><code>pop</code> is the Singapore Residents by Planning Area/Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 in csv format (i.e.&nbsp;respopagesextod2011to2020.csv). This is an aspatial data fie. It can be downloaded at Department of Statistics, Singapore Although it does not contain any coordinates values, but it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/respopagesextod2011to2020.csv"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -355,6 +366,175 @@ $ Sex  &lt;chr&gt; "Males", "Males", "Males", "Males", "Males", "Males", "Males"
 $ TOD  &lt;chr&gt; "HDB 1- and 2-Room Flats", "HDB 3-Room Flats", "HDB 4-Room Flats"…
 $ Pop  &lt;dbl&gt; 0, 10, 30, 50, 0, 0, 40, 0, 0, 10, 30, 60, 0, 0, 40, 0, 0, 10, 30…
 $ Time &lt;dbl&gt; 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011,…</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="prepare-data" class="level1">
+<h1>4. Prepare Data</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Recode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Uppercase</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Left Join</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>The following attributes will be derived:</p>
+<p>YOUNG: Age group <code>0_to_4</code> and <code>20_to_24</code> ECONOMY ACTIVE: Age group <code>25_to_29</code> and <code>60_to_64</code> AGED: Age group <code>65_and_above</code> TOTAL: All age group DEPENDENCY: Ratio between YOUNG and AGED : ECONOMIC ACTIVE</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pop2020 <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">==</span> <span class="dv">2020</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(PA, SZ, AG) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">POP =</span> <span class="fu">sum</span>(Pop)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> AG, <span class="at">values_from =</span> POP) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">YOUNG =</span> <span class="fu">rowSums</span>(.[<span class="dv">3</span><span class="sc">:</span><span class="dv">6</span>]) <span class="sc">+</span> <span class="fu">rowSums</span>(.[<span class="dv">12</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ECONOMY_ACTIVE =</span> <span class="fu">rowSums</span>(.[<span class="dv">7</span><span class="sc">:</span><span class="dv">11</span>]) <span class="sc">+</span> <span class="fu">rowSums</span>(.[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>]))<span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AGED =</span> <span class="fu">rowSums</span>(.[<span class="dv">16</span><span class="sc">:</span><span class="dv">21</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TOTAL =</span> <span class="fu">rowSums</span>(.[<span class="dv">3</span><span class="sc">:</span><span class="dv">21</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DEPENDENCY =</span> (YOUNG <span class="sc">+</span> AGED)<span class="sc">/</span>ECONOMY_ACTIVE) <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(PA, SZ, YOUNG, ECONOMY_ACTIVE, AGED, TOTAL, DEPENDENCY)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pop2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 332
+Columns: 7
+$ PA             &lt;chr&gt; "Ang Mo Kio", "Ang Mo Kio", "Ang Mo Kio", "Ang Mo Kio",…
+$ SZ             &lt;chr&gt; "Ang Mo Kio Town Centre", "Cheng San", "Chong Boon", "K…
+$ YOUNG          &lt;dbl&gt; 1440, 6640, 6150, 5540, 2100, 3960, 2220, 4690, 0, 1220…
+$ ECONOMY_ACTIVE &lt;dbl&gt; 2610, 15460, 13950, 12090, 3410, 8420, 4200, 11450, 0, …
+$ AGED           &lt;dbl&gt; 760, 6050, 6470, 5120, 1310, 3610, 1530, 5100, 0, 750, …
+$ TOTAL          &lt;dbl&gt; 4810, 28150, 26570, 22750, 6820, 15990, 7950, 21240, 0,…
+$ DEPENDENCY     &lt;dbl&gt; 0.8429119, 0.8208279, 0.9046595, 0.8817204, 1.0000000, …</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(pop2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               vars   n     mean       sd  median trimmed     mad  min    max
+PA*               1 332    26.75    16.65   27.50   26.49   20.02 1.00     55
+SZ*               2 332   166.50    95.98  166.50  166.50  123.06 1.00    332
+YOUNG             3 332  3454.13  5249.71 1265.00 2322.26 1875.49 0.00  36950
+ECONOMY_ACTIVE    4 332  6892.23 10198.28 2315.00 4770.30 3432.22 0.00  73950
+AGED              5 332  1856.96  2626.05  695.00 1348.20 1030.41 0.00  20240
+TOTAL             6 332 12203.31 17814.72 4330.00 8574.62 6419.66 0.00 131140
+DEPENDENCY        7 234     0.86     1.20    0.79    0.79    0.12 0.11     19
+                   range  skew kurtosis     se
+PA*                54.00  0.09    -1.28   0.91
+SZ*               331.00  0.00    -1.21   5.27
+YOUNG           36950.00  2.53     8.87 288.12
+ECONOMY_ACTIVE  73950.00  2.40     8.03 559.70
+AGED            20240.00  2.45     9.87 144.12
+TOTAL          131140.00  2.38     8.22 977.71
+DEPENDENCY         18.89 14.62   217.36   0.08</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p><code>PA</code> and <code>SZ</code> of <code>pop2020</code> and <code>SUBZONE_N</code> and <code>PLN_AREA_N</code> of <code>mpsz</code>are standardized to uppercase.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pop2020 <span class="ot">&lt;-</span> pop2020 <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> <span class="fu">vars</span>(PA, SZ), <span class="at">.funs =</span> <span class="fu">funs</span>(toupper)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ECONOMY_ACTIVE <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(pop2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               vars   n     mean       sd   median  trimmed      mad   min
+PA*               1 234    19.82    12.88    19.50    19.46    17.05  1.00
+SZ*               2 234   117.50    67.69   117.50   117.50    86.73  1.00
+YOUNG             3 234  4900.73  5659.61  2895.00  3883.62  3832.52  0.00
+ECONOMY_ACTIVE    4 234  9778.72 10927.13  5995.00  7872.39  7694.69 10.00
+AGED              5 234  2634.66  2781.89  1920.00  2218.94  2364.75  0.00
+TOTAL             6 234 17314.10 19025.75 11050.00 14115.43 14106.94 50.00
+DEPENDENCY        7 234     0.86     1.20     0.79     0.79     0.12  0.11
+                  max     range  skew kurtosis      se
+PA*                42     41.00  0.16    -1.29    0.84
+SZ*               234    233.00  0.00    -1.22    4.43
+YOUNG           36950  36950.00  2.18     6.79  369.98
+ECONOMY_ACTIVE  73950  73940.00  2.06     6.20  714.33
+AGED            20240  20240.00  2.19     8.49  181.86
+TOTAL          131140 131090.00  2.06     6.51 1243.75
+DEPENDENCY         19     18.89 14.62   217.36    0.08</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p><code>pop2020</code> and <code>mpsz</code> are joined using <code>SZ</code> and <code>SUBZONE_N</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mpszpop2020 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(mpsz, pop2020,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"SUBZONE_N"</span> <span class="ot">=</span> <span class="st">"SZ"</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mpszpop2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 323
+Columns: 22
+$ OBJECTID       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, …
+$ SUBZONE_NO     &lt;int&gt; 1, 1, 3, 8, 3, 7, 9, 2, 13, 7, 12, 6, 1, 5, 1, 1, 3, 2,…
+$ SUBZONE_N      &lt;chr&gt; "MARINA SOUTH", "PEARL'S HILL", "BOAT QUAY", "HENDERSON…
+$ SUBZONE_C      &lt;chr&gt; "MSSZ01", "OTSZ01", "SRSZ03", "BMSZ08", "BMSZ03", "BMSZ…
+$ CA_IND         &lt;chr&gt; "Y", "Y", "Y", "N", "N", "N", "N", "Y", "N", "N", "N", …
+$ PLN_AREA_N     &lt;chr&gt; "MARINA SOUTH", "OUTRAM", "SINGAPORE RIVER", "BUKIT MER…
+$ PLN_AREA_C     &lt;chr&gt; "MS", "OT", "SR", "BM", "BM", "BM", "BM", "SR", "QT", "…
+$ REGION_N       &lt;chr&gt; "CENTRAL REGION", "CENTRAL REGION", "CENTRAL REGION", "…
+$ REGION_C       &lt;chr&gt; "CR", "CR", "CR", "CR", "CR", "CR", "CR", "CR", "CR", "…
+$ INC_CRC        &lt;chr&gt; "5ED7EB253F99252E", "8C7149B9EB32EEFC", "C35FEFF02B13E0…
+$ FMEL_UPD_D     &lt;date&gt; 2014-12-05, 2014-12-05, 2014-12-05, 2014-12-05, 2014-1…
+$ X_ADDR         &lt;dbl&gt; 31595.84, 28679.06, 29654.96, 26782.83, 26201.96, 25358…
+$ Y_ADDR         &lt;dbl&gt; 29220.19, 29782.05, 29974.66, 29933.77, 30005.70, 29991…
+$ SHAPE_Leng     &lt;dbl&gt; 5267.381, 3506.107, 1740.926, 3313.625, 2825.594, 4428.…
+$ SHAPE_Area     &lt;dbl&gt; 1630379.27, 559816.25, 160807.50, 595428.89, 387429.44,…
+$ PA             &lt;chr&gt; NA, "OUTRAM", "SINGAPORE RIVER", "BUKIT MERAH", "BUKIT …
+$ YOUNG          &lt;dbl&gt; NA, 1200, 0, 3150, 2900, 3340, 3130, 0, 1290, 50, NA, 7…
+$ ECONOMY_ACTIVE &lt;dbl&gt; NA, 2860, 40, 6900, 6020, 6800, 7700, 50, 2600, 140, NA…
+$ AGED           &lt;dbl&gt; NA, 2120, 10, 3320, 1740, 3420, 3610, 10, 610, 60, NA, …
+$ TOTAL          &lt;dbl&gt; NA, 6180, 50, 13370, 10660, 13560, 14440, 60, 4500, 250…
+$ DEPENDENCY     &lt;dbl&gt; NA, 1.1608392, 0.2500000, 0.9376812, 0.7707641, 0.99411…
+$ geometry       &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((31495.56 30..., MULTIPOLYG…</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Save Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(mpszpop2020, <span class="st">"data/mpszpop2020.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="choropleth-map" class="level1">
+<h1>Choropleth Map</h1>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Load Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mpszpop2020 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mpszpop2020.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qtm</span>(mpszpop2020, <span class="at">fill =</span> <span class="st">"DEPENDENCY"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HO10_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
