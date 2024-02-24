@@ -68,7 +68,7 @@ pacman::p_load(tidyverse, kable, lubridate, data.table, ggthemes, readxl, scales
 # 5. Import Data
 
 ::: panel-tabset
-## attacks
+## Cyber Attacks
 
 `attacks` consists of 199,999 rows of **time-series cyber attack records** by country. There are three columns, namely `timestamp`, `source_country` and `tz`.
 
@@ -87,7 +87,7 @@ glimpse(attacks)
 kable(head(attacks))
 ```
 
-## air
+## Air Arrivals
 
 `air` consists of 240 rows of visitor flights by arrival dates. There are 35 columns representing 35 countries, excluding the `Month_Year` column. The `Month_Year` colname has been revised for readability by R.
 
@@ -96,13 +96,27 @@ air <- read_excel("data/arrivals_by_air.xlsx")
 glimpse(air)
 ```
 
-## rice
+## Rice Yield
 
 `rice` consists of 550 records of rice yield and production by year and country. The countries are China, India, Indonesia, Japan, Korea, Malaysia, Myanmar, Phillippines, Sri Lanka, Thailand and Vietnam.
 
 ```{r}
 rice <- read_csv("data/rice.csv")
 glimpse(rice)
+```
+
+## Average Price of Goods
+
+`price` is the average retail prices of consumer items from Jan 2010 to Jan 2024. Prices of items starting from January 2019 are based on the 2019-based CPI basket and indicate the average transaction price levels in the same base period.
+
+`dmy()` of **lubridate** package to parse date into appropriate date data type in R. Otherwise, date will be imported as character.
+
+Source: [SingStat](https://tablebuilder.singstat.gov.sg/table/TS/M212891)
+
+```{r}
+price <- read_csv("data/AVERP.csv") %>% 
+  mutate(Date = dmy(Date))
+glimpse(price)
 ```
 :::
 
@@ -336,8 +350,9 @@ A horizon graph is an analytical graphical method specially designed for visuali
 
 A horizon graph essentially an area chart that has been split into slices and the slices then layered on top of one another with the areas representing the highest (absolute) values on top. Each slice has a greater intensity of colour based on the absolute value it represents.
 
-```{r}
+### 6.5.1 Air Arrivals
 
+```{r}
 # Reshape data from wide to long
 air_long <- melt(air, id.vars = "Month_Year", variable.name = "Country", value.name = "Value")
 
@@ -380,6 +395,33 @@ ggplot(air_long) +
 Year 2020 Observation: Given that the graph extends to 2020, a global reduction in color intensity around that year across all countries would be indicative of the impact of the **COVID-19 pandemic**, as international travel restrictions were widely implemented during this time.
 :::
 
+### 6.5.2 Average Consumer Price
+
+```{r}
+price %>% 
+  filter(Date >= "2018-01-01") %>%
+  ggplot() +
+  geom_horizon(aes(x = Date, y = Values), 
+               origin = "midpoint", 
+               horizonscale = 6)+
+  facet_grid(`Consumer Items`~.) +
+  theme_few() +
+  scale_fill_hcl(palette = 'RdBu') +
+  theme(panel.spacing.y=unit(0, "lines"), 
+        strip.text.y = element_text(size = 5, angle = 0, hjust = 0),
+        legend.position = 'none',
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=7),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank()) +
+  scale_x_date(expand = c(0,0), date_breaks = "3 month", date_labels = "%b%y") +
+  ggtitle('Average Retail Prices of Selected Consumer Items (Jan 2018 to Dec 2022)')
+```
+
 # 7. Reference
 
 1.  [Newggslopegraph](https://cran.r-project.org/web/packages/CGPfunctions/vignettes/Using-newggslopegraph.html)
+2.  [Lubridate](https://lubridate.tidyverse.org)
+3.  [ggHoriPlot](https://rivasiker.github.io/ggHoriPlot/)

@@ -53,6 +53,15 @@ website:
           - text: Exam Prototype
             href: https://chockwankee.shinyapps.io/Prototype1_SingleFile/
             
+      - text: "✱ Tableau"
+        menu:
+          - text: Examination Performance
+            href: https://public.tableau.com/app/profile/wan.kee/viz/In_class_Exercise_03_exam/Dashboard1
+          - text: Superstore Sales and Profit Report
+            href: https://public.tableau.com/app/profile/wan.kee/viz/In_class_Exercise_02/SuperstoreSalesandProfitReport
+          - text: Tourism Time Series Analysis
+            href: https://public.tableau.com/app/profile/wan.kee/viz/TimeAnalysis_17087559349170/TouristArrivals?publish=yes
+            
     
   page-navigation: true
 
