@@ -398,6 +398,9 @@ Year 2020 Observation: Given that the graph extends to 2020, a global reduction 
 ### 6.5.2 Average Consumer Price
 
 ```{r}
+##| fig-width: 12
+##| fig-height: 10
+
 price %>% 
   filter(Date >= "2018-01-01") %>%
   ggplot() +
@@ -405,13 +408,13 @@ price %>%
                origin = "midpoint", 
                horizonscale = 6)+
   facet_grid(`Consumer Items`~.) +
-  theme_few() +
+  theme_few() + 
   scale_fill_hcl(palette = 'RdBu') +
   theme(panel.spacing.y=unit(0, "lines"), 
         strip.text.y = element_text(size = 5, angle = 0, hjust = 0),
         legend.position = 'none',
         axis.text.y = element_blank(),
-        axis.text.x = element_text(size=7),
+        axis.text.x = element_text(size=6),
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         axis.ticks.y = element_blank(),
