@@ -113,7 +113,6 @@ write_rds(mpszpop2020, "data/mpszpop2020.rds")
 ```
 :::
 
-
 # Choropleth Map
 
 ::: {.callout-note collapse="true"}
@@ -123,7 +122,6 @@ write_rds(mpszpop2020, "data/mpszpop2020.rds")
 mpszpop2020 <- readRDS("data/mpszpop2020.rds")
 ```
 :::
-
 
 ## qtm()
 
@@ -139,19 +137,71 @@ The basic building block of tmap is `tm_shape()` followed by the layer elements 
 
 Note that `tm_polygons()` is a wrapper of `tm_fill()` and `tm_border()`. `tm_fill()` shades the polygons by using the default colour scheme and `tm_borders()` adds the borders of the shapefile onto the choropleth map where the `alpha` argument is used to define transparency number between 0 (totally transparent) and 1 (default; not transparent).
 
-tmap provides a total ten data classification methods, namely: fixed, sd, equal, pretty , quantile, kmeans, hclust, bclust, fisher, and jenks. The default interval binning used to draw the choropleth map is called “pretty” and the default colour scheme is YlOrRd of ColorBrewer. By default, Missing value will be shaded in grey.
-
+tmap provides a total ten data classification methods, namely: fixed, sd, equal, pretty, quantile, kmeans, hclust, bclust, fisher, and jenks. The default interval binning used to draw the choropleth map is **pretty** and the default colour scheme is YlOrRd of ColorBrewer. By default, Missing value will be shaded in grey.
 
 ::: panel-tabset
 
 ### pretty
+
+The **pretty** style chooses a number of breaks not necessarily equal to n using pretty, but likely to be legible.
 
 ```{r}
 tm_shape(mpszpop2020)+
   tm_polygons("DEPENDENCY")
 ```
 
-a quantile data classification that used 5 classes.
+### quantile
+
+The **quantile** style provides quantile breaks.
+
+```{r}
+tm_shape(mpszpop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+### kmeans
+
+The **kmeans** style uses kmeans to generate the breaks; it may be anchored using `set.seed`.
+
+```{r}
+tm_shape(mpszpop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "kmeans") +
+  tm_borders(alpha = 0.5)
+```
+
+### bclust
+
+The **hclust** style uses hclust to generate the breaks using hierarchical clustering.
+The **bclust** style uses bclust to generate the breaks using bagged clustering.
+
+```{r}
+tm_shape(mpszpop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "bclust") +
+  tm_borders(alpha = 0.5)
+```
+
+### fisher
+
+The **fisher** style uses the algorithm proposed by W. D. Fisher (1958) and discussed by Slocum et al. (2005) as the Fisher-Jenks algorithm. This style will subsample by default for more than 3000 observations.
+
+```{r}
+tm_shape(mpszpop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "fisher") +
+  tm_borders(alpha = 0.5)
+```
+
+### jenks
+
+`jenks` is a quantile data classification that used 5 classes. The jenks style has been ported from Jenks' code, and has been checked for consistency with ArcView, ArcGIS, and MapInfo
 
 ```{r}
 tm_shape(mpszpop2020)+
@@ -160,9 +210,24 @@ tm_shape(mpszpop2020)+
           style = "jenks") +
   tm_borders(alpha = 0.5)
 ```
-
 :::
 
+## Breaks
+
+Breaks are computed internally or set explicitly by means of the breaks argument to the `tm_fill()`. It is a good practice to obtain descriptive statistics on the variable before setting the break points.
+
+```{r}
+summary(mpszpop2020$DEPENDENCY)
+```
+
+Based on the output, the break points are set at 0.60, 0.70, 0.80, and 0.90. In addition, a minimum and maximum will also be set at 0 and 100. Therefore, the breaks vector is c(0, 0.60, 0.70, 0.80, 0.90, 1.00).
+
+```{r}
+tm_shape(mpszpop2020)+
+  tm_fill("DEPENDENCY",
+          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) +
+  tm_borders(alpha = 0.5)
+```
 
 
 ```{r}
@@ -183,5 +248,54 @@ tm_shape(mpszpop2020)+
   tm_grid(alpha =0.2) +
   tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
              position = c("left", "bottom"))
+```
+## Multiple Choropleth Plots
+
+```{r}
+tm_shape(mpszpop2020)+ 
+  tm_polygons(c("YOUNG","AGED"),
+          style = c("pretty", "pretty"), 
+          palette = list("Blues","Purples")) +
+  tm_layout(legend.position = c("right", "bottom"))
+```
+```{r}
+tm_shape(mpszpop2020)+ 
+  tm_polygons(c("YOUNG","AGED"),
+          style = c("quantile", "quantile"), 
+          palette = list("Blues","Purples")) +
+  tm_layout(legend.position = c("right", "bottom"))
+```
+## Group-by Variable
+
+```{r}
+tm_shape(mpszpop2020) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by="REGION_N", 
+            free.coords=TRUE, 
+            drop.shapes=FALSE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center", "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+
+
+```{r}
+tm_shape(mpszpop2020[mpszpop2020$REGION_N=="CENTRAL REGION", ])+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.45, 
+            legend.width = 5.0,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
 ```
 
