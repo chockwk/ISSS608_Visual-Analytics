@@ -113,7 +113,7 @@ write_rds(mpszpop2020, "data/mpszpop2020.rds")
 ```
 :::
 
-# Choropleth Map
+# 5. Choropleth Map
 
 ::: {.callout-note collapse="true"}
 ## Load Point
@@ -229,7 +229,6 @@ tm_shape(mpszpop2020)+
   tm_borders(alpha = 0.5)
 ```
 
-
 ```{r}
 tm_shape(mpszpop2020)+
   tm_fill("DEPENDENCY", 
@@ -297,5 +296,285 @@ tm_shape(mpszpop2020[mpszpop2020$REGION_N=="CENTRAL REGION", ])+
             legend.position = c("right", "bottom"),
             frame = FALSE) +
   tm_borders(alpha = 0.5)
+```
+
+# 6. Geospatial Data Point
+
+Visualizing geospatial point data typically involves plotting points on a map to represent locations or events. Using the mapping library to create a map and add the data points as layers, the map appearance can be customized to enhance visualization, such as background, colors, and labels.
+
+Proportional symbol maps (also known as graduate symbol maps) are a class of maps that use the visual variable of size to represent differences in the magnitude of a discrete, abruptly changing phenomenon.
+
+# 7. Load Data
+
+SGPools
+
+`SGPools` contains the locations of Singapore outlets and branches and their respective winnings. 
+
+```{r}
+sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+glimpse(sgpools)
+```
+
+# 8. Prepare Data
+
+`st_as_sf()` converts sgpools data frame into a simple feature data frame. The `coords` argument defines the x-coordinates and y-coordinates. The `crs` argument specifies the coordinates system in epsg format where EPSG: 3414 is Singapore SVY21 Projected Coordinate System.
+
+```{r}
+sgpools_sf <- st_as_sf(sgpools, 
+                       coords = c("XCOORD", "YCOORD"),
+                       crs= 3414)
+```
+
+
+# 9. Interactive Geospatial Point Map
+
+`tm_bubbles()` adds bubble symbols to the map and are often used to represent point data.
+
+The `size` argument specifies the attribute used to determine the size of the bubbles. It can take on a **numeric value** as a standard size or a **numeric attribute** where the size will be proportional to the values of the "Gp1Gp2 Winnings" attribute. 
+
+The `col` argument specifies the color of the bubbles. It can be a **colour value** or a **categorical attribute**.
+
+```{r}
+tmap_mode("view")
+
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE",
+             size = "Gp1Gp2 Winnings",
+             border.col = "black",
+             border.lwd = 1) +
+  tm_view(set.zoom.limits = c(11,12))
+```
+
+`tm_facets()` divides the map into multiple facets based on the specified attribute. Each unique value of the attribute will result in a separate facet.
+
+The `by` argument specifies the attribute used to create facets. Each unique value of the "OUTLET TYPE" attribute will result in a separate facet.
+
+The `nrow` argument specifies the number of rows in the facet grid. Where nrow = 1, all facets will be arranged in a single row.
+
+The `sync` argument specifies whether the scales of the facets should be synchronized. When set to TRUE, the scales (e.g., zoom levels) of all facets will be synchronized, allowing for easy comparison between facets.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE) +
+  tm_view(set.zoom.limits = c(11,12))
+```
+
+# 10. Geospatial Analytical Map
+
+Geospatial analytical maps involve the visualization and analysis of spatial data to reveal patterns, trends, and relationships within a geographic context. These maps are designed to provide insights into spatial distributions and variations, allowing for better understanding and interpretation of data. Some common types of geospatial analytical maps include choropleth maps, rate maps, percentile maps, and boxmaps.
+
+# 11. Import Data
+
+`NGA_wp` is a polygon feature data frame providing information on water point of Nigeria at the LGA level. 
+
+```{r}
+NGA_wp <- read_rds("data/rds/NGA_wp.rds")
+```
+
+# 12. Choropleth Maps
+
+Choropleth maps use color shading to represent variations in data values across geographic regions. Each region is shaded based on the value of a specific variable, such as population density, average income, or disease prevalence. Choropleth maps are useful for visualizing spatial patterns and disparities in data.
+
+```{r}
+tmap_mode("view")
+
+p1 <- tm_shape(NGA_wp) +
+  tm_fill("wp_functional",
+          n = 10,
+          style = "equal",
+          palette = "Blues") +
+  tm_borders(lwd = 0.1,
+             alpha = 1) +
+  tm_layout(main.title = "Distribution of functional water point by LGAs",
+            legend.outside = FALSE)
+
+p2 <- tm_shape(NGA_wp) +
+  tm_fill("total_wp",
+          n = 10,
+          style = "equal",
+          palette = "Blues") +
+  tm_borders(lwd = 0.1,
+             alpha = 1) +
+  tm_layout(main.title = "Distribution of total water point by LGAs",
+            legend.outside = FALSE)
+
+tmap_arrange(p2, p1, nrow = 1)
+```
+
+# 13. Rate Maps
+
+**Rate maps** are a type of choropleth map that display rates or proportions per unit area. They are commonly used to visualize rates of occurrence or density of phenomena, such as crime rates, disease incidence, or population density. Rate maps often involve normalizing raw counts by a population or area size to allow for meaningful comparisons between different regions.
+
+`mutate()` from dplyr package is used to derive two fields, namely pct_functional and pct_nonfunctional.
+
+```{r}
+NGA_wp <- NGA_wp %>%
+  mutate(pct_functional = wp_functional/total_wp) %>%
+  mutate(pct_nonfunctional = wp_nonfunctional/total_wp)
+
+tm_shape(NGA_wp) +
+  tm_fill("pct_functional",
+          n = 10,
+          style = "equal",
+          palette = "Blues",
+          legend.hist = TRUE) +
+  tm_borders(lwd = 0.1,
+             alpha = 1) +
+  tm_layout(main.title = "Rate map of functional water point by LGAs",
+            legend.outside = TRUE)
+```
+
+# 14. Percentile Maps
+
+**Percentile maps** divide the data into equal intervals based on percentiles and assign each interval a unique color or shading. This type of map is useful for identifying relative rankings or distributions of values within a dataset. Percentile maps highlight areas with high or low values relative to the entire dataset and can be effective for comparing distributions across different regions.
+
+The data preparation as below:
+
+::: panel-tabset
+## Missing Data
+
+`drop_na()` excludes records with NA.
+
+```{r}
+NGA_wp <- NGA_wp %>%
+  drop_na()
+```
+
+## Cumulative Probability
+
+Create customised classification by defining percentile classes where `percent` is c(0,.01,.1,.5,.9,.99,1).
+
+During variables extraction, the geometry is extracted but base R functions cannot deal with the geometry. To prevent an error from `quantile()`, `st_set_geomtry()` is set to NULL to drop geomtry field.
+
+```{r}
+percent <- c(0,.01,.1,.5,.9,.99,1)
+var <- NGA_wp["pct_functional"] %>%
+  st_set_geometry(NULL)
+quantile(var[,1], percent)
+```
+
+## get.var function
+
+We will write an R function `get.var` to extract a variable (wp_nonfunctional) as a vector out of an sf data.frame.
+
+The arguments are `vname` for variable name and `df` as the name of sf data frame
+It returns `v`, the vector with values.
+
+```{r}
+get.var <- function(vname,df) {
+  v <- df[vname] %>% 
+    st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
+
+:::
+
+```{r}
+percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
+  percent <- c(0,.01,.1,.5,.9,.99,1)
+  var <- get.var(vnam, df)
+  bperc <- quantile(var, percent)
+  tm_shape(df) +
+  tm_polygons() +
+  tm_shape(df) +
+     tm_fill(vnam,
+             title=legtitle,
+             breaks=bperc,
+             palette="Blues",
+          labels=c("< 1%", "1% - 10%", "10% - 50%", "50% - 90%", "90% - 99%", "> 99%"))  +
+  tm_borders() +
+  tm_layout(main.title = mtitle, 
+            title.position = c("right","bottom"))
+}
+
+percentmap("total_wp", NGA_wp)
+```
+
+# 15. Boxmaps
+
+Boxmaps, also known as box plot maps, are a spatial representation of box plots. They display summary statistics of a variable (e.g., median, quartiles, outliers) for different geographic areas. Each area is represented by a box plot, with the length of the box indicating the interquartile range (IQR) and the median value shown as a horizontal line within the box. Boxmaps provide a compact visualization of spatial variability and distribution of data.
+
+The data preparation as below:
+
+::: panel-tabset
+## boxbreak function
+
+`boxbreak` is an R function that creating break points for a box map. The arguments `v` indicates vector with observations, `multi` is the multiplier for IQR (default 1.5). The function returns `bb`, a vector with 7 break points compute quartile and fences.
+
+```{r}
+boxbreaks <- function(v,mult=1.5) {
+  qv <- unname(quantile(v))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+  # initialize break points vector
+  bb <- vector(mode="numeric",length=7)
+  # logic for lower and upper fences
+  if (lofence < qv[1]) {  # no lower outliers
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+  if (upfence > qv[5]) { # no upper outliers
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+  bb[3:5] <- qv[2:4]
+  return(bb)
+}
+```
+
+## get.var function
+
+`get.var` is a function to extract a variable as a vector out of an sf data frame. The arguments `vname` is the variable name and `df` is the name of sf data frame. It returns `v`, a vector with values.
+
+```{r}
+get.var <- function(vname,df) {
+  v <- df[vname] %>% st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
+
+```{r}
+var <- get.var("wp_nonfunctional", NGA_wp) 
+boxbreaks(var)
+```
+
+:::
+
+```{r}
+boxmap <- function(vnam, df, legtitle=NA,
+                   mtitle="Box Map", mult=1.5){
+  var <- get.var(vnam,df)
+  bb <- boxbreaks(var)
+  
+  tm_shape(df) +
+    tm_polygons() +
+  tm_shape(df) +
+     tm_fill(vnam,title=legtitle,
+             breaks=bb,
+             palette="Blues",
+             labels = c("lower outlier", "< 25%", "25% - 50%", "50% - 75%", "> 75%", "upper outlier")) +
+  tm_borders() +
+  tm_layout(main.title = mtitle, 
+            title.position = c("left", "top"))
+}
+
+tmap_mode("plot")
+boxmap("wp_nonfunctional", NGA_wp)
 ```
 
