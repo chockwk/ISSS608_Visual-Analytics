@@ -28,8 +28,7 @@ pacman::p_load(tidyverse, sf, tmap, psych)
 
 # 3. Load Data
 
-:::panel-tabset
-
+::: panel-tabset
 ## Master Plan Subzone
 
 `mpsz` is the Master Plan 2014 Subzone Boundary in ESRI shapefile format. It can be downloaded at data.gov.sg This is a geospatial data. It consists of the geographical boundary of Singapore at the planning subzone level. The data is based on URA Master Plan 2014. `st_read()` function of sf package to import the MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame.
@@ -38,6 +37,7 @@ pacman::p_load(tidyverse, sf, tmap, psych)
 mpsz <- st_read(dsn = "data/geospatial", 
                 layer = "MP14_SUBZONE_WEB_PL")
 ```
+
 ```{r}
 mpsz
 ```
@@ -54,16 +54,12 @@ glimpse(pop)
 
 # 4. Prepare Data
 
-:::panel-tabset
+::: panel-tabset
 ## Recode
 
 The following attributes will be derived:
 
-YOUNG: Age group `0_to_4` and `20_to_24`
-ECONOMY ACTIVE: Age group `25_to_29` and `60_to_64`
-AGED: Age group `65_and_above`
-TOTAL: All age group
-DEPENDENCY: Ratio between YOUNG and AGED : ECONOMIC ACTIVE
+YOUNG: Age group `0_to_4` and `20_to_24` ECONOMY ACTIVE: Age group `25_to_29` and `60_to_64` AGED: Age group `65_and_above` TOTAL: All age group DEPENDENCY: Ratio between YOUNG and AGED : ECONOMIC ACTIVE
 
 ```{r}
 pop2020 <- pop %>%
@@ -80,6 +76,7 @@ pop2020 <- pop %>%
   select(PA, SZ, YOUNG, ECONOMY_ACTIVE, AGED, TOTAL, DEPENDENCY)
 glimpse(pop2020)
 ```
+
 ```{r}
 describe(pop2020)
 ```
@@ -94,6 +91,7 @@ pop2020 <- pop2020 %>%
   filter(ECONOMY_ACTIVE > 0)
 describe(pop2020)
 ```
+
 ## Left Join
 
 `pop2020` and `mpsz` are joined using `SZ` and `SUBZONE_N`.
@@ -131,6 +129,7 @@ mpszpop2020 <- readRDS("data/mpszpop2020.rds")
 tmap_mode("plot")
 qtm(mpszpop2020, fill = "DEPENDENCY")
 ```
+
 ## tmap()
 
 The basic building block of tmap is `tm_shape()` followed by the layer elements `tm_shape()` to define the input data and `tm_polygons()` to draw the planning subzone polygons.
@@ -140,7 +139,6 @@ Note that `tm_polygons()` is a wrapper of `tm_fill()` and `tm_border()`. `tm_fil
 tmap provides a total ten data classification methods, namely: fixed, sd, equal, pretty, quantile, kmeans, hclust, bclust, fisher, and jenks. The default interval binning used to draw the choropleth map is **pretty** and the default colour scheme is YlOrRd of ColorBrewer. By default, Missing value will be shaded in grey.
 
 ::: panel-tabset
-
 ### pretty
 
 The **pretty** style chooses a number of breaks not necessarily equal to n using pretty, but likely to be legible.
@@ -176,8 +174,7 @@ tm_shape(mpszpop2020)+
 
 ### bclust
 
-The **hclust** style uses hclust to generate the breaks using hierarchical clustering.
-The **bclust** style uses bclust to generate the breaks using bagged clustering.
+The **hclust** style uses hclust to generate the breaks using hierarchical clustering. The **bclust** style uses bclust to generate the breaks using bagged clustering.
 
 ```{r}
 tm_shape(mpszpop2020)+
@@ -248,6 +245,7 @@ tm_shape(mpszpop2020)+
   tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
              position = c("left", "bottom"))
 ```
+
 ## Multiple Choropleth Plots
 
 ```{r}
@@ -257,6 +255,7 @@ tm_shape(mpszpop2020)+
           palette = list("Blues","Purples")) +
   tm_layout(legend.position = c("right", "bottom"))
 ```
+
 ```{r}
 tm_shape(mpszpop2020)+ 
   tm_polygons(c("YOUNG","AGED"),
@@ -264,6 +263,7 @@ tm_shape(mpszpop2020)+
           palette = list("Blues","Purples")) +
   tm_layout(legend.position = c("right", "bottom"))
 ```
+
 ## Group-by Variable
 
 ```{r}
@@ -280,7 +280,6 @@ tm_shape(mpszpop2020) +
             title.size = 20) +
   tm_borders(alpha = 0.5)
 ```
-
 
 ```{r}
 tm_shape(mpszpop2020[mpszpop2020$REGION_N=="CENTRAL REGION", ])+
@@ -308,7 +307,7 @@ Proportional symbol maps (also known as graduate symbol maps) are a class of map
 
 SGPools
 
-`SGPools` contains the locations of Singapore outlets and branches and their respective winnings. 
+`SGPools` contains the locations of Singapore outlets and branches and their respective winnings.
 
 ```{r}
 sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
@@ -325,12 +324,11 @@ sgpools_sf <- st_as_sf(sgpools,
                        crs= 3414)
 ```
 
-
 # 9. Interactive Geospatial Point Map
 
 `tm_bubbles()` adds bubble symbols to the map and are often used to represent point data.
 
-The `size` argument specifies the attribute used to determine the size of the bubbles. It can take on a **numeric value** as a standard size or a **numeric attribute** where the size will be proportional to the values of the "Gp1Gp2 Winnings" attribute. 
+The `size` argument specifies the attribute used to determine the size of the bubbles. It can take on a **numeric value** as a standard size or a **numeric attribute** where the size will be proportional to the values of the "Gp1Gp2 Winnings" attribute.
 
 The `col` argument specifies the color of the bubbles. It can be a **colour value** or a **categorical attribute**.
 
@@ -371,7 +369,7 @@ Geospatial analytical maps involve the visualization and analysis of spatial dat
 
 # 11. Import Data
 
-`NGA_wp` is a polygon feature data frame providing information on water point of Nigeria at the LGA level. 
+`NGA_wp` is a polygon feature data frame providing information on water point of Nigeria at the LGA level.
 
 ```{r}
 NGA_wp <- read_rds("data/rds/NGA_wp.rds")
@@ -463,8 +461,7 @@ quantile(var[,1], percent)
 
 We will write an R function `get.var` to extract a variable (wp_nonfunctional) as a vector out of an sf data.frame.
 
-The arguments are `vname` for variable name and `df` as the name of sf data frame
-It returns `v`, the vector with values.
+The arguments are `vname` for variable name and `df` as the name of sf data frame It returns `v`, the vector with values.
 
 ```{r}
 get.var <- function(vname,df) {
@@ -474,7 +471,6 @@ get.var <- function(vname,df) {
   return(v)
 }
 ```
-
 :::
 
 ```{r}
@@ -553,7 +549,6 @@ get.var <- function(vname,df) {
 var <- get.var("wp_nonfunctional", NGA_wp) 
 boxbreaks(var)
 ```
-
 :::
 
 ```{r}
@@ -577,4 +572,3 @@ boxmap <- function(vnam, df, legtitle=NA,
 tmap_mode("plot")
 boxmap("wp_nonfunctional", NGA_wp)
 ```
-

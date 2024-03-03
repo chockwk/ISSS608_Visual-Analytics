@@ -33,6 +33,7 @@ website:
           - text: Geospatial Analysis
             href: Topics/HO10/HO10.html
           - text: Network Data Analysis
+            href: Topics/HO11/HO11.html
             
             
       - text: "❄ Real-world Exercises"

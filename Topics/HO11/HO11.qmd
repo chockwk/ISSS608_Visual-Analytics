@@ -1,0 +1,23 @@
+---
+title: "Network Analysis"
+author: "Wan Kee"
+date: "3 March 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  message: false
+  error: true
+---
+
+# 1. Learning Objectives
+
+
+# 2. Load Packages
+
+
+# 3. Import Data
+
+
+# 4. Prepare Data

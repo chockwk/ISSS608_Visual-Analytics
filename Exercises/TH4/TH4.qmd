@@ -11,3 +11,14 @@ execute:
   message: false
   error: true
 ---
+
+# The Task
+
+Evaluation of R Packages: To evaluate and determine the necessary R packages required for Shiny application. Ensure that the selected packages are supported in the R CRAN. Choose packages that provide functionality relevant to your application's objectives and requirements.
+
+Preparation and Testing of R Codes: To prepare and test the specific R code that will be used in Shiny application. These codes should be capable of performing the desired data processing, analysis, or visualization tasks and should return the correct output as expected. Thorough testing is essential to ensure the reliability and accuracy of your application.
+
+Determination of Parameters and Outputs: Identify the parameters (inputs) and outputs that will be exposed on the Shiny application's user interface. This involves determining the user-interactable elements, such as input fields, sliders, dropdown menus, etc., as well as the expected outputs or results that users will receive after interacting with the application.
+
+Selection of Shiny UI Components: Select appropriate Shiny user interface (UI) components for exposing the parameters and outputs determined above. Choose UI elements that are user-friendly, intuitive, and visually appealing. Consider using a combination of input and output components to create an interactive and engaging user experience.
+
