@@ -26,20 +26,24 @@ Welcome to ISSS608 Visual Analytics and Applications, Spring 2024 class!
 
 This page documents my learning journey of geospatial analytics taught by **Prof Kam Tin Seong**.
 
-![](_site/images/datasaurus.gif)
+![](Images/same-stats-different-graphs.gif)
 
 Source: [Autodesk](https://www.research.autodesk.com/publications/same-stats-different-graphs/)
 
 This is the Datasaurus Dozen. While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson’s correlation) to two decimal places.
 
-![](_site/images/datasaurus_all.png){width="600"}
+![](Images/Datasaurus_Dozen.png)
 
-# Visual Analytics?
+# What is Visual Analytics?
 
-Visual Analytics is the craft of **analytical reasoning** supported by: - Data Science and Analytics - Data Visualization - Human-Computing-Interaction (HCI) - Interface Design - Visual Storytelling
+Visual Analytics is the craft of **analytical reasoning** supported by:
+
+-   Data Science and Analytics
+-   Data Visualization
+-   Human Computing Interaction (HCI)
+-   Interface Design
+-   Visual Storytelling
 
 The learning objective is to understand the **basic concepts, theories and methodologies** of visual analytics, analyse data using appropriate **visual thinking and visual analytics techniques**, and implement cutting-edge **visual analytics system** for **decision making**.
-
-![](_site/images/VA.png){width="600"}
 
 # Topic Overview
