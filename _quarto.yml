@@ -64,7 +64,8 @@ website:
             href: https://public.tableau.com/app/profile/wan.kee/viz/In_class_Exercise_02/SuperstoreSalesandProfitReport
           - text: Tourism Time Series Analysis
             href: https://public.tableau.com/app/profile/wan.kee/viz/TimeAnalysis_17087559349170/TouristArrivals?publish=yes
-            
+          - text: Residential Transaction
+            href: https://public.tableau.com/app/profile/wan.kee/viz/GeospatialAnalysis_ResidentialTransactions_09032024/ChoroplethMap_UnitPrice?publish=yes
     
   page-navigation: true
 

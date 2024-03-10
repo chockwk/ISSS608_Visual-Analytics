@@ -22,3 +22,58 @@ Determination of Parameters and Outputs: Identify the parameters (inputs) and ou
 
 Selection of Shiny UI Components: Select appropriate Shiny user interface (UI) components for exposing the parameters and outputs determined above. Choose UI elements that are user-friendly, intuitive, and visually appealing. Consider using a combination of input and output components to create an interactive and engaging user experience.
 
+
+```{r}
+pacman::p_load(tidyverse, readr, visdat, plotly)
+```
+
+```{r}
+weather <- readRDS("data/rds/weather.rds")
+```
+
+```{r}
+weather <- weather %>%
+  rename_with(~ gsub(" ", "_", .x), everything())
+glimpse(weather)
+```
+
+```{r}
+weather <- weather %>% 
+  mutate(Station = as.factor(Station),
+         Date = make_date(year = Year, month = Month, day = Day),
+         Month = lubridate::month(Date, label = TRUE),         
+         Day = day(Date),
+         Daily_Rainfall_Total = as.numeric(Daily_Rainfall_Total),
+         Highest_30_Min_Rainfall = as.numeric(Highest_30_Min_Rainfall),
+         Highest_60_Min_Rainfall = as.numeric(Highest_60_Min_Rainfall),
+         Highest_120_Min_Rainfall = as.numeric(Highest_120_Min_Rainfall),
+         Mean_Temperature = as.numeric(Mean_Temperature), 
+         Maximum_Temperature = as.numeric(Maximum_Temperature), 
+         Minimum_Temperature = as.numeric(Minimum_Temperature),
+         Mean_Wind_Speed = as.numeric(Mean_Wind_Speed),
+         Max_Wind_Speed = as.numeric(Max_Wind_Speed))
+glimpse(weather)
+```
+
+```{r}
+weather[duplicated(weather),]
+```
+
+```{r}
+weather %>%
+  sample_n(10000) %>%
+  vis_miss()
+```
+
+```{r}
+temp <- weather %>%
+  select(Station, Year, Month, Day, Date, Mean_Temperature, Maximum_Temperature, Minimum_Temperature) %>% 
+  filter(Year %in% c("1983", "1993", "2003", "2013", "2023"))
+glimpse(temp)
+```
+
+```{r}
+vis_miss(temp, cluster = TRUE)
+```
+
+
