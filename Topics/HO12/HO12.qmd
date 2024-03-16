@@ -1,0 +1,13 @@
+---
+title: "Information Dashboard Design"
+author: "Wan Kee"
+date: "16 March 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true 
+  warning: false
+  message: false
+  error: true
+  freeze: true # git add_freeze/
+---
