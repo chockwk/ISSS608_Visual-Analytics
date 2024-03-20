@@ -22,6 +22,15 @@ Determination of Parameters and Outputs: Identify the parameters (inputs) and ou
 
 Selection of Shiny UI Components: Select appropriate Shiny user interface (UI) components for exposing the parameters and outputs determined above. Choose UI elements that are user-friendly, intuitive, and visually appealing. Consider using a combination of input and output components to create an interactive and engaging user experience.
 
+# Criteria
+
+1.  Appropriateness of analytics methods used (eg. ggstatsplot scatterplot)
+2.  Appropriateness of data visualization methods used (eg. mean shown by boxplot)
+3.  Appropriateness of R packages used (gigraph and plotly for interactivity)
+4.  Appropriateness of UI design used
+
+Time series: tidyverts, timetk, modeltime
+Forecasting: fable
 
 ```{r}
 pacman::p_load(tidyverse, readr, visdat, plotly)
@@ -75,5 +84,3 @@ glimpse(temp)
 ```{r}
 vis_miss(temp, cluster = TRUE)
 ```
-
-

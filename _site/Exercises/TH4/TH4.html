@@ -173,6 +173,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Topics/HO11/HO11.html" rel="" target="">
  <span class="dropdown-text">Network Data Analysis</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Topics/HO12/HO12.html" rel="" target="">
+ <span class="dropdown-text">Information Dashboard Design</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -195,6 +199,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="../../Exercises/TH4/TH4.html" rel="" target="">
  <span class="dropdown-text">Confirmatory Data Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://chockwk-prototype.netlify.app/eda/time_series_analysis_v2" rel="" target="">
+ <span class="dropdown-text">Shiny App Protoype</span></a>
   </li>  
     </ul>
   </li>
@@ -257,6 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#criteria" id="toc-criteria" class="nav-link" data-scroll-target="#criteria">Criteria</a></li>
   </ul>
 </nav>
     </div>
@@ -289,7 +298,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 4, 2024</p>
+      <p class="date-modified">March 16, 2024</p>
     </div>
   </div>
     
@@ -304,6 +313,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Preparation and Testing of R Codes: To prepare and test the specific R code that will be used in Shiny application. These codes should be capable of performing the desired data processing, analysis, or visualization tasks and should return the correct output as expected. Thorough testing is essential to ensure the reliability and accuracy of your application.</p>
 <p>Determination of Parameters and Outputs: Identify the parameters (inputs) and outputs that will be exposed on the Shiny application’s user interface. This involves determining the user-interactable elements, such as input fields, sliders, dropdown menus, etc., as well as the expected outputs or results that users will receive after interacting with the application.</p>
 <p>Selection of Shiny UI Components: Select appropriate Shiny user interface (UI) components for exposing the parameters and outputs determined above. Choose UI elements that are user-friendly, intuitive, and visually appealing. Consider using a combination of input and output components to create an interactive and engaging user experience.</p>
+</section>
+<section id="criteria" class="level1">
+<h1>Criteria</h1>
+<ol type="1">
+<li>Appropriateness of analytics methods used (eg. ggstatsplot scatterplot)</li>
+<li>Appropriateness of data visualization methods used (eg. mean shown by boxplot)</li>
+<li>Appropriateness of R packages used (gigraph and plotly for interactivity)</li>
+<li>Appropriateness of UI design used</li>
+</ol>
+<p>Time series: tidyverts, timetk, modeltime Forecasting: fable</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, readr, visdat, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
